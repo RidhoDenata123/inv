@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,6 +36,9 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Admin dashboard Route
     Route::get('/admin/dashboard', [HomeController::class, 'adminDashboard'])->name('admin.dashboard');
 
+
+// ALL PRODUCT ROUTE
+
     // Product page Route
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
@@ -53,6 +57,24 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Product change image Route
     Route::put('/products/{id}/change-image', [ProductController::class, 'changeImage'])->name('products.change-image');
 
+
+// ALL CATEGORY ROUTE
+
+    // Category page Route
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+
+    // Category add Route
+    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+
+    // Category detail Route
+    Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('categories.show');
+
+    // Category edit Route
+    Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
+
+    // Category delete Route
+    Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    
 });
 
 

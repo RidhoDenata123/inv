@@ -10,6 +10,30 @@
                         </div>
                     @endif
 
+@section('styles')
+    <!-- Bootstrap Select CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" />
+
+    <style>
+        .bootstrap-select .dropdown-toggle {
+            height: calc(1.5em + .75rem + 2px); /* Sesuaikan tinggi dengan form Bootstrap */
+            padding: .375rem .75rem; /* Padding default form */
+            font-size: 1rem; /* Ukuran font default */
+            line-height: 1.5; /* Line height default */
+            color: #495057; /* Warna teks default */
+            background-color: #fff; /* Warna latar belakang */
+            border: 1px solid #ced4da; /* Warna border */
+            border-radius: .25rem; /* Radius border */
+        }
+
+        .bootstrap-select .dropdown-menu {
+            font-size: 1rem; /* Ukuran font dropdown */
+        }
+    </style>
+
+
+    @endsection
+
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
@@ -47,7 +71,7 @@
                                         <td>{{ $loop->iteration }}</td> <!-- Nomor otomatis -->
                                         <td>{{ $product->product_id }}</td>
                                         <td>{{ $product->product_name }}</td>
-                                        <td>{{ $product->product_category }}</td>
+                                        <td>{{ $product->category ? $product->category->category_name : 'No Category' }}</td>
                                         <td>{{ "Rp " . number_format($product->purchase_price,2,',','.') }}</td>
                                         <td>{{ "Rp " . number_format($product->selling_price,2,',','.') }}</td>
                                         <td>{{ $product->supplier_id }}</td>
@@ -105,7 +129,7 @@
                                     </tr>
                                 @empty
                                     <div class="alert alert-danger">
-                                        Data Products belum Tersedia.
+                                    No data available in table
                                     </div>
                                 @endforelse
                             </tbody>
@@ -135,7 +159,7 @@
 
                                         <div class="form-group mb-3">
                                                     <label class="font-weight-bold">Product ID :</label>
-                                                    <input type="text" class="form-control @error('product_id') is-invalid @enderror" id="product_id" name="product_id" value="{{ old('product_id') }}" placeholder="Input product id" require>
+                                                    <input type="text" class="form-control @error('product_id') is-invalid @enderror" id="product_id" name="product_id" value="{{ old('product_id') }}" placeholder="Generated automatically" readonly>
 
                                                         <!-- error message for product_id -->
                                                         @error('product_id')
@@ -160,17 +184,29 @@
                                                 </div>
                                             </div>
                                             <div class="col">
-                                                    <div class="form-group mb-3">
-                                                            <label class="font-weight-bold">Product Category :</label>
-                                                            <input type="text" class="form-control @error('product_category') is-invalid @enderror" id="product_category" name="product_category" value="{{ old('product_category') }}" placeholder="Input product category" require>
 
-                                                                <!-- error message for product_category -->
-                                                                @error('product_category')
-                                                                    <div class="alert alert-danger mt-2">
-                                                                        {{ $message }}
-                                                                    </div>
-                                                                @enderror
-                                                    </div>      
+                                            <div class="form-group mb-3">
+                                                <label class="font-weight-bold">Product Category:</label>
+                                                <select class="form-control selectpicker @error('product_category') is-invalid @enderror" 
+                                                        id="product_category" 
+                                                        name="product_category" 
+                                                        data-live-search="true" 
+                                                        data-style="btn-light" 
+                                                        required>
+                                                    <option value="" selected>Select a category</option>
+                                                    @foreach ($categories as $category)
+                                                        <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
+                                                    @endforeach
+                                                </select>
+
+                                                <!-- Error message for product_category -->
+                                                @error('product_category')
+                                                    <div class="alert alert-danger mt-2">
+                                                        {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            </div>
+
                                             </div>
                                         </div>
                                         <div class="form-group mb-3">
@@ -382,7 +418,7 @@
                                     <p><span class="text-primary"> {{ Auth::user()->name }}</span>, are you sure you want to delete "<strong><span id="deleteProductId"></span> - <span id="deleteProductName"></span></strong>" ?</p>
                                     <div class="alert alert-danger">
                                     <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> <strong>WARNING</strong></span>
-                                    <p class="text-danger"><small>This action cannot be undone, product data will be permanently deleted !</small></p>
+                                    <p class="text-danger"><small>This action cannot be undone, the selected product data will be permanently deleted !</small></p>
                                     </div>
                                     
                                     
@@ -393,14 +429,7 @@
                                         <div class="invalid-feedback">Check this box to continue.</div>
                                         </label>
                                     </div>
-
                                 </div>
-
-                         
-
-
-
-
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it.</button>
                                     <button type="submit" class="btn btn-danger">Yes, Delete!</button>
@@ -456,17 +485,27 @@
                                             </div>
 
                                             <div class="col">
-                                                    <div class="form-group mb-3">
-                                                            <label class="font-weight-bold">Product Category :</label>
-                                                            <input type="text" class="form-control @error('product_category') is-invalid @enderror" id="edit_product_category" name="product_category" value="{{ old('product_category') }}" placeholder="Input product category" require>
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold">Product Category:</label>
+                                                    <select class="form-control selectpicker @error('product_category') is-invalid @enderror" 
+                                                            id="product_category" 
+                                                            name="product_category" 
+                                                            data-live-search="true" 
+                                                            data-style="btn-light" 
+                                                            required>
+                                                        <option value="" selected>Select a category</option>
+                                                        @foreach ($categories as $category)
+                                                            <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
+                                                        @endforeach
+                                                    </select>
 
-                                                                <!-- error message for product_category -->
-                                                                @error('product_category')
-                                                                    <div class="alert alert-danger mt-2">
-                                                                        {{ $message }}
-                                                                    </div>
-                                                                @enderror
-                                                    </div>      
+                                                    <!-- Error message for product_category -->
+                                                    @error('product_category')
+                                                        <div class="alert alert-danger mt-2">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                </div>
                                             </div>
                                         </div>
 
@@ -629,7 +668,7 @@
                     </div>
                 </div>
                   
-                </div>
+            </div>
                 <!-- /.container-fluid -->
 
                 @section('scripts')
@@ -637,7 +676,9 @@
                 <!-- Page level plugins -->
                 <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
                 <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
-                
+                <!-- Bootstrap Select JS -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
+              
                 <!-- Datatable  -->       
                 <script>
                     $(document).ready(function() {
@@ -676,52 +717,64 @@
                             });
                         @endif
 
+                        // Inisialisasi Bootstrap Select
+                        $('.selectpicker').selectpicker({
+                            liveSearch: true, // Aktifkan pencarian
+                            style: 'btn-light', // Gunakan gaya sederhana
+                            size: 5 // Batasi jumlah item yang terlihat
+                        });
+
+
+                        // Generate random product ID when the modal is opened
+                        $('#addProductModal').on('show.bs.modal', function() {
+                            const randomId = 'PRD-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+                            $('#product_id').val(randomId); // Set the generated ID to the input field
+                        });
+
                         // Handle click event on "SHOW" button
                         $('.btn-show').on('click', function() {
                             const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
 
                             // Lakukan permintaan AJAX ke server
                             $.ajax({
-                                url: `/products/${productId}/detail`, // URL rute Laravel
-                                method: 'GET',
-                                success: function(data) {
-                                            // Isi modal dengan data produk
-                                            $('#detailProductId').text(data.product_id);
-                                            $('#detailProductName').text(data.product_name);
-                                            $('#detailProductCategory').text(data.product_category);
-                                            $('#detailProductDescription').text(data.product_description);
-                                            $('#detailPurchasePrice').text("Rp " + parseFloat(data.purchase_price).toLocaleString('id-ID', { minimumFractionDigits: 2 }));
-                                            $('#detailSellingPrice').text("Rp " + parseFloat(data.selling_price).toLocaleString('id-ID', { minimumFractionDigits: 2 }));
-                                            $('#detailProductQty').text(data.product_qty);
-                                            $('#detailProductUnit').text(data.product_unit);
-                                            $('#detailSupplierId').text(data.supplier_id);
-                                            $('#detailProductStatus').text(data.product_status);
+                            url: `/products/${productId}/detail`, // URL rute Laravel
+                            method: 'GET',
+                            success: function(data) {
+                                        // Isi modal dengan data produk
+                                        $('#detailProductId').text(data.product_id);
+                                        $('#detailProductName').text(data.product_name);
+                                        $('#detailProductCategory').text(data.product_category);
+                                        $('#detailProductDescription').text(data.product_description);
+                                        $('#detailPurchasePrice').text("Rp " + parseFloat(data.purchase_price).toLocaleString('id-ID', { minimumFractionDigits: 2 }));
+                                        $('#detailSellingPrice').text("Rp " + parseFloat(data.selling_price).toLocaleString('id-ID', { minimumFractionDigits: 2 }));
+                                        $('#detailProductQty').text(data.product_qty);
+                                        $('#detailProductUnit').text(data.product_unit);
+                                        $('#detailSupplierId').text(data.supplier_id);
+                                        $('#detailProductStatus').text(data.product_status);
 
-                                            
-                                            // Atur warna badge berdasarkan status produk
-                                                const statusElement = $('#detailProductStatus');
-                                                statusElement.text(data.product_status); // Set teks status
-                                                if (data.product_status === 'active') {
-                                                    statusElement.removeClass('badge-danger').addClass('badge-success'); // Warna hijau
-                                                } else if (data.product_status === 'inactive') {
-                                                    statusElement.removeClass('badge-success').addClass('badge-danger'); // Warna merah
-                                                }
-
-                                            // Tampilkan gambar produk
-                                            if (data.product_img) {
-                                                $('#detailProductImage').attr('src', data.product_img);
-                                            } else {
-                                                $('#detailProductImage').attr('src', '/img/default-product.png'); // Gambar default
+                                        
+                                        // Atur warna badge berdasarkan status produk
+                                            const statusElement = $('#detailProductStatus');
+                                            statusElement.text(data.product_status); // Set teks status
+                                            if (data.product_status === 'active') {
+                                                statusElement.removeClass('badge-danger').addClass('badge-success'); // Warna hijau
+                                            } else if (data.product_status === 'inactive') {
+                                                statusElement.removeClass('badge-success').addClass('badge-danger'); // Warna merah
                                             }
-                                        },
-                                        error: function(xhr) {
-                                            alert('Failed to fetch product details. Please try again.');
+
+                                        // Tampilkan gambar produk
+                                        if (data.product_img) {
+                                            $('#detailProductImage').attr('src', data.product_img);
+                                        } else {
+                                            $('#detailProductImage').attr('src', '/img/default-product.png'); // Gambar default
                                         }
-                                    });
+                                    },
+                                    error: function(xhr) {
+                                        alert('Failed to fetch product details. Please try again.');
+                                    }
                                 });
                             });
-
-
+                        });
 
                         // Handle click event on "DELETE" button
                         $('.btn-delete').on('click', function() {
@@ -736,6 +789,7 @@
                             const deleteUrl = `/products/${productId}`;
                             $('#deleteProductForm').attr('action', `/products/${productId}`);
                         });
+
                         // Handle click event on "EDIT" button
                         $('.btn-edit').on('click', function() {
                             const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
@@ -748,7 +802,7 @@
                                     // Isi modal dengan data produk
                                     $('#edit_product_id').val(data.product_id);
                                     $('#edit_product_name').val(data.product_name);
-                                    $('#edit_product_category').val(data.product_category);
+                                    $('#edit_product_category').val(data.product_category).selectpicker('refresh'); // Pilih kategori yang sesuai
                                     $('#edit_product_description').val(data.product_description);
                                     $('#edit_purchase_price').val(data.purchase_price);
                                     $('#edit_selling_price').val(data.selling_price);
@@ -766,7 +820,8 @@
                                 }
                             });
                         });
-                         // Handle click event on "CHANGE IMAGE" button
+                        
+                        // Handle click event on "CHANGE IMAGE" button
                         $('.btn-change-image').on('click', function() {
                             const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
 

@@ -36,4 +36,9 @@ class Product extends Model
         'supplier_id',
         'product_status'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'product_category', 'category_id');
+    }
 }

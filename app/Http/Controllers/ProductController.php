@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-//import model product
-use App\Models\Product; 
+//import model
+use App\Models\Product;
+use App\Models\Category; 
 
 //import return type View
 use Illuminate\View\View;
@@ -26,11 +27,10 @@ class ProductController extends Controller
      */
     public function index() : View
     {
-        //get all products
-        $products = Product::latest()->paginate(10);
-
-        //render view with products
-        return view('products.index', compact('products'));
+        $products = Product::with('category')->paginate(10); // Eager load relasi category
+        $categories = Category::all(); // Ambil semua data kategori
+    
+        return view('products.index', compact('products', 'categories'));
     }
 
     /**
@@ -79,7 +79,7 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product added successfully!');
     }
 
-
+    //SHOW DETAIL
     public function getDetail($product_id)
     {
         // Cari produk berdasarkan product_id
@@ -106,7 +106,7 @@ class ProductController extends Controller
         ]);
     }
 
-
+    // DELETE PRODUCT
     public function destroy($id)
     {
         // Cari produk berdasarkan product_id
@@ -128,6 +128,7 @@ class ProductController extends Controller
     return redirect()->route('products.index')->with('success', 'Product deleted successfully!');
     }
 
+    // EDIT PRODUCT
     public function update(Request $request, $id): RedirectResponse
     {
         // Validasi form
@@ -156,30 +157,32 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product updated successfully!');
     }
 
+
+    // CHANGE IMAGE
     public function changeImage(Request $request, $id): RedirectResponse
-{
-    // Validasi form
-    $request->validate([
-        'product_img' => 'required|image|mimes:jpeg,jpg,png|max:2048',
-    ]);
+    {
+        // Validasi form
+        $request->validate([
+            'product_img' => 'required|image|mimes:jpeg,jpg,png|max:2048',
+        ]);
 
-    // Cari produk berdasarkan product_id
-    $product = Product::where('product_id', $id)->first();
+        // Cari produk berdasarkan product_id
+        $product = Product::where('product_id', $id)->first();
 
-    if (!$product) {
-        return redirect()->route('products.index')->with('error', 'Product not found!');
+        if (!$product) {
+            return redirect()->route('products.index')->with('error', 'Product not found!');
+        }
+
+        // Hapus gambar lama jika ada
+        if ($product->product_img) {
+            Storage::disk('public')->delete($product->product_img);
+        }
+
+        // Simpan gambar baru
+        $product->product_img = $request->file('product_img')->store('products', 'public');
+        $product->save();
+
+        return redirect()->route('products.index')->with('success', 'Product image updated successfully!');
     }
-
-    // Hapus gambar lama jika ada
-    if ($product->product_img) {
-        Storage::disk('public')->delete($product->product_img);
-    }
-
-    // Simpan gambar baru
-    $product->product_img = $request->file('product_img')->store('products', 'public');
-    $product->save();
-
-    return redirect()->route('products.index')->with('success', 'Product image updated successfully!');
-}
 
 }

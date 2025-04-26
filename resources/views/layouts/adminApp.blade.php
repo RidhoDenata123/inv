@@ -28,6 +28,10 @@
 
     <!-- Custom styles for this page -->
     <link href=" {{ asset('vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+    
+    <!-- Page-Level CSS -->
+    @yield('styles')
+    
 
 </head>
 
@@ -104,6 +108,8 @@
 
     <!-- Custom scripts for all pages-->
         <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+
+
 
 
 

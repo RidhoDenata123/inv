@@ -37,7 +37,7 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Master Data :</h6>
             <a class="collapse-item" href="{{ route('products.index') }}">Product</a>
-            <a class="collapse-item" href="">Category</a>
+            <a class="collapse-item" href="{{ route('categories.index') }}">Category</a>
             <a class="collapse-item" href="">Product Unit</a>
             <a class="collapse-item" href="">Supplier</a>
             <a class="collapse-item" href="">Customer</a>
