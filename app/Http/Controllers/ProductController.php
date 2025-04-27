@@ -87,7 +87,8 @@ class ProductController extends Controller
         return response()->json([
             'product_id' => $product->product_id,
             'product_name' => $product->product_name,
-            'product_category' => $product->category ? $product->category->category_name : 'No Category',
+            'product_category' => $product->category ? $product->category->category_id : null,
+            'category_name' => $product->category ? $product->category->category_name : 'No Category', // Untuk modal show
             'product_description' => $product->product_description,
             'purchase_price' => $product->purchase_price,
             'selling_price' => $product->selling_price,

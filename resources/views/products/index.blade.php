@@ -522,6 +522,7 @@
                                                         </div>
                                                     @enderror
                                                 </div>
+
                                             </div>
                                         </div>
 
@@ -663,7 +664,7 @@
                                     <div class="form-group">
                                         <label class="font-weight-bold">Current Image :</label>
                                         <div class="text-center mb-3">
-                                            <img id="currentProductImage" src="" alt="Current Product Image" class="img-fluid" style="max-height: 200px;">
+                                            <img id="currentProductImage" src="" alt="Current Product Image" class="img-fluid rounded" style="max-height: 200px;">
                                         </div>
                                     </div>
 
@@ -719,78 +720,78 @@
                 <script>
                     $(document).ready(function() {
 
-                    // Tampilkan SweetAlert jika ada session flash message
-                    @if (session('success'))
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: '{{ session('success') }}',
-                            confirmButtonText: 'OK'
-                        });
-                    @endif
+                        // Tampilkan SweetAlert jika ada session flash message
+                        @if (session('success'))
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: '{{ session('success') }}',
+                                confirmButtonText: 'OK'
+                            });
+                        @endif
 
-                    @if (session('error'))
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: '{{ session('error') }}',
-                            confirmButtonText: 'OK'
-                        });
-                    @endif
+                        @if (session('error'))
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: '{{ session('error') }}',
+                                confirmButtonText: 'OK'
+                            });
+                        @endif
 
-                    // Validasi file gambar sebelum mengupload ADD PRODUCT
-                    document.getElementById('product_img').addEventListener('change', function(event) {
-                        const file = event.target.files[0];
-                        if (file) {
-                            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-                            const maxSize = 2 * 1024 * 1024; // 2MB
+                        // Validasi file gambar sebelum mengupload ADD PRODUCT
+                        document.getElementById('product_img').addEventListener('change', function(event) {
+                            const file = event.target.files[0];
+                            if (file) {
+                                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                                const maxSize = 2 * 1024 * 1024; // 2MB
 
-                            if (!allowedTypes.includes(file.type)) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Invalid File Type',
-                                    text: 'Only JPEG, PNG, JPG, and GIF files are allowed.',
-                                    confirmButtonText: 'OK'
-                                });
-                                event.target.value = ''; // Reset input
-                            } else if (file.size > maxSize) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'File Too Large',
-                                    text: 'File size exceeds 2MB.',
-                                    confirmButtonText: 'OK'
-                                });
-                                event.target.value = ''; // Reset input
+                                if (!allowedTypes.includes(file.type)) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Invalid File Type',
+                                        text: 'Only JPEG, PNG, JPG, and GIF files are allowed.',
+                                        confirmButtonText: 'OK'
+                                    });
+                                    event.target.value = ''; // Reset input
+                                } else if (file.size > maxSize) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'File Too Large',
+                                        text: 'File size exceeds 2MB.',
+                                        confirmButtonText: 'OK'
+                                    });
+                                    event.target.value = ''; // Reset input
+                                }
                             }
-                        }
-                    });
+                        });
 
-                    // Validasi file gambar sebelum mengupload CHANGE IMG
-                    document.getElementById('new_product_image').addEventListener('change', function(event) {
-                        const file = event.target.files[0];
-                        if (file) {
-                            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-                            const maxSize = 2 * 1024 * 1024; // 2MB
+                        // Validasi file gambar sebelum mengupload CHANGE IMG
+                        document.getElementById('new_product_image').addEventListener('change', function(event) {
+                            const file = event.target.files[0];
+                            if (file) {
+                                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                                const maxSize = 2 * 1024 * 1024; // 2MB
 
-                            if (!allowedTypes.includes(file.type)) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Invalid File Type',
-                                    text: 'Only JPEG, PNG, JPG, and GIF files are allowed.',
-                                    confirmButtonText: 'OK'
-                                });
-                                event.target.value = ''; // Reset input
-                            } else if (file.size > maxSize) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'File Too Large',
-                                    text: 'File size exceeds 2MB.',
-                                    confirmButtonText: 'OK'
-                                });
-                                event.target.value = ''; // Reset input
+                                if (!allowedTypes.includes(file.type)) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Invalid File Type',
+                                        text: 'Only JPEG, PNG, JPG, and GIF files are allowed.',
+                                        confirmButtonText: 'OK'
+                                    });
+                                    event.target.value = ''; // Reset input
+                                } else if (file.size > maxSize) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'File Too Large',
+                                        text: 'File size exceeds 2MB.',
+                                        confirmButtonText: 'OK'
+                                    });
+                                    event.target.value = ''; // Reset input
+                                }
                             }
-                        }
-                    });
+                        });
 
                         // Inisialisasi Bootstrap Select
                         $('.selectpicker').selectpicker({
@@ -818,7 +819,7 @@
                                         // Isi modal dengan data produk
                                         $('#detailProductId').text(data.product_id);
                                         $('#detailProductName').text(data.product_name);
-                                        $('#detailProductCategory').text(data.product_category); // Tampilkan category_name
+                                        $('#detailProductCategory').text(data.category_name); // Tampilkan category_name
                                         $('#detailProductDescription').text(data.product_description);
                                         $('#detailPurchasePrice').text("Rp " + parseFloat(data.purchase_price).toLocaleString('id-ID', { minimumFractionDigits: 2 }));
                                         $('#detailSellingPrice').text("Rp " + parseFloat(data.selling_price).toLocaleString('id-ID', { minimumFractionDigits: 2 }));
@@ -851,6 +852,7 @@
                             });
                         });
 
+                        
                         // Handle click event on "DELETE" button
                         $('.btn-delete').on('click', function() {
                             const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
@@ -865,49 +867,49 @@
                             $('#deleteProductForm').attr('action', `/products/${productId}`);
                         });
 
+
                         // Handle click event on "EDIT" button
                         $('.btn-edit').on('click', function() {
                         const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
-
                         // Lakukan permintaan AJAX ke server untuk mendapatkan data produk
                         $.ajax({
-                            url: `/products/${productId}/detail`, // URL rute Laravel untuk mendapatkan detail produk
-                            method: 'GET',
-                            success: function(data) {
-                                // Isi modal dengan data produk
-                                $('#edit_product_id').val(data.product_id);
-                                $('#edit_product_name').val(data.product_name);
-                                $('#edit_product_description').val(data.product_description);
-                                $('#edit_purchase_price').val(data.purchase_price);
-                                $('#edit_selling_price').val(data.selling_price);
-                                $('#edit_product_qty').val(data.product_qty);
-                                $('#edit_product_unit').val(data.product_unit);
-                                $('#edit_supplier_id').val(data.supplier_id);
+                                url: `/products/${productId}/detail`, // URL rute Laravel untuk mendapatkan detail produk
+                                method: 'GET',
+                                success: function(data) {
+                                    // Isi modal dengan data produk
+                                    $('#edit_product_id').val(data.product_id);
+                                    $('#edit_product_name').val(data.product_name);
+                                    $('#edit_product_description').val(data.product_description);
+                                    $('#edit_purchase_price').val(data.purchase_price);
+                                    $('#edit_selling_price').val(data.selling_price);
+                                    $('#edit_product_qty').val(data.product_qty);
+                                    $('#edit_product_unit').val(data.product_unit);
+                                    $('#edit_supplier_id').val(data.supplier_id);
 
-                                // Pilih kategori yang sesuai
-                                $('#edit_product_category').val(data.product_category).selectpicker('refresh');
+                                    // Pilih kategori yang sesuai
+                                    $('#edit_product_category').val(data.product_category).selectpicker('refresh');
 
-                                // Pilih status yang sesuai
-                                if (data.product_status === 'active') {
-                                    $('#edit_product_status_active').prop('checked', true);
-                                } else if (data.product_status === 'inactive') {
-                                    $('#edit_product_status_inactive').prop('checked', true);
+                                    // Pilih status yang sesuai
+                                    if (data.product_status === 'active') {
+                                        $('#edit_product_status_active').prop('checked', true);
+                                    } else if (data.product_status === 'inactive') {
+                                        $('#edit_product_status_inactive').prop('checked', true);
+                                    }
+
+                                    // Set action URL untuk form edit
+                                    const editUrl = `/products/${productId}`;
+                                    $('#editProductForm').attr('action', editUrl);
+                                },
+                                error: function(xhr) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Failed to fetch product details. Please try again.',
+                                        confirmButtonText: 'OK'
+                                    });
                                 }
-
-                                // Set action URL untuk form edit
-                                const editUrl = `/products/${productId}`;
-                                $('#editProductForm').attr('action', editUrl);
-                            },
-                            error: function(xhr) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'Failed to fetch product details. Please try again.',
-                                    confirmButtonText: 'OK'
-                                });
-                            }
+                            });
                         });
-                    });
                         
                         // Handle click event on "CHANGE IMAGE" button
                         $('.btn-change-image').on('click', function() {
