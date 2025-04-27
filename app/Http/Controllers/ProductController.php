@@ -34,51 +34,44 @@ class ProductController extends Controller
     }
 
     /**
-     * store
+     * STORE PRODUCT
      *
      * @param  mixed $request
      * @return RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
-        //validate form
         $request->validate([
-            'product_id'             => 'required',
-            'product_name'           => 'required',
-            'product_category'       => 'required',
-            'product_description'    => 'required',
-            'product_qty'            => 'required|numeric',
-            'purchase_price'         => 'required|numeric',
-            'selling_price'          => 'required|numeric',
-            'product_unit'           => 'required',
-            'product_img'            => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
-            'supplier_id'            => 'required',
-            'product_status'         => 'required',
+            'product_id' => 'required|string|unique:products,product_id',
+            'product_name' => 'required|string|max:255',
+            'product_category' => 'required|string',
+            'product_description' => 'nullable|string',
+            'product_qty' => 'required|integer|min:0',
+            'purchase_price' => 'required|numeric|min:0',
+            'selling_price' => 'required|numeric|min:0',
+            'product_unit' => 'required|string|max:50',
+            'supplier_id' => 'required|string|max:50',
+            'product_status' => 'required|in:active,inactive',
+            'product_img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi gambar
         ]);
 
-        //upload image
-        $image = $request->file('product_img');
-        $imageName = $image ? $image->store('products', 'public') : null;
+        try {
+            // Simpan produk
+            $product = new Product($request->all());
 
-        //create product
-        Product::create([
-            'product_id'          => $request->product_id,
-            'product_name'        => $request->product_name,
-            'product_category'    => $request->product_category,
-            'product_description' => $request->product_description,
-            'product_qty'         => $request->product_qty,
-            'purchase_price'      => $request->purchase_price,
-            'selling_price'       => $request->selling_price,
-            'product_unit'        => $request->product_unit,
-            'product_img'         => $imageName,
-            'supplier_id'         => $request->supplier_id,
-            'product_status'      => $request->product_status,
-        ]);
+            // Simpan gambar jika ada
+            if ($request->hasFile('product_img')) {
+                $imagePath = $request->file('product_img')->store('products', 'public');
+                $product->product_img = $imagePath;
+            }
 
-        //redirect to index
-        return redirect()->route('products.index')->with('success', 'Product added successfully!');
+            $product->save();
+
+            return redirect()->route('products.index')->with('success', 'Product added successfully!');
+        } catch (\Exception $e) {
+            return redirect()->route('products.index')->with('error', 'Failed to add product. Please check the image format or size.');
+        }
     }
-
     //SHOW DETAIL
     public function getDetail($product_id)
     {
@@ -161,28 +154,30 @@ class ProductController extends Controller
     // CHANGE IMAGE
     public function changeImage(Request $request, $id): RedirectResponse
     {
-        // Validasi form
         $request->validate([
-            'product_img' => 'required|image|mimes:jpeg,jpg,png|max:2048',
+            'product_img' => 'required|image|mimes:jpeg,jpg,png,gif|max:2048', // Validasi gambar
         ]);
-
-        // Cari produk berdasarkan product_id
+    
         $product = Product::where('product_id', $id)->first();
-
+    
         if (!$product) {
             return redirect()->route('products.index')->with('error', 'Product not found!');
         }
-
-        // Hapus gambar lama jika ada
-        if ($product->product_img) {
-            Storage::disk('public')->delete($product->product_img);
+    
+        try {
+            // Hapus gambar lama jika ada
+            if ($product->product_img) {
+                Storage::disk('public')->delete($product->product_img);
+            }
+    
+            // Simpan gambar baru
+            $product->product_img = $request->file('product_img')->store('products', 'public');
+            $product->save();
+    
+            return redirect()->route('products.index')->with('success', 'Product image updated successfully!');
+        } catch (\Exception $e) {
+            return redirect()->route('products.index')->with('error', 'Failed to update product image. Please check the image format or size.');
         }
-
-        // Simpan gambar baru
-        $product->product_img = $request->file('product_img')->store('products', 'public');
-        $product->save();
-
-        return redirect()->route('products.index')->with('success', 'Product image updated successfully!');
     }
 
 }

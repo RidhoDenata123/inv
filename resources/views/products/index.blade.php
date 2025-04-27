@@ -5,10 +5,20 @@
    
 
 @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+    <div class="alert alert-success" role="alert">
+        {{ session('status') }}
+    </div>
+@endif
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 @section('styles')
     <!-- Bootstrap Select CSS -->
@@ -698,24 +708,78 @@
                 <script>
                     $(document).ready(function() {
 
-                        // Tampilkan SweetAlert jika ada session flash message
-                        @if (session('success'))
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: '{{ session('success') }}',
-                                confirmButtonText: 'OK'
-                            });
-                        @endif
+                    // Tampilkan SweetAlert jika ada session flash message
+                    @if (session('success'))
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: '{{ session('success') }}',
+                            confirmButtonText: 'OK'
+                        });
+                    @endif
 
-                        @if (session('error'))
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: '{{ session('error') }}',
-                                confirmButtonText: 'OK'
-                            });
-                        @endif
+                    @if (session('error'))
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: '{{ session('error') }}',
+                            confirmButtonText: 'OK'
+                        });
+                    @endif
+
+                    // Validasi file gambar sebelum mengupload ADD PRODUCT
+                    document.getElementById('product_img').addEventListener('change', function(event) {
+                        const file = event.target.files[0];
+                        if (file) {
+                            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                            const maxSize = 2 * 1024 * 1024; // 2MB
+
+                            if (!allowedTypes.includes(file.type)) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Invalid File Type',
+                                    text: 'Only JPEG, PNG, JPG, and GIF files are allowed.',
+                                    confirmButtonText: 'OK'
+                                });
+                                event.target.value = ''; // Reset input
+                            } else if (file.size > maxSize) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'File Too Large',
+                                    text: 'File size exceeds 2MB.',
+                                    confirmButtonText: 'OK'
+                                });
+                                event.target.value = ''; // Reset input
+                            }
+                        }
+                    });
+
+                    // Validasi file gambar sebelum mengupload CHANGE IMG
+                    document.getElementById('new_product_image').addEventListener('change', function(event) {
+                        const file = event.target.files[0];
+                        if (file) {
+                            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                            const maxSize = 2 * 1024 * 1024; // 2MB
+
+                            if (!allowedTypes.includes(file.type)) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Invalid File Type',
+                                    text: 'Only JPEG, PNG, JPG, and GIF files are allowed.',
+                                    confirmButtonText: 'OK'
+                                });
+                                event.target.value = ''; // Reset input
+                            } else if (file.size > maxSize) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'File Too Large',
+                                    text: 'File size exceeds 2MB.',
+                                    confirmButtonText: 'OK'
+                                });
+                                event.target.value = ''; // Reset input
+                            }
+                        }
+                    });
 
                         // Inisialisasi Bootstrap Select
                         $('.selectpicker').selectpicker({
@@ -852,6 +916,8 @@
                         var fileName = $(this).val().split("\\").pop();
                         $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
                         });
+
+                       
 
 
                 </script>
