@@ -221,7 +221,7 @@
                                         </div>
                                         <div class="form-group mb-3">
                                             <label class="font-weight-bold">Product Description</label>
-                                            <textarea class="form-control @error('product_description') is-invalid @enderror" name="product_description" rows="5" placeholder="Input product description">{{ old('product_description') }}</textarea>
+                                            <textarea class="form-control @error('product_description') is-invalid @enderror" name="product_description" rows="3" placeholder="Input product description">{{ old('product_description') }}</textarea>
                                         
                                             <!-- error message for product_description -->
                                             @error('product_description')
@@ -298,22 +298,28 @@
                                                     </div>      
                                             </div>
                                         </div>
-                                            <div class="form-group mb-3">
-                                                <label class="font-weight-bold">Product Status :</label>
-                                                    <select name="product_status" id="product_status" class="form-control @error('product_status') is-invalid @enderror">
-                                                    
-                                                        <option value="active">Active</option>
-                                                        <option value="inactive">Inactive</option>
-                                                    
-                                                    </select>
-                                                    <!-- error message for product_status -->
-                                                    @error('product_status')
-                                                        <div class="alert alert-danger mt-2">
-                                                            {{ $message }}
-                                                        </div>
-                                                    @enderror
+                                        <div class="form-group mb-3">
+                                            <label class="font-weight-bold">Product Status : </label>
+                                            <br>
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" id="product_status_active" name="product_status" value="active" class="custom-control-input" {{ old('product_status') === 'active' ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="product_status_active">Active</label>
                                             </div>
-                                        <hr>
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" id="product_status_inactive" name="product_status" value="inactive" class="custom-control-input" {{ old('product_status') === 'inactive' ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="product_status_inactive">Inactive</label>
+                                            </div>
+
+                                            <!-- Error message for product_status -->
+                                            @error('product_status')
+                                                <div class="alert alert-danger mt-2">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+
+                                            <hr>
+
                                         <label class="font-weight-bold">Product image :</label>
                                         <div class="custom-file">
                                             <input type="file" class="custom-file-input @error('product_img') is-invalid @enderror" name="product_img" id="product_img">
@@ -498,12 +504,12 @@
                                                 <div class="form-group mb-3">
                                                     <label class="font-weight-bold">Product Category:</label>
                                                     <select class="form-control selectpicker @error('product_category') is-invalid @enderror" 
-                                                            id="product_category" 
+                                                            id="edit_product_category" 
                                                             name="product_category" 
                                                             data-live-search="true" 
                                                             data-style="btn-light" 
                                                             required>
-                                                        <option value="" selected>Select a category</option>
+                                                        <option value="" disabled>Select a category</option>
                                                         @foreach ($categories as $category)
                                                             <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
                                                         @endforeach
@@ -522,7 +528,7 @@
 
                                         <div class="form-group mb-3">
                                             <label class="font-weight-bold">Product Description</label>
-                                            <textarea class="form-control @error('product_description') is-invalid @enderror" id="edit_product_description" name="product_description" rows="5" placeholder="Input product description">{{ old('product_description') }}</textarea>
+                                            <textarea class="form-control @error('product_description') is-invalid @enderror" id="edit_product_description" name="product_description" rows="3" placeholder="Input product description">{{ old('product_description') }}</textarea>
                                         
                                             <!-- error message for product_description -->
                                             @error('product_description')
@@ -606,21 +612,26 @@
                                             </div>
                                         </div>
 
-                                            <div class="form-group mb-3">
-                                                <label class="font-weight-bold">Product Status :</label>
-                                                    <select name="product_status" id="edit_product_status" class="form-control @error('product_status') is-invalid @enderror">
-                                                    
-                                                        <option value="active">Active</option>
-                                                        <option value="inactive">Inactive</option>
-                                                    
-                                                    </select>
-                                                    <!-- error message for product_status -->
-                                                    @error('product_status')
-                                                        <div class="alert alert-danger mt-2">
-                                                            {{ $message }}
-                                                        </div>
-                                                    @enderror
+                                        <div class="form-group mb-3">
+                                            <label class="font-weight-bold">Product Status:</label>
+                                            <br>
+
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" id="edit_product_status_active" name="product_status" value="active" class="custom-control-input">
+                                                <label class="custom-control-label" for="edit_product_status_active">Active</label>
                                             </div>
+                                            <div class="custom-control custom-radio custom-control-inline">
+                                                <input type="radio" id="edit_product_status_inactive" name="product_status" value="inactive" class="custom-control-input">
+                                                <label class="custom-control-label" for="edit_product_status_inactive">Inactive</label>
+                                            </div>
+
+                                            <!-- Error message for product_status -->
+                                            @error('product_status')
+                                                <div class="alert alert-danger mt-2">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
 
                                     </div>
 
@@ -807,7 +818,7 @@
                                         // Isi modal dengan data produk
                                         $('#detailProductId').text(data.product_id);
                                         $('#detailProductName').text(data.product_name);
-                                        $('#detailProductCategory').text(data.product_category);
+                                        $('#detailProductCategory').text(data.product_category); // Tampilkan category_name
                                         $('#detailProductDescription').text(data.product_description);
                                         $('#detailPurchasePrice').text("Rp " + parseFloat(data.purchase_price).toLocaleString('id-ID', { minimumFractionDigits: 2 }));
                                         $('#detailSellingPrice').text("Rp " + parseFloat(data.selling_price).toLocaleString('id-ID', { minimumFractionDigits: 2 }));
@@ -856,34 +867,47 @@
 
                         // Handle click event on "EDIT" button
                         $('.btn-edit').on('click', function() {
-                            const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
+                        const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
 
-                            // Lakukan permintaan AJAX ke server untuk mendapatkan data produk
-                            $.ajax({
-                                url: `/products/${productId}/detail`, // URL rute Laravel untuk mendapatkan detail produk
-                                method: 'GET',
-                                success: function(data) {
-                                    // Isi modal dengan data produk
-                                    $('#edit_product_id').val(data.product_id);
-                                    $('#edit_product_name').val(data.product_name);
-                                    $('#edit_product_category').val(data.product_category).selectpicker('refresh'); // Pilih kategori yang sesuai
-                                    $('#edit_product_description').val(data.product_description);
-                                    $('#edit_purchase_price').val(data.purchase_price);
-                                    $('#edit_selling_price').val(data.selling_price);
-                                    $('#edit_product_qty').val(data.product_qty);
-                                    $('#edit_product_unit').val(data.product_unit);
-                                    $('#edit_supplier_id').val(data.supplier_id);
-                                    $('#edit_product_status').val(data.product_status);
+                        // Lakukan permintaan AJAX ke server untuk mendapatkan data produk
+                        $.ajax({
+                            url: `/products/${productId}/detail`, // URL rute Laravel untuk mendapatkan detail produk
+                            method: 'GET',
+                            success: function(data) {
+                                // Isi modal dengan data produk
+                                $('#edit_product_id').val(data.product_id);
+                                $('#edit_product_name').val(data.product_name);
+                                $('#edit_product_description').val(data.product_description);
+                                $('#edit_purchase_price').val(data.purchase_price);
+                                $('#edit_selling_price').val(data.selling_price);
+                                $('#edit_product_qty').val(data.product_qty);
+                                $('#edit_product_unit').val(data.product_unit);
+                                $('#edit_supplier_id').val(data.supplier_id);
 
-                                    // Set action URL untuk form edit
-                                    const editUrl = `/products/${productId}`;
-                                    $('#editProductForm').attr('action', editUrl);
-                                },
-                                error: function(xhr) {
-                                    alert('Failed to fetch product details. Please try again.');
+                                // Pilih kategori yang sesuai
+                                $('#edit_product_category').val(data.product_category).selectpicker('refresh');
+
+                                // Pilih status yang sesuai
+                                if (data.product_status === 'active') {
+                                    $('#edit_product_status_active').prop('checked', true);
+                                } else if (data.product_status === 'inactive') {
+                                    $('#edit_product_status_inactive').prop('checked', true);
                                 }
-                            });
+
+                                // Set action URL untuk form edit
+                                const editUrl = `/products/${productId}`;
+                                $('#editProductForm').attr('action', editUrl);
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Failed to fetch product details. Please try again.',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
                         });
+                    });
                         
                         // Handle click event on "CHANGE IMAGE" button
                         $('.btn-change-image').on('click', function() {
