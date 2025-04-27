@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 //import model
 use App\Models\Product;
-use App\Models\Category; 
+use App\Models\Category;
+use App\Models\Unit;  
 
 //import return type View
 use Illuminate\View\View;
@@ -27,10 +28,11 @@ class ProductController extends Controller
      */
     public function index() : View
     {
-        $products = Product::with('category')->paginate(10); // Eager load relasi category
-        $categories = Category::all(); // Ambil semua data kategori
+        $products = Product::with('category', 'unit')->paginate(10);
+        $categories = Category::all();
+        $units = Unit::all(); // Ambil data unit dari model Unit
     
-        return view('products.index', compact('products', 'categories'));
+        return view('products.index', compact('products', 'categories', 'units'));
     }
 
     /**
@@ -94,6 +96,7 @@ class ProductController extends Controller
             'selling_price' => $product->selling_price,
             'product_qty' => $product->product_qty,
             'product_unit' => $product->product_unit,
+            'unit_name' => $product->unit ? $product->unit->unit_name : 'No Unit', // Untuk modal show
             'supplier_id' => $product->supplier_id,
             'product_status' => $product->product_status,
             'product_img' => $product->product_img ? asset('storage/' . $product->product_img) : null, // URL gambar

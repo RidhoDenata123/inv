@@ -30,7 +30,7 @@
             padding: .375rem .75rem; /* Padding default form */
             font-size: 1rem; /* Ukuran font default */
             line-height: 1.5; /* Line height default */
-            color: #495057; /* Warna teks default */
+            color: #858796; /* Warna teks default */
             background-color: #fff; /* Warna latar belakang */
             border: 1px solid #ced4da; /* Warna border */
             border-radius: .25rem; /* Radius border */
@@ -71,6 +71,7 @@
                                     <th scope="col">Selling Price</th>
                                     <th scope="col">Supplier</th>
                                     <th scope="col">Qty</th>
+                                    <th scope="col">Unit</th>
                                     <th scope="col">Status</th>
                                     <th scope="col">ACTIONS</th>
                                 </tr>
@@ -78,7 +79,7 @@
                             <tbody>
                                 @forelse ($products as $product)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td> <!-- Nomor otomatis -->
+                                        <td>{{ $loop->iteration }}.</td> <!-- Nomor otomatis -->
                                         <td>{{ $product->product_id }}</td>
                                         <td>{{ $product->product_name }}</td>
                                         <td>{{ $product->category ? $product->category->category_name : 'No Category' }}</td>
@@ -86,6 +87,7 @@
                                         <td>{{ "Rp " . number_format($product->selling_price,2,',','.') }}</td>
                                         <td>{{ $product->supplier_id }}</td>
                                         <td>{{ $product->product_qty }}</td>
+                                        <td>{{ $product->unit ? $product->unit->unit_name : 'No Category' }}</td>
                                         <td>
                                             <span class="badge 
                                                 {{ $product->product_status === 'active' ? 'badge-success' : 'badge-danger' }}">
@@ -273,15 +275,25 @@
                                         <div class="row">
                                             <div class="col">                    
                                                 <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Product Unit :</label>
-                                                    <input type="text" class="form-control @error('product_unit') is-invalid @enderror" id="product_unit" name="product_unit" value="{{ old('product_unit') }}" placeholder="Input product unit" require>
+                                                    <label class="font-weight-bold">Product Unit:</label>
+                                                    <select class="form-control selectpicker @error('product_unit') is-invalid @enderror" 
+                                                            id="product_unit" 
+                                                            name="product_unit" 
+                                                            data-live-search="true" 
+                                                            data-style="btn-light" 
+                                                            required>
+                                                        <option value="" selected>Select a unit</option>
+                                                        @foreach ($units as $unit)
+                                                            <option value="{{ $unit->unit_id }}">{{ $unit->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
 
-                                                        <!-- error message for product_unit -->
-                                                        @error('product_unit')
-                                                            <div class="alert alert-danger mt-2">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
+                                                    <!-- Error message for product_unit -->
+                                                    @error('product_unit')
+                                                        <div class="alert alert-danger mt-2">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col">
@@ -585,17 +597,26 @@
                                         <div class="row">
                                             <div class="col">                    
                                                 <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Product Unit :</label>
-                                                    <input type="text" class="form-control @error('product_unit') is-invalid @enderror" id="edit_product_unit" name="product_unit" value="{{ old('product_unit') }}" placeholder="Input product unit" require>
+                                                    <label class="font-weight-bold">Product Unit:</label>
+                                                    <select class="form-control selectpicker @error('product_unit') is-invalid @enderror" 
+                                                            id="edit_product_unit" 
+                                                            name="product_unit" 
+                                                            data-live-search="true" 
+                                                            data-style="btn-light" 
+                                                            required>
+                                                        <option value="" disabled>Select a unit</option>
+                                                        @foreach ($units as $unit)
+                                                            <option value="{{ $unit->unit_id }}">{{ $unit->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
 
-                                                        <!-- error message for product_unit -->
-                                                        @error('product_unit')
-                                                            <div class="alert alert-danger mt-2">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
+                                                    <!-- Error message for product_unit -->
+                                                    @error('product_unit')
+                                                        <div class="alert alert-danger mt-2">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
                                                 </div>
-
                                             </div>
 
                                             <div class="col">
@@ -824,7 +845,7 @@
                                         $('#detailPurchasePrice').text("Rp " + parseFloat(data.purchase_price).toLocaleString('id-ID', { minimumFractionDigits: 2 }));
                                         $('#detailSellingPrice').text("Rp " + parseFloat(data.selling_price).toLocaleString('id-ID', { minimumFractionDigits: 2 }));
                                         $('#detailProductQty').text(data.product_qty);
-                                        $('#detailProductUnit').text(data.product_unit);
+                                        $('#detailProductUnit').text(data.unit_name);
                                         $('#detailSupplierId').text(data.supplier_id);
                                         $('#detailProductStatus').text(data.product_status);
 
@@ -888,6 +909,8 @@
 
                                     // Pilih kategori yang sesuai
                                     $('#edit_product_category').val(data.product_category).selectpicker('refresh');
+                                    // Pilih unit yang sesuai
+                                    $('#edit_product_unit').val(data.product_unit).selectpicker('refresh');
 
                                     // Pilih status yang sesuai
                                     if (data.product_status === 'active') {

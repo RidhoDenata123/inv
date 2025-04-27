@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UnitController;
+use App\Http\Controllers\SupplierController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -57,7 +59,6 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Product change image Route
     Route::put('/products/{id}/change-image', [ProductController::class, 'changeImage'])->name('products.change-image');
 
-
 // ALL CATEGORY ROUTE
 
     // Category page Route
@@ -75,6 +76,39 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Category delete Route
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
     
+// ALL UNIT ROUTE
+
+    // Unit page Route
+    Route::get('/units', [UnitController::class, 'index'])->name('units.index');
+
+    // Unit add Route
+    Route::post('/units', [UnitController::class, 'store'])->name('units.store');
+
+    // Unit detail Route
+    Route::get('/units/{id}', [UnitController::class, 'show'])->name('units.show');
+
+    // Unit edit Route
+    Route::put('/units/{id}', [UnitController::class, 'update'])->name('units.update');
+
+    // Unit delete Route
+    Route::delete('/units/{id}', [UnitController::class, 'destroy'])->name('units.destroy');
+
+// ALL SUPPLIER ROUTE
+
+    // Supplier page Route
+    Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
+
+    // Supplier add Route
+    Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
+
+    // Supplier detail Route
+    Route::get('/suppliers/{id}', [SupplierController::class, 'show'])->name('suppliers.show');
+
+    // Supplier edit Route
+    Route::put('/suppliers/{id}', [SupplierController::class, 'update'])->name('suppliers.update');
+
+    // Supplier delete Route
+    Route::delete('/suppliers/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
 });
 
 
