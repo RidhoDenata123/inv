@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\CustomerController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -109,6 +110,23 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Supplier delete Route
     Route::delete('/suppliers/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+
+// ALL CUSTOMER ROUTE
+
+    // Supplier page Route
+    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+
+    // Supplier add Route
+    Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
+
+    // Supplier detail Route
+    Route::get('/customers/{id}', [CustomerController::class, 'show'])->name('customers.show');
+
+    // Supplier edit Route
+    Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
+
+    // Supplier delete Route
+    Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 });
 
 

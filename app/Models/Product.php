@@ -46,4 +46,9 @@ class Product extends Model
     {
         return $this->belongsTo(Unit::class, 'product_unit', 'unit_id');
     }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'supplier_id');
+    }
 }

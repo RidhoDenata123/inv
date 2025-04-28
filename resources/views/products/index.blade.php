@@ -85,7 +85,7 @@
                                         <td>{{ $product->category ? $product->category->category_name : 'No Category' }}</td>
                                         <td>{{ "Rp " . number_format($product->purchase_price,2,',','.') }}</td>
                                         <td>{{ "Rp " . number_format($product->selling_price,2,',','.') }}</td>
-                                        <td>{{ $product->supplier_id }}</td>
+                                        <td>{{ $product->supplier ? $product->supplier->supplier_name : 'No Supplier' }}</td>
                                         <td>{{ $product->product_qty }}</td>
                                         <td>{{ $product->unit ? $product->unit->unit_name : 'No Category' }}</td>
                                         <td>
@@ -185,7 +185,7 @@
                                             <div class="col">                    
                                                 <div class="form-group mb-3">
                                                     <label class="font-weight-bold">Product name :</label>
-                                                    <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="product_name" name="product_name" value="{{ old('product_name') }}" placeholder="Input product name" require>
+                                                    <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="product_name" name="product_name" value="{{ old('product_name') }}" placeholder="Enter product name" require>
 
                                                         <!-- error message for product_name -->
                                                         @error('product_name')
@@ -223,7 +223,7 @@
                                         </div>
                                         <div class="form-group mb-3">
                                             <label class="font-weight-bold">Product Description</label>
-                                            <textarea class="form-control @error('product_description') is-invalid @enderror" name="product_description" rows="3" placeholder="Input product description">{{ old('product_description') }}</textarea>
+                                            <textarea class="form-control @error('product_description') is-invalid @enderror" name="product_description" rows="3" placeholder="Enter product description">{{ old('product_description') }}</textarea>
                                         
                                             <!-- error message for product_description -->
                                             @error('product_description')
@@ -235,7 +235,7 @@
 
                                         <div class="form-group mb-3">
                                             <label class="font-weight-bold">Product Quantity :</label>
-                                            <input type="number" class="form-control @error('product_qty') is-invalid @enderror" id="product_qty" name="product_qty" value="{{ old('product_qty') }}" placeholder="Input product quantity" require>
+                                            <input type="number" class="form-control @error('product_qty') is-invalid @enderror" id="product_qty" name="product_qty" value="{{ old('product_qty') }}" placeholder="Enter product quantity" require>
 
                                                 <!-- error message for product_qty -->
                                                 @error('product_qty')
@@ -248,7 +248,7 @@
                                             <div class="col">                    
                                                 <div class="form-group mb-3">
                                                     <label class="font-weight-bold">Purchase Price :</label>
-                                                    <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" placeholder="Input purchase price" require>
+                                                    <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" placeholder="Enter purchase price" require>
 
                                                         <!-- error message for purchase_price -->
                                                         @error('purchase_price')
@@ -261,7 +261,7 @@
                                             <div class="col">
                                                     <div class="form-group mb-3">
                                                             <label class="font-weight-bold">Selling Price :</label>
-                                                            <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" name="selling_price" value="{{ old('selling_price') }}" placeholder="Input selling price" require>
+                                                            <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" name="selling_price" value="{{ old('selling_price') }}" placeholder="Enter selling price" require>
 
                                                                 <!-- error message for selling_price -->
                                                                 @error('selling_price')
@@ -297,17 +297,27 @@
                                                 </div>
                                             </div>
                                             <div class="col">
-                                                    <div class="form-group mb-3">
-                                                            <label class="font-weight-bold">Supplier :</label>
-                                                            <input type="text" class="form-control @error('supplier_id') is-invalid @enderror" id="supplier_id" name="supplier_id" value="{{ old('supplier_id') }}" placeholder="Input supplier id" require>
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold">Supplier:</label>
+                                                    <select class="form-control selectpicker @error('supplier_id') is-invalid @enderror" 
+                                                            id="supplier_id" 
+                                                            name="supplier_id" 
+                                                            data-live-search="true" 
+                                                            data-style="btn-light" 
+                                                            required>
+                                                        <option value="" selected>Select a supplier</option>
+                                                        @foreach ($suppliers as $supplier)
+                                                            <option value="{{ $supplier->supplier_id }}">{{ $supplier->supplier_name }}</option>
+                                                        @endforeach
+                                                    </select>
 
-                                                                <!-- error message for supplier_id -->
-                                                                @error('supplier_id')
-                                                                    <div class="alert alert-danger mt-2">
-                                                                        {{ $message }}
-                                                                    </div>
-                                                                @enderror
-                                                    </div>      
+                                                    <!-- Error message for supplier_id -->
+                                                    @error('supplier_id')
+                                                        <div class="alert alert-danger mt-2">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="form-group mb-3">
@@ -620,17 +630,27 @@
                                             </div>
 
                                             <div class="col">
-                                                    <div class="form-group mb-3">
-                                                            <label class="font-weight-bold">Supplier :</label>
-                                                            <input type="text" class="form-control @error('supplier_id') is-invalid @enderror" id="edit_supplier_id" name="supplier_id" value="{{ old('supplier_id') }}" placeholder="Input supplier id" require>
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold">Supplier:</label>
+                                                    <select class="form-control selectpicker @error('supplier_id') is-invalid @enderror" 
+                                                            id="edit_supplier_id" 
+                                                            name="supplier_id" 
+                                                            data-live-search="true" 
+                                                            data-style="btn-light" 
+                                                            required>
+                                                        <option value="" disabled>Select a supplier</option>
+                                                        @foreach ($suppliers as $supplier)
+                                                            <option value="{{ $supplier->supplier_id }}">{{ $supplier->supplier_name }}</option>
+                                                        @endforeach
+                                                    </select>
 
-                                                                <!-- error message for supplier_id -->
-                                                                @error('supplier_id')
-                                                                    <div class="alert alert-danger mt-2">
-                                                                        {{ $message }}
-                                                                    </div>
-                                                                @enderror
-                                                    </div>      
+                                                    <!-- Error message for supplier_id -->
+                                                    @error('supplier_id')
+                                                        <div class="alert alert-danger mt-2">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                </div>
                                             </div>
                                         </div>
 
@@ -846,7 +866,7 @@
                                         $('#detailSellingPrice').text("Rp " + parseFloat(data.selling_price).toLocaleString('id-ID', { minimumFractionDigits: 2 }));
                                         $('#detailProductQty').text(data.product_qty);
                                         $('#detailProductUnit').text(data.unit_name);
-                                        $('#detailSupplierId').text(data.supplier_id);
+                                        $('#detailSupplierId').text(data.supplier_name);
                                         $('#detailProductStatus').text(data.product_status);
 
                                         
@@ -892,8 +912,9 @@
                         // Handle click event on "EDIT" button
                         $('.btn-edit').on('click', function() {
                         const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
-                        // Lakukan permintaan AJAX ke server untuk mendapatkan data produk
-                        $.ajax({
+
+                            // Lakukan permintaan AJAX ke server untuk mendapatkan data produk
+                            $.ajax({
                                 url: `/products/${productId}/detail`, // URL rute Laravel untuk mendapatkan detail produk
                                 method: 'GET',
                                 success: function(data) {
@@ -904,13 +925,15 @@
                                     $('#edit_purchase_price').val(data.purchase_price);
                                     $('#edit_selling_price').val(data.selling_price);
                                     $('#edit_product_qty').val(data.product_qty);
-                                    $('#edit_product_unit').val(data.product_unit);
-                                    $('#edit_supplier_id').val(data.supplier_id);
 
                                     // Pilih kategori yang sesuai
                                     $('#edit_product_category').val(data.product_category).selectpicker('refresh');
+
                                     // Pilih unit yang sesuai
                                     $('#edit_product_unit').val(data.product_unit).selectpicker('refresh');
+
+                                    // Pilih supplier yang sesuai
+                                    $('#edit_supplier_id').val(data.supplier_id).selectpicker('refresh');
 
                                     // Pilih status yang sesuai
                                     if (data.product_status === 'active') {

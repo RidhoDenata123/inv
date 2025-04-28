@@ -40,7 +40,7 @@
             <a class="collapse-item" href="{{ route('categories.index') }}">Category</a>
             <a class="collapse-item" href="{{ route('units.index') }}">Unit</a>
             <a class="collapse-item" href="{{ route('suppliers.index') }}">Supplier</a>
-            <a class="collapse-item" href="">Customer</a>
+            <a class="collapse-item" href="{{ route('customers.index') }}">Customer</a>
 
 
         </div>

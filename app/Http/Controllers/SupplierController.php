@@ -45,10 +45,11 @@ class SupplierController extends Controller
         $request->validate([
             'supplier_id'             => 'required',
             'supplier_name'           => 'required',
+            'supplier_description'    => 'required',
             'supplier_address'        => 'required',
             'supplier_phone'          => 'required',
             'supplier_email'          => 'required|email',
-            'supplier_website'        => 'required|url',
+            'supplier_website'        => 'nullable|url|max:255', // Field ini opsional
         ]);
 
         //create supplier
@@ -85,10 +86,11 @@ class SupplierController extends Controller
     {
         $request->validate([
             'supplier_name'           => 'required',
+            'supplier_description'    => 'required',
             'supplier_address'        => 'required',
             'supplier_phone'          => 'required',
             'supplier_email'          => 'required|email',
-            'supplier_website'        => 'required|url',
+            'supplier_website'        => 'nullable|url|max:255', // Field ini opsional
         ]);
     
         $supplier = Supplier::where('supplier_id', $id)->first();
