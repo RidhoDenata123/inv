@@ -8,12 +8,17 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ReceivingHeaderController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
 Auth::routes();
+
+
+
+
 
 /*------------------------------------------
 --------------------------------------------
@@ -24,6 +29,11 @@ Route::middleware(['auth', 'user-access:user'])->group(function () {
   
     // User dashboard Route
     Route::get('/user/dashboard', [HomeController::class, 'userDashboard'])->name('user.dashboard');
+
+    // Profile page Route
+    Route::get('/user/profile', [HomeController::class, 'profile'])->name('user.profile.index');
+    // Profile update Route
+    Route::put('/user/profile', [HomeController::class, 'updateProfile'])->name('user.profile.update');
 
     
     
@@ -38,6 +48,11 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
   
     // Admin dashboard Route
     Route::get('/admin/dashboard', [HomeController::class, 'adminDashboard'])->name('admin.dashboard');
+
+    // Profile page Route
+    Route::get('/admin/profile', [HomeController::class, 'AdminProfile'])->name('admin.profile.index');
+    // Profile update Route
+    Route::put('/admin/profile', [HomeController::class, 'AdminUpdateProfile'])->name('admin.profile.update');
 
 
 // ALL PRODUCT ROUTE
@@ -127,6 +142,27 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Supplier delete Route
     Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+
+
+// ALL RECEIVING HEADER TRANSACTION ROUTE  
+
+    // Receiving Header page Route
+    Route::get('/receiving/header', [ReceivingHeaderController::class, 'index'])->name('receiving.header');
+
+    // Receiving Header add Route
+    Route::post('/receiving/header', [ReceivingHeaderController::class, 'store'])->name('receiving.header.store');
+
+    // Receiving Header detail Route
+    Route::get('/receiving/header/{id}', [ReceivingHeaderController::class, 'show'])->name('receiving.header.show');
+
+    // Receiving Header edit Route
+    Route::put('/receiving/header/{id}', [ReceivingHeaderController::class, 'update'])->name('receiving.header.update');
+
+    // Receiving Header delete Route
+    Route::delete('/receiving/header/{id}', [ReceivingHeaderController::class, 'destroy'])->name('receiving.header.destroy');
+
+    
+
 });
 
 

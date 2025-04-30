@@ -36,5 +36,37 @@ class HomeController extends Controller
     {
         return view('adminDashboard');
     }
+
+
+    // Admin Profile
+    public function AdminProfile()
+    {
+        $user = auth()->user(); // Ambil data user yang sedang login
+        return view('profile.admin', compact('user'));
+    }
+
+    // Admin Update Profile
+    public function AdminUpdateProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
+        $user->save();
+
+        // Redirect with flash message
+        return redirect()->route('admin.profile.index')->with('success', 'Profile updated successfully!');
+    }
   
 }

@@ -1,7 +1,7 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
 <!-- Sidebar - Brand -->
-<a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+<a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('admin.dashboard') }}">
     <div class="sidebar-brand-icon">
         <img src="{{ asset('img/logo.png') }}" alt="Logo" width="35px" height="35px">
     </div>
@@ -58,7 +58,7 @@
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Transaction :</h6>
-            <a class="collapse-item" href="">Receiving</a>
+            <a class="collapse-item" href="{{ route('receiving.header') }}">Receiving</a>
             <a class="collapse-item" href="">Dispatching</a>
            
         </div>
