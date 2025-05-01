@@ -40,33 +40,37 @@
   
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <!-- Tombol Show -->
-                                        <a href="#" 
-                                            class="btn btn-sm btn-dark btn-show mr-2" 
-                                            data-receiving_id="{{ $header->receiving_header_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#receivingHeaderDetailModal">
-                                            <i class='fas fa-eye'></i>
-                                        </a>
+                                        @if ($header->receiving_header_status === 'Confirmed')
+                                            <!-- Tombol Show Detail -->
+                                            <a href="{{ route('receiving.detail.ShowById', $header->receiving_header_id) }}" 
+                                            class="btn btn-sm btn-dark mr-2">
+                                                <i class="fas fa-search"></i> 
+                                            </a>
+                                        @elseif ($header->receiving_header_status === 'Pending')
+                                            <!-- Tombol Show -->
+                                            <a href="{{ route('receiving.detail.ShowById', $header->receiving_header_id) }}" 
+                                            class="btn btn-sm btn-dark mr-2">
+                                                <i class="fas fa-search"></i>
+                                            </a>
 
-                                        <!-- Tombol Edit -->
-                                        <a href="#" 
+                                            <!-- Tombol Edit -->
+                                            <a href="#" 
                                             class="btn btn-sm btn-primary btn-edit mr-2" 
                                             data-receiving_id="{{ $header->receiving_header_id }}" 
                                             data-toggle="modal" 
                                             data-target="#editReceivingHeaderModal">
-                                            <i class='fas fa-edit'></i>
-                                        </a>
+                                                <i class="fas fa-edit"></i>
+                                            </a>
 
-                                        <!-- Tombol Delete -->
-                                        <button type="button" 
-                                            class="btn btn-sm btn-danger btn-delete" 
-                                            data-receiving_id="{{ $header->receiving_header_id }}"
-                                            data-toggle="modal" 
-                                            data-target="#deleteReceivingHeaderModal">
-                                            <i class='fas fa-trash-alt'></i>
-                                        </button>
-
+                                            <!-- Tombol Delete -->
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-danger btn-delete" 
+                                                    data-receiving_id="{{ $header->receiving_header_id }}" 
+                                                    data-toggle="modal" 
+                                                    data-target="#deleteReceivingHeaderModal">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -82,7 +86,7 @@
         </div>
     </div>
 
-    <!-- Modal for Add Unit -->
+    <!-- Modal for Add header -->
     <div class="modal fade" id="addReceivingHeaderModal" tabindex="-1" role="dialog" aria-labelledby="addUnitModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -94,7 +98,7 @@
                     </button>
                 </div>
                 <!-- Modal Body -->
-                <form action="{{ route('receiving.header.store') }}" method="POST">
+                <form action="{{ route('receiving.header.storeHeader') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
@@ -114,7 +118,7 @@
                         </div>
 
                         <div class="form-group mb-3">
-                            <label class="font-weight-bold">Receiving Header Description :</label>
+                            <label class="font-weight-bold">Description :</label>
                             <textarea class="form-control @error('receiving_header_description') is-invalid @enderror" id="receiving_header_description" name="receiving_header_description" rows="3" placeholder="Enter description">{{ old('receiving_header_description') }}</textarea>
                             @error('receiving_header_description')
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -193,54 +197,54 @@
     </div>
 
     <!-- Modal for Edit Receiving Header -->
-<div class="modal fade" id="editReceivingHeaderModal" tabindex="-1" role="dialog" aria-labelledby="editReceivingHeaderModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h5 class="modal-title" id="editReceivingHeaderModalLabel">Edit Receiving Header</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+    <div class="modal fade" id="editReceivingHeaderModal" tabindex="-1" role="dialog" aria-labelledby="editReceivingHeaderModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editReceivingHeaderModalLabel">Edit Receiving Header</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form id="editReceivingHeaderForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="editReceivingHeaderId" class="font-weight-bold">Receiving Header ID:</label>
+                            <input type="text" class="form-control" id="editReceivingHeaderId" name="receiving_header_id" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editReceivingHeaderName" class="font-weight-bold">Designation:</label>
+                            <input type="text" class="form-control @error('receiving_header_name') is-invalid @enderror" id="editReceivingHeaderName" name="receiving_header_name" required>
+                            @error('receiving_header_name')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="editReceivingHeaderDescription" class="font-weight-bold">Receiving Header Description:</label>
+                            <textarea class="form-control @error('receiving_header_description') is-invalid @enderror" id="editReceivingHeaderDescription" name="receiving_header_description" rows="3" required></textarea>
+                            @error('receiving_header_description')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
             </div>
-
-            <!-- Modal Body -->
-            <form id="editReceivingHeaderForm" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="editReceivingHeaderId" class="font-weight-bold">Receiving Header ID:</label>
-                        <input type="text" class="form-control" id="editReceivingHeaderId" name="receiving_header_id" readonly>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editReceivingHeaderName" class="font-weight-bold">Designation:</label>
-                        <input type="text" class="form-control @error('receiving_header_name') is-invalid @enderror" id="editReceivingHeaderName" name="receiving_header_name" required>
-                        @error('receiving_header_name')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="editReceivingHeaderDescription" class="font-weight-bold">Receiving Header Description:</label>
-                        <textarea class="form-control @error('receiving_header_description') is-invalid @enderror" id="editReceivingHeaderDescription" name="receiving_header_description" rows="3" required></textarea>
-                        @error('receiving_header_description')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                </div>
-
-                <!-- Modal Footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
 
     
 
@@ -313,7 +317,7 @@
                     $('#editReceivingHeaderForm').attr('action', `/receiving/header/${receivingId}`);
 
                     // Tampilkan modal
-                    $('#editReceivingHeaderModal').modal('show');
+                    $('#editReceivingHeaderModal').modal('edit');
                 },
                 error: function(xhr) {
                     // Tampilkan pesan error jika gagal
@@ -327,17 +331,29 @@
             });
         });
 
-        // Handle click event on "DELETE" button
         $('.btn-delete').on('click', function() {
             const receivingId = $(this).data('receiving_id'); // Ambil ID receiving header dari tombol
             const receivingName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama receiving header dari tabel
 
+            if (!receivingId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Receiving header ID is undefined. Please try again.',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
             // Isi modal dengan data receiving header
-            $('#deleteReceivingHeaderId').text(receivingId);
+            $('#deleteReceivingHeaderId').text(receivingName);
 
             // Set action URL untuk form delete
             const deleteUrl = `/receiving/header/${receivingId}`;
             $('#deleteReceivingHeaderForm').attr('action', deleteUrl);
+
+            // Tampilkan modal
+            $('#deleteReceivingHeaderModal').modal('show');
         });
     });
 </script>

@@ -31,4 +31,17 @@ class ReceivingHeader extends Model
         'receiving_header_status',
         'confirmed_at',
     ];
+
+        //
+        public function header()
+        {
+            return $this->belongsTo(ReceivingHeader::class, 'receiving_header_id', 'receiving_header_id');
+        }
+
+        // Relasi ke ReceivingDetail
+        public function details()
+        {
+            return $this->hasMany(ReceivingDetail::class, 'receiving_header_id', 'receiving_header_id');
+        }
+    
 }

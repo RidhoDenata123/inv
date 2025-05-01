@@ -8,7 +8,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\ReceivingHeaderController;
+use App\Http\Controllers\ReceivingController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -147,21 +148,40 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 // ALL RECEIVING HEADER TRANSACTION ROUTE  
 
     // Receiving Header page Route
-    Route::get('/receiving/header', [ReceivingHeaderController::class, 'index'])->name('receiving.header');
+    Route::get('/receiving/header', [ReceivingController::class, 'index'])->name('receiving.header');
 
     // Receiving Header add Route
-    Route::post('/receiving/header', [ReceivingHeaderController::class, 'store'])->name('receiving.header.store');
-
-    // Receiving Header detail Route
-    Route::get('/receiving/header/{id}', [ReceivingHeaderController::class, 'show'])->name('receiving.header.show');
+    Route::post('/receiving/header', [ReceivingController::class, 'storeHeader'])->name('receiving.header.storeHeader');
 
     // Receiving Header edit Route
-    Route::put('/receiving/header/{id}', [ReceivingHeaderController::class, 'update'])->name('receiving.header.update');
+    Route::get('/receiving/header/{id}', [ReceivingController::class, 'editHeader'])->name('receiving.header.editHeader');
+
+    // Receiving Header update Route
+    Route::put('/receiving/header/{id}', [ReceivingController::class, 'updateHeader'])->name('receiving.header.updateHeader');
 
     // Receiving Header delete Route
-    Route::delete('/receiving/header/{id}', [ReceivingHeaderController::class, 'destroy'])->name('receiving.header.destroy');
+    Route::delete('/receiving/header/{id}', [ReceivingController::class, 'destroyHeader'])->name('receiving.header.destroyHeader');
 
+// ALL RECEIVING DETAIL TRANSACTION ROUTE  
+
+    // Receiving detail Route
+    Route::get('/receiving/detail/{id}', [ReceivingController::class, 'ShowById'])->name('receiving.detail.ShowById');
     
+
+    // Receiving Header add Route
+    Route::post('/receiving/detail', [ReceivingController::class, 'addDetail'])->name('receiving.detail.addDetail');
+
+    // Receiving Header delete Route
+    Route::delete('/receiving/detail/{id}', [ReceivingController::class, 'destroyDetail'])->name('receiving.detail.destroy');
+
+    // Rute untuk mendapatkan detail receiving detail
+    Route::get('/receiving/detail-modal/{id}', [ReceivingController::class, 'showDetail'])->name('receiving.detail.show');
+
+    // Rute untuk memperbarui receiving detail
+    Route::put('/receiving/detail/{id}', [ReceivingController::class, 'updateDetail'])->name('receiving.detail.update');
+
+    // Rute untuk mengonfirmasi receiving
+    Route::put('/receiving/confirm/{id}', [ReceivingController::class, 'confirm'])->name('receiving.confirm');
 
 });
 

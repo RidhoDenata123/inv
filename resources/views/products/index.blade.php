@@ -102,7 +102,7 @@
                                                 data-product_id="{{ $product->product_id }}" 
                                                 data-toggle="modal" 
                                                 data-target="#productDetailModal">
-                                                <i class='fas fa-eye'></i>
+                                                <i class="fas fa-search"></i>
                                                 </a>
 
                                                 <!-- Dropdown Edit -->
@@ -734,7 +734,7 @@
             </div>
                 <!-- /.container-fluid -->
 
-                @section('scripts')
+@section('scripts')
 
                 <!-- Page level plugins -->
                 <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>

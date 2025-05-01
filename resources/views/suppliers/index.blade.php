@@ -52,7 +52,7 @@
                                             data-supplier_id="{{ $supplier->supplier_id }}" 
                                             data-toggle="modal" 
                                             data-target="#supplierDetailModal">
-                                            <i class='fas fa-eye'></i>
+                                            <i class="fas fa-search"></i>
                                         </a>
 
                                         <!-- Tombol Edit -->

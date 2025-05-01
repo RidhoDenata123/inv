@@ -12,7 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('receiving_details', function (Blueprint $table) {
-            $table->id();
+            $table->string('receiving_detail_id')->primary();
+            $table->string('receiving_header_id');
+            $table->string('product_id');
+            $table->integer('receiving_qty')->default(0);
+
+            $table->string('receiving_detail_status');
+            $table->string('confirmed_at')->nullable();
             $table->timestamps();
         });
     }

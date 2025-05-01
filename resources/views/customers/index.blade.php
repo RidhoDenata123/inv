@@ -52,7 +52,7 @@
                                             data-customer_id="{{ $customer->customer_id }}" 
                                             data-toggle="modal" 
                                             data-target="#customerDetailModal">
-                                            <i class='fas fa-eye'></i>
+                                            <i class="fas fa-search"></i>
                                         </a>
 
                                         <!-- Tombol Edit -->

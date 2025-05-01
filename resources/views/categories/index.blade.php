@@ -54,7 +54,7 @@
                                                     data-category_id="{{ $category->category_id }}" 
                                                     data-toggle="modal" 
                                                     data-target="#categoryDetailModal">
-                                                    <i class='fas fa-eye'></i>
+                                                    <i class="fas fa-search"></i>
                                                 </a>
 
                                                 <!-- Tombol Edit -->
