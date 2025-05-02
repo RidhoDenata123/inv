@@ -29,6 +29,7 @@ class ReceivingHeader extends Model
         'receiving_header_description',
         'created_by',
         'receiving_header_status',
+        'confirmed_by',
         'confirmed_at',
     ];
 

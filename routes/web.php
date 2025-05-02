@@ -167,9 +167,11 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Receiving detail Route
     Route::get('/receiving/detail/{id}', [ReceivingController::class, 'ShowById'])->name('receiving.detail.ShowById');
     
-
     // Receiving Header add Route
     Route::post('/receiving/detail', [ReceivingController::class, 'addDetail'])->name('receiving.detail.addDetail');
+
+    // get unit
+    Route::get('/products/{id}/unit', [ProductController::class, 'getUnit'])->name('products.getUnit');
 
     // Receiving Header delete Route
     Route::delete('/receiving/detail/{id}', [ReceivingController::class, 'destroyDetail'])->name('receiving.detail.destroy');
@@ -180,9 +182,11 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Rute untuk memperbarui receiving detail
     Route::put('/receiving/detail/{id}', [ReceivingController::class, 'updateDetail'])->name('receiving.detail.update');
 
-    // Rute untuk mengonfirmasi receiving
-    Route::put('/receiving/confirm/{id}', [ReceivingController::class, 'confirm'])->name('receiving.confirm');
+    // Rute untuk mengonfirmasi all receiving
+    Route::put('/receiving/confirm-all/{id}', [ReceivingController::class, 'confirmAll'])->name('receiving.confirmAll');
 
+    // Rute untuk mengonfirmasi receiving by id
+    Route::put('/receiving/detail/confirm/{id}', [ReceivingController::class, 'confirmDetail'])->name('receiving.detail.confirm');
 });
 
 

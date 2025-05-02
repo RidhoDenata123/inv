@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('receiving_header_id');
             $table->string('product_id');
             $table->integer('receiving_qty')->default(0);
-
             $table->string('receiving_detail_status');
+            $table->string('created_by')->nullable();
+            $table->string('confirmed_by')->nullable();
             $table->string('confirmed_at')->nullable();
             $table->timestamps();
         });

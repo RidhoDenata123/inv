@@ -39,33 +39,27 @@
 
             <table class="table table-bordered table-sm">
                 <tr>
-                    <th>Receiving Header ID</th>
-                    <td>{{ $receivingHeader->receiving_header_id }}</td>
+                    <td><span class="font-weight-bold">Receiving Header ID : </span> {{ $receivingHeader->receiving_header_id }}</td>
+                    <td><span class="font-weight-bold">Designation : </span>{{ $receivingHeader->receiving_header_name }}</td>
                 </tr>
                 <tr>
-                    <th>Designation</th>
-                    <td>{{ $receivingHeader->receiving_header_name }}</td>
+                    <td><span class="font-weight-bold">Created By : </span>{{ $receivingHeader->created_by ? \App\Models\User::find($receivingHeader->created_by)->name : 'N/A' }}</td>
+                    <td><span class="font-weight-bold">Created Date : </span>{{ $receivingHeader->created_at }}</td>
                 </tr>
                 <tr>
-                    <th>Description</th>
-                    <td>{{ $receivingHeader->receiving_header_description }}</td>
+                    <td><span class="font-weight-bold">Confirmation Date : </span>{{ $receivingHeader->confirmed_at }}</td>
+                    <td><span class="font-weight-bold">Confirmed By : </span>{{ $receivingHeader->confirmed_by ? \App\Models\User::find($receivingHeader->confirmed_by)->name : 'N/A' }}</td>
                 </tr>
                 <tr>
-                    <th>Created By</th>
-                    <td>{{ $receivingHeader->created_by }}</td>
+                    <td><span class="font-weight-bold">Description : </span>{{ $receivingHeader->receiving_header_description }}</td>
+                    <td><span class="font-weight-bold">Status : </span>
+                        <span class="badge 
+                            {{ $receivingHeader->receiving_header_status === 'Confirmed' ? 'badge-success' : 'badge-warning' }}">
+                            {{ ucfirst($receivingHeader->receiving_header_status) }}
+                        </span>
+                    </td>
                 </tr>
-                <tr>
-                    <th>Created Date</th>
-                    <td>{{ $receivingHeader->created_at }}</td>
-                </tr>
-                <tr>
-                    <th>Confirmation Date</th>
-                    <td>{{ $receivingHeader->confirmed_at }}</td>
-                </tr>
-                <tr>
-                    <th>Status</th>
-                    <td>{{ $receivingHeader->receiving_header_status }}</td>
-                </tr>
+
             </table>
 
         @if ($receivingHeader->receiving_header_status === 'Pending')
@@ -74,21 +68,30 @@
            
 
             <div class="table-responsive">
-                <table id="detailTable" class="table table-bordered">
-                    <thead>
+                <table id="detailTable" class="table table-bordered table-sm">
+                    <thead class="text-center">
+
+                    <tr>
+                            <th scope="col" rowspan="2">No.</th>
+                            <th scope="col" rowspan="2">Detail ID</th>
+                            <th scope="col" colspan="2">Product</th>
+                            <th scope="col" rowspan="2">Receiving Qty</th>
+                            <th scope="col" rowspan="2">Unit</th>
+                            <th scope="col" colspan="2">Creation</th>
+                            <th scope="col" colspan="2">Confirmation</th>
+                            <th scope="col" rowspan="2">Detail Status</th>
+                            <th scope="col" rowspan="2">ACTIONS</th>
+                        </tr>
                         <tr>
-                            <th scope="col">No.</th>
-                            <th scope="col">Detail ID</th>
-                            <th scope="col">Product ID</th>
-                            <th scope="col">Receiving Qty</th>
-                            
-                            <th scope="col">Created Date</th>
-                            <th scope="col">Confirmation Date</th>
-                            <th scope="col">Detail Status</th>
-                            <th scope="col">ACTIONS</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">By</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">By</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-center">
                         @forelse ($receivingDetails as $detail)
                             <tr>
                                 <td>{{ $loop->iteration }}.</td>
@@ -103,11 +106,22 @@
                                     </a>
                                     
                                 </td>
+                                <td>{{ $detail->product_id ? $detail->product->product_name : 'No product name' }}</td>
                                 <td>{{ $detail->receiving_qty }}</td>
-                                
-                                <td>{{ $detail->created_at }}</td>
-                                <td>{{ $detail->confirmed_at }}</td>
-                                <td>{{ $detail->receiving_detail_status }}</td>
+                                <td>{{ $detail->product_id ? $detail->product->unit->unit_name : 'No unit' }}</td>
+                                <td>{{ $detail->created_at ? \Carbon\Carbon::parse($detail->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
+                                <td>{{ $detail->created_by ? \App\Models\User::find($detail->created_by)->name : 'N/A' }}</td>
+                                <td>{{ $detail->confirmed_at ? \Carbon\Carbon::parse($detail->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
+                                <td>{{ $detail->confirmed_by ? \App\Models\User::find($detail->confirmed_by)->name : 'N/A' }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {{ $detail->receiving_detail_status === 'Confirmed' ? 'badge-success' : 'badge-warning' }}">
+                                        {{ ucfirst($detail->receiving_detail_status) }}
+                                    </span>
+                                </td>
+
+
+
 
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center align-items-center">
@@ -121,6 +135,15 @@
                                                 <i class="fas fa-search"></i>
                                             </a>
                                         @elseif ($detail->receiving_detail_status === 'Pending')
+
+                                            <!-- Tombol Confirm -->
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-success btn-confirm mr-2" 
+                                                    data-receiving_detail_id="{{ $detail->receiving_detail_id }}" 
+                                                    data-toggle="modal" 
+                                                    data-target="#confirmDetailModal">
+                                                <i class="fas fa-check"></i>
+                                            </button>
 
                                             <!-- Tombol Show Detail -->
                                             <a href="#" 
@@ -155,7 +178,7 @@
                             </tr>
                         @empty
                         <tr>
-                            <td colspan="9" class="text-center">No data available in table</td>
+                            <td colspan="12" class="text-center">No data available in table</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -168,7 +191,7 @@
 
                 @if ($receivingHeader->receiving_header_status === 'Pending')
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmReceivingModal">
-                        Confirm
+                        Confirm All
                     </button>
                 @endif
             </div>
@@ -177,14 +200,14 @@
         
     </div>
 
-    <!-- Modal for restock Product -->
+    <!-- Modal for add Product -->
     <div class="modal fade" id="addReceivingDetailModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
             
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">Restock Product</h4>
+                        <h4 class="modal-title">Add Product</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
@@ -204,7 +227,7 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group mb-3">
-                                        <label class="font-weight-bold">Product :</label>
+                                        <label class="font-weight-bold">Product:</label>
                                         <select class="form-control selectpicker" id="product_id" name="product_id" data-live-search="true" required>
                                             <option value="" disabled selected>Select a product</option>
                                             @foreach ($products as $product)
@@ -213,13 +236,18 @@
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="col">
                                     <div class="form-group mb-3">
                                         <label class="font-weight-bold">Quantity:</label>
-                                        <input type="number" class="form-control" id="receiving_qty" name="receiving_qty" placeholder="Enter quantity" required>
+                                        <div class="input-group mb-3">
+                                            <input type="number" class="form-control" id="receiving_qty" name="receiving_qty" placeholder="Enter quantity" required>
+                                            <div class="input-group-append">
+                                                <span class="input-group-text" id="product_unit">unit</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                        
                             </div>
 
                             <!-- receiving_header_id -->
@@ -228,8 +256,8 @@
                             <input type="hidden" class="form-control" id="receiving_detail_status" name="receiving_detail_status" value="Pending" readonly>
                             <!-- confirmed_at -->
                             <input type="hidden" class="form-control" id="confirmed_at" name="confirmed_at" value="" readonly>
-                            <!-- receiving_detail_type -->
-                            <input type="hidden" class="form-control" id="receiving_detail_type" name="receiving_detail_type" value="Restock" readonly>
+                            <!-- create_by -->
+                            <input type="hidden" class="form-control" name="created_by" value="{{ Auth::user()->id }}" readonly>
                         </div>
 
                         <!-- Modal footer -->
@@ -364,73 +392,73 @@
     </div>
     
     <!-- Modal for Edit Receiving Detail -->
-    <div class="modal fade" id="editReceivingDetailModal" tabindex="-1" role="dialog" aria-labelledby="editReceivingDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editReceivingDetailModalLabel">Edit Receiving Detail</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+        <div class="modal fade" id="editReceivingDetailModal" tabindex="-1" role="dialog" aria-labelledby="editReceivingDetailModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editReceivingDetailModalLabel">Edit Receiving Detail</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
 
-                <!-- Modal Body -->
-                <form id="editReceivingDetailForm" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                        <!-- Detail ID -->
-                        <div class="form-group mb-3">
-                            <label class="font-weight-bold">Detail ID:</label>
-                            <input type="text" class="form-control" id="edit_receiving_detail_id" name="receiving_detail_id" readonly>
-                        </div>
-
-                        <div class="row">
-                                <div class="col">
-                                    <div class="form-group mb-3">
-                                        <label class="font-weight-bold">Product:</label>
-                                        <select class="form-control selectpicker" id="edit_product_id" name="product_id" data-live-search="true" required>
-                                            <option value="" disabled>Select a product</option>
-                                            @foreach ($products as $product)
-                                                <option value="{{ $product->product_id }}">{{ $product->product_name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="form-group mb-3">
-                                        <label class="font-weight-bold">Quantity:</label>
-                                        <input type="number" class="form-control" id="edit_receiving_qty" name="receiving_qty" placeholder="Enter quantity" required>
-                                    </div>
-                                </div>
+                    <!-- Modal Body -->
+                    <form id="editReceivingDetailForm" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-body">
+                            <!-- Detail ID -->
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">Detail ID:</label>
+                                <input type="text" class="form-control" id="edit_receiving_detail_id" name="receiving_detail_id" readonly>
                             </div>
 
-                            <!-- receiving_detail_status -->
-                            <input type="hidden" class="form-control" id="edit_receiving_detail_status" name="receiving_detail_status" readonly>
-                       
-                           
+                            <div class="row">
+                                    <div class="col">
+                                        <div class="form-group mb-3">
+                                            <label class="font-weight-bold">Product:</label>
+                                            <select class="form-control selectpicker" id="edit_product_id" name="product_id" data-live-search="true" required>
+                                                <option value="" disabled>Select a product</option>
+                                                @foreach ($products as $product)
+                                                    <option value="{{ $product->product_id }}">{{ $product->product_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
 
+                                    <div class="col">
+                                        <div class="form-group mb-3">
+                                            <label class="font-weight-bold">Quantity:</label>
+                                            <input type="number" class="form-control" id="edit_receiving_qty" name="receiving_qty" placeholder="Enter quantity" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- receiving_detail_status -->
+                                <input type="hidden" class="form-control" id="edit_receiving_detail_status" name="receiving_detail_status" readonly>
+                        
+                            
+
+                            </div>
+
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
                         </div>
-
-                    <!-- Modal Footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal for Confirm Receiving -->
+    <!-- Modal for Confirm All Receiving -->
     <div class="modal fade" id="confirmReceivingModal" tabindex="-1" role="dialog" aria-labelledby="confirmReceivingModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h5 class="modal-title" id="confirmReceivingModalLabel">Confirm Receiving</h5>
+                    <h5 class="modal-title" id="confirmReceivingModalLabel">Confirm All Pending Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -438,16 +466,46 @@
 
                 <!-- Modal Body -->
                 <div class="modal-body">
-                    <p>Are you sure you want to confirm this receiving? This action will update the status and product quantities.</p>
+                    <p>Are you sure you want to confirm all pending receiving details? This action will update the status of the header and pending details only.</p>
                 </div>
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <form id="confirmReceivingForm" method="POST" action="{{ route('receiving.confirm', $receivingHeader->receiving_header_id) }}">
+                    <form id="confirmAllForm" method="POST" action="{{ route('receiving.confirmAll', $receivingHeader->receiving_header_id) }}">
                         @csrf
                         @method('PUT')
-                        <button type="submit" class="btn btn-primary">Confirm</button>
+                        <button type="submit" class="btn btn-primary">Confirm All</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Confirm Receiving Detail by id -->
+    <div class="modal fade" id="confirmDetailModal" tabindex="-1" role="dialog" aria-labelledby="confirmDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDetailModalLabel">Confirm Receiving Detail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <p>Are you sure you want to confirm this receiving detail? This action will update the status and product quantities.</p>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <form id="confirmDetailForm" method="POST" action="">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="btn btn-success">Confirm</button>
                     </form>
                 </div>
             </div>
@@ -630,6 +688,55 @@
                 // Tampilkan modal
                 $('#deleteReceivingDetailModal').modal('show');
             });
+
+            // Handle click event on "Confirm" button on row
+            $('.btn-confirm').on('click', function() {
+                const detailId = $(this).data('receiving_detail_id'); // Ambil ID receiving detail dari tombol
+
+                if (!detailId) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Receiving detail ID is undefined. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+                // Set action URL untuk form confirm
+                const confirmUrl = `/receiving/detail/confirm/${detailId}`;
+                $('#confirmDetailForm').attr('action', confirmUrl);
+
+                // Tampilkan modal
+                $('#confirmDetailModal').modal('show');
+            });
+
+            // Ketika produk dipilih
+            $('#product_id').on('change', function() {
+                const productId = $(this).val(); // Ambil product_id yang dipilih
+
+                if (productId) {
+                    // Lakukan permintaan AJAX ke server
+                    $.ajax({
+                        url: `/products/${productId}/unit`, // Endpoint untuk mendapatkan unit
+                        method: 'GET',
+                        success: function(response) {
+                            // Tampilkan unit di input-group-append
+                            $('#product_unit').text(response.unit_name);
+                        },
+                        error: function(xhr) {
+                            // Jika terjadi error, tampilkan pesan default
+                            $('#product_unit').text('unit');
+                            console.error('Failed to fetch unit:', xhr.responseText);
+                        }
+                    });
+                } else {
+                    // Reset unit jika tidak ada produk yang dipilih
+                    $('#product_unit').text('unit');
+                }
+            });
+            
+
         });
     </script>
 @endsection

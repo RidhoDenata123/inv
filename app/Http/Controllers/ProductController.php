@@ -187,4 +187,19 @@ class ProductController extends Controller
         }
     }
 
+    // GET UNIT
+    public function getUnit($id)
+    {
+        // Cari produk berdasarkan product_id
+        $product = Product::with('unit')->where('product_id', $id)->first();
+
+        // Jika produk ditemukan dan memiliki unit
+        if ($product && $product->unit) {
+            return response()->json(['unit_name' => $product->unit->unit_name]);
+        }
+
+        // Jika produk atau unit tidak ditemukan
+        return response()->json(['unit_name' => 'No unit found'], 404);
+    }
+
 }

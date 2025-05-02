@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('receiving_header_description')->nullable();
             $table->string('created_by');
             $table->string('receiving_header_status');
+            $table->string('confirmed_by')->nullable();
             $table->string('confirmed_at')->nullable();
             $table->timestamps();
         });

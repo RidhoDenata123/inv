@@ -29,7 +29,9 @@ class ReceivingDetail extends Model
         'product_id',
         'receiving_qty',
         'receiving_detail_status',
+        'confirmed_by',
         'confirmed_at',
+        'created_by',
     ];
     // Get the receiving header
     public function details()

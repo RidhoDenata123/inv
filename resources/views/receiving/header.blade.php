@@ -14,30 +14,42 @@
             <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addReceivingHeaderModal"><i class='fas fa-plus'></i> ADD RECEIVING</a>
            
             <div class="table-responsive">
-                <table id="receivingHeaderTable" class="table table-bordered">
-                    <thead>
+                <table id="receivingHeaderTable" class="table table-bordered table-sm">
+                    <thead class="text-center">
                         <tr>
-                            <th scope="col">No.</th>
-                            <th scope="col">Receiving ID</th>
-                            <th scope="col">Designation</th>
-                            <th scope="col">Created By</th>
-                            <th scope="col">Created Date</th>
-                            <th scope="col">Confirmation Date</th>
-                            <th scope="col">Receiving Status</th>
-                            <th scope="col">ACTIONS</th>
+                            <th scope="col" rowspan="2">No.</th>
+                            <th scope="col" rowspan="2">Receiving ID</th>
+                            <th scope="col" rowspan="2">Designation</th>
+                            <th scope="col" colspan="2">Creation</th>
+                           
+                            <th scope="col" colspan="2">Confirmation</th>
+                            <th scope="col" rowspan="2">Receiving Status</th>
+                            <th scope="col" rowspan="2">ACTIONS</th>
+                        </tr>
+                        <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">By</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">By</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-center">
                         @forelse ($receiving_headers as $header)
                             <tr>
                                 <td>{{ $loop->iteration }}.</td>
                                 <td>{{ $header->receiving_header_id }}</td>
                                 <td>{{ $header->receiving_header_name }}</td>
-                                <td>{{ $header->created_by }}</td>
-                                <td>{{ $header->created_at }}</td>
-                                <td>{{ $header->confirmed_at }}</td>
-                                <td>{{ $header->receiving_header_status }}</td>
-  
+                                <td>{{ $header->created_at ? \Carbon\Carbon::parse($header->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
+                                <td>{{ $header->created_by ? \App\Models\User::find($header->created_by)->name : 'N/A' }}</td>
+                                <td>{{ $header->confirmed_at ? \Carbon\Carbon::parse($header->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
+                                <td>{{ $header->confirmed_by ? \App\Models\User::find($header->confirmed_by)->name : 'N/A' }}</td>
+                                <td>                                
+                                    <span class="badge 
+                                        {{ $header->receiving_header_status === 'Confirmed' ? 'badge-success' : 'badge-warning' }}">
+                                        {{ ucfirst($header->receiving_header_status) }}
+                                    </span>
+                                </td>
+
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center align-items-center">
                                         @if ($header->receiving_header_status === 'Confirmed')
@@ -76,7 +88,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center">No data available in table</td>
+                                <td colspan="9" class="text-center">No data available in table</td>
                             </tr>
                         @endforelse
                     </tbody>

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 //import model Receiving Header
@@ -13,7 +12,7 @@ use App\Models\Supplier;
 //import return type View
 use Illuminate\View\View;
 
-//import return type redirectResponse
+//import return type RedirectResponse
 use Illuminate\Http\RedirectResponse;
 
 //import Http Request
@@ -21,6 +20,15 @@ use Illuminate\Http\Request;
 
 //import Storage
 use Illuminate\Support\Facades\Storage;
+
+//import Auth
+use Illuminate\Support\Facades\Auth;
+
+//carbon
+use Carbon\Carbon;
+
+// Mendapatkan waktu saat ini dengan zona waktu Jakarta
+$timeInJakarta = Carbon::now('Asia/Jakarta');
 
 class ReceivingController extends Controller
 {
@@ -45,7 +53,11 @@ class ReceivingController extends Controller
             'receiving_header_description'    => 'nullable',
             'created_by'                      => 'required',
             'receiving_header_status'         => 'required',
+            'confirmed_by'                    => 'nullable',
             'confirmed_at'                    => 'nullable|date',
+            
+
+            
         ]);
 
         //create receiving header
@@ -55,6 +67,7 @@ class ReceivingController extends Controller
             'receiving_header_description'    => $request->receiving_header_description,
             'created_by'                      => $request->created_by,
             'receiving_header_status'         => $request->receiving_header_status,
+            'confirmed_by'                    => $request->confirmed_by,
             'confirmed_at'                    => $request->confirmed_at,
         ]);
 
@@ -137,6 +150,19 @@ class ReceivingController extends Controller
         return view('receiving.detail', compact('receivingHeader', 'receivingDetails', 'products', 'categories', 'units', 'suppliers'));
     }
 
+    //get product unit
+        public function getUnit($id)
+    {
+        $product = Product::with('unit')->where('product_id', $id)->first();
+
+        if ($product && $product->unit) {
+            return response()->json(['unit_name' => $product->unit->unit_name]);
+        }
+
+        return response()->json(['unit_name' => 'No unit found'], 404);
+    }
+
+
     //create receiving detail
     public function addDetail(Request $request): RedirectResponse
     {
@@ -146,8 +172,9 @@ class ReceivingController extends Controller
             'receiving_header_id'             => 'required',
             'product_id'                      => 'required',
             'receiving_qty'                   => 'required',
-            
+            'created_by'                      => 'nullable',
             'receiving_detail_status'         => 'nullable',
+            'confirmed_by'                    => 'nullable',
             'confirmed_at'                    => 'nullable|date',
         ]);
 
@@ -157,8 +184,9 @@ class ReceivingController extends Controller
             'receiving_header_id'             => $request->receiving_header_id,
             'product_id'                      => $request->product_id,
             'receiving_qty'                   => $request->receiving_qty,
-           
+            'created_by'                      => $request->created_by,
             'receiving_detail_status'         => $request->receiving_detail_status,
+            'confirmed_by'                    => $request->confirmed_by,
             'confirmed_at'                    => $request->confirmed_at,
         ]);
 
@@ -182,7 +210,7 @@ class ReceivingController extends Controller
         return response()->json($receivingDetail);
     }
 
-    //update receiving detail
+    //update receiving detail 
     public function updateDetail(Request $request, $id)
     {
         $receivingDetail = ReceivingDetail::findOrFail($id);
@@ -198,25 +226,30 @@ class ReceivingController extends Controller
         return redirect()->back()->with('success', 'Receiving detail updated successfully!');
     }
 
-    public function confirm($id)
+    //confirm receiving all
+    public function confirmAll($id)
     {
         // Ambil Receiving Header berdasarkan ID
         $receivingHeader = ReceivingHeader::where('receiving_header_id', $id)->firstOrFail();
     
-        // Update status Receiving Header menjadi Confirmed dan isi confirmed_at
+        // Update status Receiving Header menjadi Confirmed
         $receivingHeader->update([
             'receiving_header_status' => 'Confirmed',
-            'confirmed_at' => now(), // Isi tanggal dan waktu konfirmasi
+            'confirmed_at' => now(),
+            'confirmed_by' => Auth::user()->id, // Isi dengan ID pengguna yang sedang login
         ]);
     
-        // Ambil semua Receiving Details terkait
-        $receivingDetails = ReceivingDetail::where('receiving_header_id', $id)->get();
+        // Ambil semua Receiving Details dengan status Pending
+        $pendingDetails = ReceivingDetail::where('receiving_header_id', $id)
+            ->where('receiving_detail_status', 'Pending')
+            ->get();
     
-        foreach ($receivingDetails as $detail) {
-            // Update status Receiving Detail menjadi Confirmed dan isi confirmed_at
+        foreach ($pendingDetails as $detail) {
+            // Update status Receiving Detail menjadi Confirmed
             $detail->update([
                 'receiving_detail_status' => 'Confirmed',
                 'confirmed_at' => now(), // Isi tanggal dan waktu konfirmasi
+                'confirmed_by' => Auth::user()->id, // Isi dengan ID pengguna yang sedang login
             ]);
     
             // Update product_qty pada tabel products
@@ -229,9 +262,32 @@ class ReceivingController extends Controller
         }
     
         // Redirect dengan pesan sukses
-        return redirect()->route('receiving.header')->with('success', 'Receiving confirmed successfully!');
+        return redirect()->back()->with('success', 'All pending receiving details confirmed successfully!');
     }
 
-
+    //confirm receiving detail per id
+    public function confirmDetail($id)
+    {
+        // Ambil Receiving Detail berdasarkan ID
+        $receivingDetail = ReceivingDetail::where('receiving_detail_id', $id)->firstOrFail();
+    
+        // Update status Receiving Detail menjadi Confirmed, isi confirmed_at, dan confirmed_by
+        $receivingDetail->update([
+            'receiving_detail_status' => 'Confirmed',
+            'confirmed_at' => now(), // Isi tanggal dan waktu konfirmasi
+            'confirmed_by' => Auth::user()->id, // Isi dengan ID pengguna yang sedang login
+        ]);
+    
+        // Update product_qty pada tabel products
+        $product = Product::where('product_id', $receivingDetail->product_id)->first();
+        if ($product) {
+            $product->update([
+                'product_qty' => $product->product_qty + $receivingDetail->receiving_qty,
+            ]);
+        }
+    
+        // Redirect dengan pesan sukses
+        return redirect()->back()->with('success', 'Receiving detail confirmed successfully!');
+    }
 
 }
