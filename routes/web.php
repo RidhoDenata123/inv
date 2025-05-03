@@ -9,6 +9,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ReceivingController;
+use App\Http\Controllers\DispatchingController;
 
 
 Route::get('/', function () {
@@ -187,6 +188,51 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Rute untuk mengonfirmasi receiving by id
     Route::put('/receiving/detail/confirm/{id}', [ReceivingController::class, 'confirmDetail'])->name('receiving.detail.confirm');
+
+
+// ALL DISPATCHING HEADER TRANSACTION ROUTE  
+
+    // Dispatching Header page Route
+    Route::get('/dispatching/header', [DispatchingController::class, 'index'])->name('dispatching.header');
+
+    // Dispatching Header add Route
+    Route::post('/dispatching/header', [DispatchingController::class, 'storeHeader'])->name('dispatching.header.storeHeader');
+
+    // Dispatching Header edit Route
+    Route::get('/dispatching/header/{id}', [DispatchingController::class, 'editHeader'])->name('dispatching.header.editHeader');
+
+    // Dispatching Header update Route
+    Route::put('/dispatching/header/{id}', [DispatchingController::class, 'updateHeader'])->name('dispatching.header.updateHeader');
+
+    // Dispatching Header delete Route
+    Route::delete('/dispatching/header/{id}', [DispatchingController::class, 'destroyHeader'])->name('dispatching.header.destroyHeader');
+
+
+// ALL DISPATCHING DETAIL TRANSACTION ROUTE  
+
+    // Dispatching detail Route
+    Route::get('/dispatching/detail/{id}', [DispatchingController::class, 'ShowById'])->name('dispatching.detail.ShowById');
+    
+    // Dispatching Header add Route
+    Route::post('/dispatching/detail', [DispatchingController::class, 'addDetail'])->name('dispatching.detail.addDetail');
+
+    // get unit
+    Route::get('/products/{id}/unit', [DispatchingController::class, 'getUnit'])->name('products.getUnit');
+
+    // Dispatching Header delete Route
+    Route::delete('/dispatching/detail/{id}', [DispatchingController::class, 'destroyDetail'])->name('dispatching.detail.destroy');
+
+    // Rute untuk mendapatkan detail Dispatching detail
+    Route::get('/dispatching/detail-modal/{id}', [DispatchingController::class, 'showDetail'])->name('dispatching.detail.show');
+
+    // Rute untuk memperbarui Dispatching detail
+    Route::put('/dispatching/detail/{id}', [DispatchingController::class, 'updateDetail'])->name('dispatching.detail.update');
+
+    // Rute untuk mengonfirmasi all Dispatching
+    Route::put('/dispatching/confirm-all/{id}', [DispatchingController::class, 'confirmAll'])->name('dispatching.confirmAll');
+
+    // Rute untuk mengonfirmasi Dispatching by id
+    Route::put('/dispatching/detail/confirm/{id}', [DispatchingController::class, 'confirmDetail'])->name('dispatching.detail.confirm');
 });
 
 

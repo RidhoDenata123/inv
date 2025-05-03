@@ -59,7 +59,7 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Transaction :</h6>
             <a class="collapse-item" href="{{ route('receiving.header') }}">Receiving</a>
-            <a class="collapse-item" href="">Dispatching</a>
+            <a class="collapse-item" href="{{ route('dispatching.header') }}">Dispatching</a>
            
         </div>
     </div>
@@ -78,7 +78,7 @@
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
         aria-expanded="true" aria-controls="collapsePages">
         <i class="fas fa-fw fa-history"></i>
-        <span>Transaction History</span>
+        <span>History</span>
     </a>
     <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
