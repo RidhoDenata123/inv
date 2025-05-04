@@ -27,11 +27,11 @@
 @section('content')
 
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice-dollar"></i> Dispatching Detail</h1>
+    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice-dollar"></i> DISPATCHING DETAIL</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Dispatching Detail Information</h6>
+            <h6 class="m-0 font-weight-bold text-primary">DISPATCHING DETAIL INFORMATION</h6>
         </div>
         <div class="card-body">
 
@@ -65,8 +65,27 @@
             </table>
 
             @if ($dispatchingHeader->dispatching_header_status === 'Pending')
-                <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addDispatchingDetailModal"><i class='fas fa-plus'></i> ADD PRODUCT</a>
+                <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addDispatchingDetailModal"><i class='fas fa-plus'></i> Dispatch Product</a>
             @endif
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-success mb-3 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class='fas fa-file-alt'></i> Documents
+                </button>
+                <div class="dropdown-menu">
+                    <a href="{{ route('dispatching.invoice', $dispatchingHeader->dispatching_header_id) }}" 
+                        class="dropdown-item" 
+                        target="_blank">
+                        Invoice
+                    </a>
+                    <a href="{{ route('dispatching.deliveryNote', $dispatchingHeader->dispatching_header_id) }}" 
+                        class="dropdown-item" 
+                        target="_blank">
+                        Delivery Note
+                    </a>
+                </div>
+            </div>
+
 
             <div class="table-responsive">
                 <table id="dispatchingDetailTable" class="table table-bordered table-sm">
@@ -184,7 +203,7 @@
 
                 @if ($dispatchingHeader->dispatching_header_status === 'Pending')
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmDispatchingModal">
-                        Confirm All
+                    <i class="fas fa-check-square"></i> Confirm All
                     </button>
                 @endif
             </div>

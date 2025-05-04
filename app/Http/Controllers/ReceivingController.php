@@ -227,32 +227,42 @@ class ReceivingController extends Controller
     }
 
     //confirm receiving all
-    public function confirmAll($id)
+    public function confirmAll(Request $request, $id)
     {
-        // Ambil Receiving Header berdasarkan ID
-        $receivingHeader = ReceivingHeader::where('receiving_header_id', $id)->firstOrFail();
+        $request->validate([
+            'receiving_document' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048', // Validasi file
+        ]);
     
-        // Update status Receiving Header menjadi Confirmed
+        $receivingHeader = ReceivingHeader::findOrFail($id);
+    
+        // Upload file ke storage
+        if ($request->hasFile('receiving_document')) {
+            $file = $request->file('receiving_document');
+            $filePath = $file->store('receiving_documents', 'public'); // Simpan di folder 'receiving_documents' di storage/public
+    
+            // Simpan path file di database
+            $receivingHeader->receiving_document = $filePath;
+        }
+    
+        // Update status header dan detail
         $receivingHeader->update([
             'receiving_header_status' => 'Confirmed',
             'confirmed_at' => now(),
-            'confirmed_by' => Auth::user()->id, // Isi dengan ID pengguna yang sedang login
+            'confirmed_by' => Auth::user()->id,
         ]);
     
-        // Ambil semua Receiving Details dengan status Pending
         $pendingDetails = ReceivingDetail::where('receiving_header_id', $id)
             ->where('receiving_detail_status', 'Pending')
             ->get();
     
         foreach ($pendingDetails as $detail) {
-            // Update status Receiving Detail menjadi Confirmed
             $detail->update([
                 'receiving_detail_status' => 'Confirmed',
-                'confirmed_at' => now(), // Isi tanggal dan waktu konfirmasi
-                'confirmed_by' => Auth::user()->id, // Isi dengan ID pengguna yang sedang login
+                'confirmed_at' => now(),
+                'confirmed_by' => Auth::user()->id,
             ]);
     
-            // Update product_qty pada tabel products
+            // Update inventory (optional, jika ada logika untuk menambah stok)
             $product = Product::where('product_id', $detail->product_id)->first();
             if ($product) {
                 $product->update([
@@ -261,7 +271,6 @@ class ReceivingController extends Controller
             }
         }
     
-        // Redirect dengan pesan sukses
         return redirect()->back()->with('success', 'All pending receiving details confirmed successfully!');
     }
 

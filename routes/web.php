@@ -233,6 +233,15 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Rute untuk mengonfirmasi Dispatching by id
     Route::put('/dispatching/detail/confirm/{id}', [DispatchingController::class, 'confirmDetail'])->name('dispatching.detail.confirm');
+
+    // Rute untuk mencetak faktur Dispatching
+    Route::get('/dispatching/invoice/{id}', [DispatchingController::class, 'printInvoice'])->name('dispatching.invoice');
+
+    // Rute untuk mencetak nota pengiriman Dispatching
+    Route::get('/dispatching/delivery-note/{id}', [DispatchingController::class, 'printDeliveryNote'])->name('dispatching.deliveryNote');
+
+
+
 });
 
 

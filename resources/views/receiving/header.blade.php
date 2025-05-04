@@ -4,14 +4,14 @@
 
 
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice"></i> Receiving</h1>
+    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice"></i> RECEIVING</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Receiving Header Table</h6>
+            <h6 class="m-0 font-weight-bold text-primary">RECEIVING HEADER TABLE</h6>
         </div>
         <div class="card-body">
-            <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addReceivingHeaderModal"><i class='fas fa-plus'></i> ADD RECEIVING</a>
+            <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addReceivingHeaderModal"><i class='fas fa-plus'></i> Add Receiving</a>
            
             <div class="table-responsive">
                 <table id="receivingHeaderTable" class="table table-bordered table-sm">
@@ -58,6 +58,8 @@
                                             class="btn btn-sm btn-dark mr-2">
                                                 <i class="fas fa-search"></i> 
                                             </a>
+
+
                                         @elseif ($header->receiving_header_status === 'Pending')
                                             <!-- Tombol Show -->
                                             <a href="{{ route('receiving.detail.ShowById', $header->receiving_header_id) }}" 

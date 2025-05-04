@@ -57,7 +57,7 @@
                             <h6 class="m-0 font-weight-bold text-primary">PRODUCT TABLE</h6>
                         </div>
                         <div class="card-body">
-                        <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addProductModal"><i class='fas fa-plus'></i> ADD PRODUCT</a>
+                        <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addProductModal"><i class='fas fa-plus'></i> Add Product</a>
                        
                             <div class="table-responsive">
                             <table id="productTable" class="table table-bordered">

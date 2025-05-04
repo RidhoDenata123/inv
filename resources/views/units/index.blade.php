@@ -21,7 +21,7 @@
             <h6 class="m-0 font-weight-bold text-primary">UNIT TABLE</h6>
         </div>
         <div class="card-body">
-            <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addUnitModal"><i class='fas fa-plus'></i> ADD UNIT</a>
+            <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addUnitModal"><i class='fas fa-plus'></i> Add Unit</a>
            
             <div class="table-responsive">
                 <table id="unitTable" class="table table-bordered">

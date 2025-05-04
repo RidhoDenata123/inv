@@ -27,14 +27,14 @@
 @section('content')
 
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice-dollar"></i> Dispatching</h1>
+    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice-dollar"></i> DISPATCHING</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Dispatching Header Table</h6>
+            <h6 class="m-0 font-weight-bold text-primary">DISPATCHING HEADER TABLE</h6>
         </div>
         <div class="card-body">
-            <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addDispatchingHeaderModal"><i class='fas fa-plus'></i> ADD DISPATCHING</a>
+            <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addDispatchingHeaderModal"><i class='fas fa-plus'></i> Add Dispatching</a>
            
             <div class="table-responsive">
                 <table id="dispatchingHeaderTable" class="table table-bordered table-sm">

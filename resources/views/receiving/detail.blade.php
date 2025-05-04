@@ -29,11 +29,11 @@
 @section('content')
 
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice"></i> Receiving Detail</h1>
+    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice"></i> RECEIVING DETAIL</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Receiving Detail Information</h6>
+            <h6 class="m-0 font-weight-bold text-primary">RECEIVING DETAIL INFORMATION</h6>
         </div>
         <div class="card-body">
 
@@ -63,7 +63,7 @@
             </table>
 
         @if ($receivingHeader->receiving_header_status === 'Pending')
-            <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addReceivingDetailModal"><i class='fas fa-plus'></i> ADD PRODUCT</a>
+            <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addReceivingDetailModal"><i class='fas fa-plus'></i> Receive Product</a>
         @endif
            
 
@@ -190,10 +190,24 @@
                 <a href="{{ route('receiving.header') }}" class="btn btn-secondary">Back to List</a>
 
                 @if ($receivingHeader->receiving_header_status === 'Pending')
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmReceivingModal">
-                        Confirm All
-                    </button>
+                    
                 @endif
+
+
+                @if ($receivingHeader->receiving_header_status === 'Pending')
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#confirmReceivingModal">
+                    <i class="fas fa-check-square"></i> Confirm All
+                    </button>
+
+                @elseif ($receivingHeader->receiving_header_status === 'Confirmed')
+                    <!-- Tombol View Document -->
+                    <a href="{{ asset('storage/' . $receivingHeader->receiving_document) }}" 
+                        class="btn btn-primary mr-2" 
+                        target="_blank">
+                        <i class="fas fa-file-alt"></i> View Document
+                    </a>
+                @endif
+
             </div>
             
         </div>
@@ -458,30 +472,51 @@
         </div>
     </div>
 
-    <!-- Modal for Confirm All Receiving -->
-    <div class="modal fade" id="confirmReceivingModal" tabindex="-1" role="dialog" aria-labelledby="confirmReceivingModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmReceivingModalLabel">Confirm All Pending Details</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+<!-- Modal for Confirm All Receiving -->
+<div class="modal fade" id="confirmReceivingModal" tabindex="-1" role="dialog" aria-labelledby="confirmReceivingModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmReceivingModalLabel">Confirm All Pending Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <form id="confirmAllForm" method="POST" action="{{ route('receiving.confirmAll', $receivingHeader->receiving_header_id) }}" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <p><span class="text-primary">{{ Auth::user()->name }}</span>, Are you sure you want to confirm all pending receiving details?</p>
+                    <div class="alert alert-primary">
+                        <span class="text-primary">
+                            <i class="fas fa-exclamation-circle"></i> <strong>ATTENTION</strong>
+                        </span>
+                        <p class="text-dark">
+                            <small>This action will set the receiving as confirmed and immediately process the selected products to be added to inventory.</small>
+                        </p>
+                    </div>
+
+                    <!-- Upload Document -->
+                <div class="form-group mb-3">
+                    <label class="font-weight-bold">Upload proof of receipt :</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input @error('receiving_document') is-invalid @enderror" name="receiving_document" id="receiving_document" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <label class="custom-file-label" for="customFile">Choose file</label>
+                        <!-- error message for receiving_document -->
+                        @error('receiving_document')
+                            <div class="alert alert-danger mt-2">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
                 </div>
 
-                <!-- Modal Body -->
-                <div class="modal-body">
-                <p><span class="text-primary">{{ Auth::user()->name }}</span>, Are you sure you want to confirm all pending receiving details?</p>
-                <div class="alert alert-primary">
-                    <span class="text-primary">
-                        <i class="fas fa-exclamation-circle"></i> <strong>ATTENTION</strong>
-                    </span>
-                    <p class="text-dark">
-                        <small>This action will set the receiving as confirmed and immediately process the selected products to be added to inventory.</small>
-                    </p>
-                </div>
-                <div class="form-group form-check">
+
+
+                    <div class="form-group form-check">
                         <label class="form-check-label">
                             <input class="form-check-input" type="checkbox" name="confirm_delete" required>
                             I agree to the Terms & Conditions.
@@ -489,20 +524,17 @@
                             <div class="invalid-feedback">Check this box to continue.</div>
                         </label>
                     </div>
-            </div>
+                </div>
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <form id="confirmAllForm" method="POST" action="{{ route('receiving.confirmAll', $receivingHeader->receiving_header_id) }}">
-                        @csrf
-                        @method('PUT')
-                        <button type="submit" class="btn btn-primary">Confirm All</button>
-                    </form>
+                    <button type="submit" class="btn btn-primary">Confirm All</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
+</div>
 
     <!-- Modal for Confirm Receiving Detail by id -->
     <div class="modal fade" id="confirmDetailModal" tabindex="-1" role="dialog" aria-labelledby="confirmDetailModalLabel" aria-hidden="true">
@@ -857,6 +889,14 @@
                         $('#edit_product_unit').text('unit');
                     }
                 });
+
+
+                // Add the following code if you want the name of the file appear on select
+                $(".custom-file-input").on("change", function() {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+                });
+
 
 
         });

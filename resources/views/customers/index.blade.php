@@ -21,7 +21,7 @@
             <h6 class="m-0 font-weight-bold text-primary">CUSTOMER TABLE</h6>
         </div>
         <div class="card-body">
-            <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addCustomerModal"><i class='fas fa-plus'></i> ADD CUSTOMER</a>
+            <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addCustomerModal"><i class='fas fa-plus'></i> Add Customer</a>
            
             <div class="table-responsive">
                 <table id="customerTable" class="table table-bordered">

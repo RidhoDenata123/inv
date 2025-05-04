@@ -232,15 +232,34 @@ class DispatchingController extends Controller
         return redirect()->back()->with('success', 'Dispatching detail confirmed successfully!');
     }
 
-    public function getUnit($id)
-{
-    // Cari produk berdasarkan product_id
-    $product = Product::with('unit')->where('product_id', $id)->first();
+        // Get product unit by product ID
+        public function getUnit($id)
+    {
+        // Cari produk berdasarkan product_id
+        $product = Product::with('unit')->where('product_id', $id)->first();
 
-    if ($product && $product->unit) {
-        return response()->json(['unit_name' => $product->unit->unit_name]);
+        if ($product && $product->unit) {
+            return response()->json(['unit_name' => $product->unit->unit_name]);
+        }
+
+        return response()->json(['unit_name' => 'No unit found'], 404);
     }
 
-    return response()->json(['unit_name' => 'No unit found'], 404);
-}
+    // Print invoice
+    public function printInvoice($id)
+    {
+        $dispatchingHeader = DispatchingHeader::findOrFail($id);
+        $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)->get();
+    
+        return view('dispatching.invoice', compact('dispatchingHeader', 'dispatchingDetails'));
+    }
+    // Print delivery note
+    public function printDeliveryNote($id)
+    {
+        $dispatchingHeader = DispatchingHeader::findOrFail($id);
+        $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)->get();
+
+        return view('dispatching.delivery-note', compact('dispatchingHeader', 'dispatchingDetails'));
+    }
+
 }
