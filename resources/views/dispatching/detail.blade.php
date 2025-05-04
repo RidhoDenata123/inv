@@ -134,6 +134,15 @@
                                                 <i class="fas fa-check"></i>
                                             </button>
 
+                                            <!-- Tombol Show Detail -->
+                                            <a href="#" 
+                                            class="btn btn-sm btn-dark btn-show mr-2" 
+                                            data-product_id="{{ $detail->product_id }}" 
+                                            data-toggle="modal" 
+                                            data-target="#productDetailModal">
+                                                <i class="fas fa-search"></i>
+                                            </a>
+
                                             <!-- Tombol Edit -->
                                             <a href="#" 
                                             class="btn btn-sm btn-primary btn-edit mr-2" 
@@ -434,6 +443,12 @@
     <div class="modal fade" id="confirmDispatchingModal" tabindex="-1" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmReceivingModalLabel">Confirm All Pending Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <p>Are you sure you want to confirm all pending dispatching details? This action will update the status of the header and pending details only.</p>
                 </div>
@@ -453,6 +468,13 @@
     <div class="modal fade" id="confirmDetailModal" tabindex="-1" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDetailModalLabel">Confirm Dispatching Detail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <p>Are you sure you want to confirm this dispatching detail? This action will update the status and product quantities.</p>
                 </div>
