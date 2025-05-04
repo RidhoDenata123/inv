@@ -433,7 +433,7 @@
                                         <div class="input-group mb-3">
                                             <input type="number" class="form-control" id="edit_receiving_qty" name="receiving_qty" placeholder="Enter quantity" required>
                                             <div class="input-group-append">
-                                                <span class="input-group-text" id="edit_product_unit">unit</span>
+                                                <span class="input-group-text" id="edit_product_unit"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -576,6 +576,7 @@
                 const randomId = 'DET-' + Math.floor(100000 + Math.random() * 900000); // Generate random ID
                 $('#receiving_detail_id').val(randomId); // Set the value of receiving_detail_id input
             });
+            
 
             // Handle click event on "EDIT" button
             $('.btn-edit').on('click', function() {
@@ -605,8 +606,32 @@
                         // Set action URL untuk form edit
                         $('#editReceivingDetailForm').attr('action', `/receiving/detail/${detailId}`);
 
+                        // Setelah data produk diisi, panggil AJAX untuk mendapatkan unit
+                        const productId = data.product_id;
+                        console.log('Product ID:', productId); // Debugging: pastikan productId benar
+
+                        if (productId) {
+                            $.ajax({
+                                url: `/products/${productId}/unit`, // Endpoint untuk mendapatkan unit
+                                method: 'GET',
+                                success: function(response) {
+                                    // Tampilkan unit di input-group-append
+                                    $('#edit_product_unit').text(response.unit_name);
+                                },
+                                error: function(xhr) {
+                                    // Jika terjadi error, tampilkan pesan default
+                                    $('#edit_product_unit').text('unit');
+                                    console.error('Failed to fetch unit:', xhr.responseText);
+                                }
+                            });
+                        } else {
+                            // Reset unit jika tidak ada produk yang dipilih
+                            $('#edit_product_unit').text('unit');
+                        }
+                        
                         // Tampilkan modal
                         $('#editReceivingDetailModal').modal('show');
+                        
                     },
                     error: function(xhr) {
                         Swal.fire({
@@ -744,54 +769,58 @@
             });
             
             // APPEND UNIT EDIT DETAIL
-            // Ketika produk dipilih pada modal Edit Receiving Detail
-            $('#edit_product_id').on('change', function() {
-                const productId = $(this).val(); // Ambil product_id yang dipilih
-
-                if (productId) {
-                    // Lakukan permintaan AJAX ke server
-                    $.ajax({
-                        url: `/products/${productId}/unit`, // Endpoint untuk mendapatkan unit
-                        method: 'GET',
-                        success: function(response) {
-                            // Tampilkan unit di input-group-append
-                            $('#edit_product_unit').text(response.unit_name);
-                        },
-                        error: function(xhr) {
-                            // Jika terjadi error, tampilkan pesan default
-                            $('#edit_product_unit').text('unit');
-                            console.error('Failed to fetch unit:', xhr.responseText);
-                        }
-                    });
-                } else {
-                    // Reset unit jika tidak ada produk yang dipilih
-                    $('#edit_product_unit').text('unit');
-                }
-            });
             // Ketika modal Edit Receiving Detail ditampilkan
             $('#editReceivingDetailModal').on('show.bs.modal', function() {
-                const productId = $('#edit_product_id').val(); // Ambil product_id yang sudah dipilih
+                    $('#edit_product_id').selectpicker('refresh'); // Refresh dropdown produk
+                    const productId = $('#edit_product_id').val(); // Ambil product_id yang sudah dipilih
 
-                if (productId) {
-                    // Lakukan permintaan AJAX ke server untuk mendapatkan unit
-                    $.ajax({
-                        url: `/products/${productId}/unit`, // Endpoint untuk mendapatkan unit
-                        method: 'GET',
-                        success: function(response) {
-                            // Tampilkan unit di input-group-append
-                            $('#edit_product_unit').text(response.unit_name);
-                        },
-                        error: function(xhr) {
-                            // Jika terjadi error, tampilkan pesan default
-                            $('#edit_product_unit').text('unit');
-                            console.error('Failed to fetch unit:', xhr.responseText);
-                        }
-                    });
-                } else {
-                    // Reset unit jika tidak ada produk yang dipilih
-                    $('#edit_product_unit').text('unit');
-                }
-            });
+                    console.log('Product ID:', productId); // Debugging: pastikan productId benar
+
+                    if (productId) {
+                        // Lakukan permintaan AJAX ke server untuk mendapatkan unit
+                        $.ajax({
+                            url: `/products/${productId}/unit`, // Endpoint untuk mendapatkan unit
+                            method: 'GET',
+                            success: function(response) {
+                                // Tampilkan unit di input-group-append
+                                $('#edit_product_unit').text(response.unit_name);
+                            },
+                            error: function(xhr) {
+                                // Jika terjadi error, tampilkan pesan default
+                                $('#edit_product_unit').text('unit');
+                                console.error('Failed to fetch unit:', xhr.responseText);
+                            }
+                        });
+                    } else {
+                        // Reset unit jika tidak ada produk yang dipilih
+                        $('#edit_product_unit').text('unit');
+                    }
+                });
+
+                // Ketika produk dipilih pada modal Edit Receiving Detail
+                $('#edit_product_id').on('change', function() {
+                    const productId = $(this).val(); // Ambil product_id yang dipilih
+
+                    if (productId) {
+                        // Lakukan permintaan AJAX ke server
+                        $.ajax({
+                            url: `/products/${productId}/unit`, // Endpoint untuk mendapatkan unit
+                            method: 'GET',
+                            success: function(response) {
+                                // Tampilkan unit di input-group-append
+                                $('#edit_product_unit').text(response.unit_name);
+                            },
+                            error: function(xhr) {
+                                // Jika terjadi error, tampilkan pesan default
+                                $('#edit_product_unit').text('unit');
+                                console.error('Failed to fetch unit:', xhr.responseText);
+                            }
+                        });
+                    } else {
+                        // Reset unit jika tidak ada produk yang dipilih
+                        $('#edit_product_unit').text('unit');
+                    }
+                });
 
 
         });

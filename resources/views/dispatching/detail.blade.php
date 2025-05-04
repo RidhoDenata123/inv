@@ -366,71 +366,69 @@
     </div>
 
     <!-- Modal for Edit Dispatching Detail -->
-<div class="modal fade" id="editDispatchingDetailModal" tabindex="-1" role="dialog" aria-labelledby="editDispatchingDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h5 class="modal-title" id="editDispatchingDetailModalLabel">Edit Dispatching Detail</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+    <div class="modal fade" id="editDispatchingDetailModal" tabindex="-1" role="dialog" aria-labelledby="editDispatchingDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editDispatchingDetailModalLabel">Edit Dispatching Detail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
 
-            <!-- Modal Body -->
-            <form id="editDispatchingDetailForm" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <!-- Detail ID -->
-                    <div class="form-group mb-3">
-                        <label class="font-weight-bold">Detail ID:</label>
-                        <input type="text" class="form-control" id="edit_dispatching_detail_id" name="dispatching_detail_id" readonly>
-                    </div>
-
-                    <div class="row">
-                        <!-- Product Dropdown -->
-                        <div class="col">
-                            <div class="form-group mb-3">
-                                <label class="font-weight-bold">Product:</label>
-                                <select class="form-control selectpicker" id="edit_product_id" name="product_id" data-live-search="true" required>
-                                    <option value="" disabled>Select a product</option>
-                                    @foreach ($products as $product)
-                                        <option value="{{ $product->product_id }}">{{ $product->product_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                <!-- Modal Body -->
+                <form id="editDispatchingDetailForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <!-- Detail ID -->
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold">Detail ID:</label>
+                            <input type="text" class="form-control" id="edit_dispatching_detail_id" name="dispatching_detail_id" readonly>
                         </div>
 
-                        <!-- Quantity Input -->
-                        <div class="col">
-                            <div class="form-group mb-3">
-                                <label class="font-weight-bold">Quantity:</label>
-                                <div class="input-group mb-3">
-                                    <input type="number" class="form-control" id="edit_dispatching_qty" name="dispatching_qty" placeholder="Enter quantity" required>
-                                    <div class="input-group-append">
-                                        <span class="input-group-text" id="edit_product_unit">unit</span>
+                        <div class="row">
+                            <!-- Product Dropdown -->
+                            <div class="col">
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold">Product:</label>
+                                    <select class="form-control selectpicker" id="edit_product_id" name="product_id" data-live-search="true" required>
+                                        <option value="" disabled>Select a product</option>
+                                        @foreach ($products as $product)
+                                            <option value="{{ $product->product_id }}">{{ $product->product_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Quantity Input -->
+                            <div class="col">
+                                <div class="form-group mb-3">
+                                    <label class="font-weight-bold">Quantity:</label>
+                                    <div class="input-group mb-3">
+                                        <input type="number" class="form-control" id="edit_dispatching_qty" name="dispatching_qty" placeholder="Enter quantity" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="edit_product_unit">unit</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Dispatching Detail Status -->
+                        <input type="hidden" class="form-control" id="edit_dispatching_detail_status" name="dispatching_detail_status" readonly>
                     </div>
 
-                    <!-- Dispatching Detail Status -->
-                    <input type="hidden" class="form-control" id="edit_dispatching_detail_status" name="dispatching_detail_status" readonly>
-                </div>
-
-                <!-- Modal Footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-
-
 
     <!-- Modal for Confirm All Dispatching -->
     <div class="modal fade" id="confirmDispatchingModal" tabindex="-1" role="dialog">
@@ -552,6 +550,32 @@
                         // Set action URL untuk form edit
                         $('#editDispatchingDetailForm').attr('action', `/dispatching/detail/${detailId}`);
 
+
+                        // Setelah data produk diisi, panggil AJAX untuk mendapatkan unit
+                        const productId = data.product_id;
+                        console.log('Product ID:', productId); // Debugging: pastikan productId benar
+
+                        if (productId) {
+                            $.ajax({
+                                url: `/products/${productId}/unit`, // Endpoint untuk mendapatkan unit
+                                method: 'GET',
+                                success: function(response) {
+                                    // Tampilkan unit di input-group-append
+                                    $('#edit_product_unit').text(response.unit_name);
+                                },
+                                error: function(xhr) {
+                                    // Jika terjadi error, tampilkan pesan default
+                                    $('#edit_product_unit').text('unit');
+                                    console.error('Failed to fetch unit:', xhr.responseText);
+                                }
+                            });
+                        } else {
+                            // Reset unit jika tidak ada produk yang dipilih
+                            $('#edit_product_unit').text('unit');
+                        }
+                        
+
+
                         // Tampilkan modal
                         $('#editDispatchingDetailModal').modal('show');
                     },
@@ -642,7 +666,7 @@
                 $('#deleteDispatchingDetailModal').modal('show');
             });
 
-            // Handle click event on "Confirm" button on row
+            // Handle click event on "Confirm" button per row
             $('.btn-confirm').on('click', function() {
                 const detailId = $(this).data('dispatching_detail_id'); // Ambil ID dispatching detail dari tombol
 
@@ -730,6 +754,7 @@
                     $('#edit_product_unit').text('unit'); // Reset unit jika tidak ada produk yang dipilih
                 }
             });
+            
         });
     </script>
 @endsection

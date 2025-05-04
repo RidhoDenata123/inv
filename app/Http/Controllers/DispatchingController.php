@@ -97,7 +97,7 @@ class DispatchingController extends Controller
     {
         $dispatchingHeader = DispatchingHeader::where('dispatching_header_id', $id)->firstOrFail();
         $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)->get();
-        $products = Product::all();
+        $products = Product::where('product_status', 'Active')->get(); // Hanya produk dengan status Active
         $categories = Category::all();
         $units = Unit::all();
         $suppliers = Supplier::all();
