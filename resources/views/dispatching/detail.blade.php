@@ -27,7 +27,7 @@
 @section('content')
 
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-truck"></i> Dispatching Detail</h1>
+    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice-dollar"></i> Dispatching Detail</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -41,12 +41,16 @@
                     <td><span class="font-weight-bold">Designation : </span>{{ $dispatchingHeader->dispatching_header_name }}</td>
                 </tr>
                 <tr>
+                    <td><span class="font-weight-bold">Created Date : </span>{{ $dispatchingHeader->created_at ? \Carbon\Carbon::parse($dispatchingHeader->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
                     <td><span class="font-weight-bold">Created By : </span>{{ $dispatchingHeader->created_by ? \App\Models\User::find($dispatchingHeader->created_by)->name : 'N/A' }}</td>
-                    <td><span class="font-weight-bold">Created Date : </span>{{ $dispatchingHeader->created_at }}</td>
                 </tr>
                 <tr>
-                    <td><span class="font-weight-bold">Confirmation Date : </span>{{ $dispatchingHeader->confirmed_at }}</td>
+                    <td><span class="font-weight-bold">Confirmation Date : </span>{{ $dispatchingHeader->confirmed_at ? \Carbon\Carbon::parse($dispatchingHeader->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
                     <td><span class="font-weight-bold">Confirmed By : </span>{{ $dispatchingHeader->confirmed_by ? \App\Models\User::find($dispatchingHeader->confirmed_by)->name : 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <td><span class="font-weight-bold">Last Update : </span>{{ $dispatchingHeader->updated_at ? \Carbon\Carbon::parse($dispatchingHeader->updated_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
+                    <td><span class="font-weight-bold">Customer : </span>{{ $dispatchingHeader->customer_id ? \App\Models\customer::find($dispatchingHeader->customer_id)->customer_name : 'N/A' }}</td>
                 </tr>
                 <tr>
                     <td><span class="font-weight-bold">Description : </span>{{ $dispatchingHeader->dispatching_header_description }}</td>
@@ -57,6 +61,7 @@
                         </span>
                     </td>
                 </tr>
+                
             </table>
 
             @if ($dispatchingHeader->dispatching_header_status === 'Pending')
@@ -344,7 +349,7 @@
                     @method('DELETE')
                     <div class="modal-body">
                         <p>
-                            Are you sure you want to delete "<strong><span id="deleteDispatchingDetailName"></span></strong>"?
+                        <span class="text-primary"> {{ Auth::user()->name }}</span>, are you sure you want to delete "<strong><span id="deleteDispatchingDetailName"></span></strong>"?
                         </p>
                         <div class="alert alert-danger">
                             <span class="text-danger">
@@ -366,8 +371,8 @@
 
                     <!-- Modal Footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it.</button>
-                        <button type="submit" class="btn btn-danger">Yes, Delete!</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it</button>
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
                     </div>
                 </form>
             </div>
@@ -450,21 +455,37 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to confirm all pending dispatching details? This action will update the status of the header and pending details only.</p>
+                    <p><span class="text-primary">{{ Auth::user()->name }}</span>, Are you sure you want to confirm all pending dispatching details?</p>
+                    <div class="alert alert-primary">
+                        <span class="text-primary">
+                            <i class="fas fa-exclamation-circle"></i> <strong>ATTENTION</strong>
+                        </span>
+                        <p class="text-dark">
+                            <small>This action will set the dispatching as confirmed and immediately process the selected products for dispatching.</small>
+                        </p>
+                    </div>
+                    <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="confirm_delete" required>
+                                I agree to the Terms & Conditions.
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Check this box to continue.</div>
+                            </label>
+                        </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No, Cancel</button>
                     <form id="confirmAllForm" method="POST" action="{{ route('dispatching.confirmAll', $dispatchingHeader->dispatching_header_id) }}">
                         @csrf
                         @method('PUT')
-                        <button type="submit" class="btn btn-primary">Confirm All</button>
+                        <button type="submit" class="btn btn-primary">Yes, Confirm All</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal for Confirm Dispatching Detail -->
+    <!-- Modal for Confirm Dispatching per Detail -->
     <div class="modal fade" id="confirmDetailModal" tabindex="-1" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -475,15 +496,31 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to confirm this dispatching detail? This action will update the status and product quantities.</p>
-                </div>
+                    <div class="modal-body">
+                        <p><span class="text-primary"> {{ Auth::user()->name }}</span>, are you sure you want to confirm "<strong><span id="confirmDispatchingDetailName"></span></strong>"?</p>
+                        <div class="alert alert-success">
+                            <span class="text-success">
+                                <i class="fas fa-exclamation-circle"></i> <strong>ATTENTION</strong>
+                            </span>
+                            <p class="text-dark">
+                                <small>This action will set the selected shipment as confirmed and immediately process the selected products for shipment.</small>
+                            </p>
+                        </div>
+                        <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox" name="confirm_delete" required>
+                                    I agree to the Terms & Conditions.
+                                    <div class="valid-feedback">Valid.</div>
+                                    <div class="invalid-feedback">Check this box to continue.</div>
+                                </label>
+                        </div>
+                    </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No, Cancel</button>
                     <form id="confirmDetailForm" method="POST" action="">
                         @csrf
                         @method('PUT')
-                        <button type="submit" class="btn btn-success">Confirm</button>
+                        <button type="submit" class="btn btn-success">Yes, Confirm</button>
                     </form>
                 </div>
             </div>
@@ -678,7 +715,7 @@
                 }
 
                 // Isi modal dengan data dispatching detail
-                $('#deleteDispatchingDetailName').text(productName);
+                $('#deleteDispatchingDetailName').text(detailId);
 
                 // Set action URL untuk form delete
                 const deleteUrl = `/dispatching/detail/${detailId}`;
@@ -688,9 +725,10 @@
                 $('#deleteDispatchingDetailModal').modal('show');
             });
 
-            // Handle click event on "Confirm" button per row
+            // Handle click event on "Confirm" button per detail
             $('.btn-confirm').on('click', function() {
                 const detailId = $(this).data('dispatching_detail_id'); // Ambil ID dispatching detail dari tombol
+                const productName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama produk dari tabel
 
                 if (!detailId) {
                     Swal.fire({
@@ -701,6 +739,8 @@
                     });
                     return;
                 }
+                // Isi modal dengan data dispatching detail
+                $('#confirmDispatchingDetailName').text(detailId);
 
                 // Set action URL untuk form confirm
                 const confirmUrl = `/dispatching/detail/confirm/${detailId}`;

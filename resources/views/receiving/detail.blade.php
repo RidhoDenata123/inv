@@ -29,7 +29,7 @@
 @section('content')
 
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-receipt"></i> Receiving Detail</h1>
+    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice"></i> Receiving Detail</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -289,7 +289,7 @@
                     @method('DELETE')
                     <div class="modal-body">
                         <p>
-                            Are you sure you want to delete "<strong><span id="deleteReceivingDetailName"></span></strong>"?
+                        <span class="text-primary"> {{ Auth::user()->name }}</span>, are you sure you want to delete "<strong><span id="deleteReceivingDetailName"></span></strong>"?
                         </p>
                         <div class="alert alert-danger">
                             <span class="text-danger">
@@ -311,8 +311,8 @@
 
                     <!-- Modal Footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it.</button>
-                        <button type="submit" class="btn btn-danger">Yes, Delete!</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it</button>
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
                     </div>
                 </form>
             </div>
@@ -472,8 +472,24 @@
 
                 <!-- Modal Body -->
                 <div class="modal-body">
-                    <p>Are you sure you want to confirm all pending receiving details? This action will update the status of the header and pending details only.</p>
+                <p><span class="text-primary">{{ Auth::user()->name }}</span>, Are you sure you want to confirm all pending receiving details?</p>
+                <div class="alert alert-primary">
+                    <span class="text-primary">
+                        <i class="fas fa-exclamation-circle"></i> <strong>ATTENTION</strong>
+                    </span>
+                    <p class="text-dark">
+                        <small>This action will set the receiving as confirmed and immediately process the selected products to be added to inventory.</small>
+                    </p>
                 </div>
+                <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" name="confirm_delete" required>
+                            I agree to the Terms & Conditions.
+                            <div class="valid-feedback">Valid.</div>
+                            <div class="invalid-feedback">Check this box to continue.</div>
+                        </label>
+                    </div>
+            </div>
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
@@ -502,8 +518,25 @@
 
                 <!-- Modal Body -->
                 <div class="modal-body">
-                    <p>Are you sure you want to confirm this receiving detail? This action will update the status and product quantities.</p>
-                </div>
+                        <p> </p>
+                        <p><span class="text-primary"> {{ Auth::user()->name }}</span>, are you sure you want to confirm "<strong><span id="confirmReceivingDetailName"></span></strong>"?</p>
+                        <div class="alert alert-success">
+                            <span class="text-success">
+                                <i class="fas fa-exclamation-circle"></i> <strong>ATTENTION</strong>
+                            </span>
+                            <p class="text-dark">
+                                <small>This action will set the selected receiving as confirmed and immediately process the selected products to be added to inventory.</small>
+                            </p>
+                        </div>
+                        <div class="form-group form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox" name="confirm_delete" required>
+                                    I agree to the Terms & Conditions.
+                                    <div class="valid-feedback">Valid.</div>
+                                    <div class="invalid-feedback">Check this box to continue.</div>
+                                </label>
+                        </div>
+                    </div>
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
@@ -710,7 +743,7 @@
                 }
 
                 // Isi modal dengan data receiving detail
-                $('#deleteReceivingDetailName').text(productName);
+                $('#deleteReceivingDetailName').text(detailId);
 
                 // Set action URL untuk form delete
                 const deleteUrl = `/receiving/detail/${detailId}`;
@@ -720,7 +753,7 @@
                 $('#deleteReceivingDetailModal').modal('show');
             });
 
-            // Handle click event on "Confirm" button on row
+            // Handle click event on "Confirm" button per detail
             $('.btn-confirm').on('click', function() {
                 const detailId = $(this).data('receiving_detail_id'); // Ambil ID receiving detail dari tombol
 
@@ -733,6 +766,9 @@
                     });
                     return;
                 }
+
+                // Isi modal dengan data receiving detail
+                $('#confirmReceivingDetailName').text(detailId);
 
                 // Set action URL untuk form confirm
                 const confirmUrl = `/receiving/detail/confirm/${detailId}`;

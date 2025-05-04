@@ -205,8 +205,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it.</button>
-                        <button type="submit" class="btn btn-danger">Yes, Delete!</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it</button>
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
                     </div>
                 </form>
             </div>

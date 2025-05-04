@@ -4,7 +4,7 @@
 
 
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-receipt"></i> Receiving</h1>
+    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice"></i> Receiving</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -200,8 +200,8 @@
 
                     <!-- Modal Footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it.</button>
-                        <button type="submit" class="btn btn-danger">Yes, Delete!</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it</button>
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
                     </div>
                 </form>
             </div>

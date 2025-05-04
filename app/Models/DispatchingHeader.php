@@ -26,6 +26,7 @@ class DispatchingHeader extends Model
     protected $fillable = [
         'dispatching_header_id',
         'dispatching_header_name',
+        'customer_id',
         'dispatching_header_description',
         'created_by',
         'dispatching_header_status',

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('dispatching_headers', function (Blueprint $table) {
             $table->string('dispatching_header_id')->primary();
             $table->string('dispatching_header_name');
+            $table->string('customer_id');
             $table->string('dispatching_header_description')->nullable();
             $table->string('created_by');
             $table->string('dispatching_header_status');

@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Unit;
 use App\Models\Supplier;
+use App\Models\Customer;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,8 @@ class DispatchingController extends Controller
     public function index(): View
     {
         $dispatching_headers = DispatchingHeader::paginate(10); // Ambil data dengan pagination
-        return view('dispatching.header', compact('dispatching_headers'));
+        $customers = Customer::all(); // Ambil semua data customer
+        return view('dispatching.header', compact('dispatching_headers', 'customers'));
     }
 
     // Create dispatching header
@@ -28,6 +30,7 @@ class DispatchingController extends Controller
         $request->validate([
             'dispatching_header_id'             => 'required',
             'dispatching_header_name'           => 'required',
+            'customer_id'                       => 'required',
             'dispatching_header_description'    => 'nullable',
             'created_by'                        => 'required',
             'dispatching_header_status'         => 'required',
@@ -38,6 +41,7 @@ class DispatchingController extends Controller
         DispatchingHeader::create([
             'dispatching_header_id'             => $request->dispatching_header_id,
             'dispatching_header_name'           => $request->dispatching_header_name,
+            'customer_id'                       => $request->customer_id,
             'dispatching_header_description'    => $request->dispatching_header_description,
             'created_by'                        => $request->created_by,
             'dispatching_header_status'         => $request->dispatching_header_status,
@@ -65,7 +69,9 @@ class DispatchingController extends Controller
     {
         $request->validate([
             'dispatching_header_name'           => 'required',
+            'customer_id'                       => 'required',
             'dispatching_header_description'    => 'nullable',
+            
         ]);
 
         $dispatching_header = DispatchingHeader::where('dispatching_header_id', $id)->first();
@@ -76,7 +82,9 @@ class DispatchingController extends Controller
 
         $dispatching_header->update([
             'dispatching_header_name'           => $request->dispatching_header_name,
+            'customer_id'                       => $request->customer_id,
             'dispatching_header_description'    => $request->dispatching_header_description,
+            
         ]);
 
         return redirect()->route('dispatching.header')->with('success', 'Dispatching draft updated successfully.');

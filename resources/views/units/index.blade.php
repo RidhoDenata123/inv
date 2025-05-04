@@ -30,7 +30,7 @@
                             <th scope="col">No.</th>
                             <th scope="col">Unit ID</th>
                             <th scope="col">Unit Name</th>
-                            
+                            <th scope="col">Unit Description</th>
                             <th scope="col">ACTIONS</th>
                         </tr>
                     </thead>
@@ -40,7 +40,7 @@
                                 <td>{{ $loop->iteration }}.</td> <!-- Nomor otomatis -->
                                 <td>{{ $unit->unit_id }}</td>
                                 <td>{{ $unit->unit_name }}</td>
-                             
+                                <td>{{ $unit->unit_description }}</td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center align-items-center">
 
@@ -165,8 +165,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it.</button>
-                        <button type="submit" class="btn btn-danger">Yes, Delete!</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it</button>
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
                     </div>
                 </form>
             </div>

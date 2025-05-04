@@ -1,9 +1,33 @@
 @extends('layouts.adminApp')
 
+@section('styles')
+    <!-- Bootstrap Select CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" />
+
+    <style>
+        .bootstrap-select .dropdown-toggle {
+            height: calc(1.5em + .75rem + 2px); /* Sesuaikan tinggi dengan form Bootstrap */
+            padding: .375rem .75rem; /* Padding default form */
+            font-size: 1rem; /* Ukuran font default */
+            line-height: 1.5; /* Line height default */
+            color: #858796; /* Warna teks default */
+            background-color: #fff; /* Warna latar belakang */
+            border: 1px solid #ced4da; /* Warna border */
+            border-radius: .25rem; /* Radius border */
+        }
+
+        .bootstrap-select .dropdown-menu {
+            font-size: 1rem; /* Ukuran font dropdown */
+        }
+    </style>
+
+
+    @endsection
+
 @section('content')
 
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-truck"></i> Dispatching</h1>
+    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice-dollar"></i> Dispatching</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -19,6 +43,7 @@
                             <th scope="col" rowspan="2">No.</th>
                             <th scope="col" rowspan="2">Dispatching ID</th>
                             <th scope="col" rowspan="2">Designation</th>
+                            <th scope="col" rowspan="2">Customer</th>
                             <th scope="col" colspan="2">Creation</th>
                             <th scope="col" colspan="2">Confirmation</th>
                             <th scope="col" rowspan="2">Dispatching Status</th>
@@ -37,6 +62,7 @@
                                 <td>{{ $loop->iteration }}.</td>
                                 <td>{{ $header->dispatching_header_id }}</td>
                                 <td>{{ $header->dispatching_header_name }}</td>
+                                <td>{{ $header->customer_id ? \App\Models\Customer::find($header->customer_id)->customer_name : 'N/A' }}</td>
                                 <td>{{ $header->created_at ? \Carbon\Carbon::parse($header->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
                                 <td>{{ $header->created_by ? \App\Models\User::find($header->created_by)->name : 'N/A' }}</td>
                                 <td>{{ $header->confirmed_at ? \Carbon\Carbon::parse($header->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
@@ -86,7 +112,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="9" class="text-center">No data available in table</td>
+                                <td colspan="10" class="text-center">No data available in table</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -127,6 +153,19 @@
                             @enderror
                         </div>
 
+                        <div class="form-group">
+                            <label for="customer_id" class="font-weight-bold">Customer :</label>
+                            <select class="form-control selectpicker" id="customer_id" name="customer_id" data-live-search="true" required>
+                                <option value="" disabled selected>Select a customer</option>
+                                @foreach ($customers as $customer)
+                                    <option value="{{ $customer->customer_id }}">{{ $customer->customer_name }}</option>
+                                @endforeach
+                            </select>
+                            @error('customer_id')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="form-group mb-3">
                             <label class="font-weight-bold">Description :</label>
                             <textarea class="form-control @error('dispatching_header_description') is-invalid @enderror" id="dispatching_header_description" name="dispatching_header_description" rows="3" placeholder="Enter description">{{ old('dispatching_header_description') }}</textarea>
@@ -151,6 +190,7 @@
                 </form>
             </div>
         </div>
+    
     </div>
 
     <!-- Modal for Delete Dispatching Header -->
@@ -194,8 +234,8 @@
 
                     <!-- Modal Footer -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it.</button>
-                        <button type="submit" class="btn btn-danger">Yes, Delete!</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it</button>
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
                     </div>
                 </form>
             </div>
@@ -232,6 +272,19 @@
                             @enderror
                         </div>
 
+                        <div class="form-group">
+                            <label for="edit_customer_id" class="font-weight-bold">Customer :</label>
+                            <select class="form-control selectpicker" id="edit_customer_id" name="customer_id" data-live-search="true" required>
+                                <option value="" disabled>Select a customer</option>
+                                @foreach ($customers as $customer)
+                                    <option value="{{ $customer->customer_id }}">{{ $customer->customer_name }}</option>
+                                @endforeach
+                            </select>
+                            @error('customer_id')
+                                <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="form-group mb-3">
                             <label for="editDispatchingHeaderDescription" class="font-weight-bold">Dispatching Header Description:</label>
                             <textarea class="form-control @error('dispatching_header_description') is-invalid @enderror" id="editDispatchingHeaderDescription" name="dispatching_header_description" rows="3" required></textarea>
@@ -257,7 +310,9 @@
 
 <!-- Page level plugins -->
 <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <!-- Bootstrap Select JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
 
 <!-- Datatable -->
 <script>
@@ -293,6 +348,13 @@
             });
         @endif
 
+        // Inisialisasi Bootstrap Select
+        $('.selectpicker').selectpicker({
+            liveSearch: true,
+            style: 'btn-light',
+            size: 5
+        });
+
         // Generate random dispatching_header_id when the modal is shown
         $('#addDispatchingHeaderModal').on('show.bs.modal', function() {
             const randomId = 'DISP-' + Math.floor(100000 + Math.random() * 900000); // Generate random ID
@@ -312,13 +374,13 @@
                     $('#editDispatchingHeaderId').val(data.dispatching_header_id);
                     $('#editDispatchingHeaderName').val(data.dispatching_header_name);
                     $('#editDispatchingHeaderDescription').val(data.dispatching_header_description);
-                    $('#editDispatchingHeaderStatus').val(data.dispatching_header_status);
+                    $('#edit_customer_id').val(data.customer_id).selectpicker('refresh'); // Pilih customer yang sesuai
 
                     // Set action URL untuk form edit
                     $('#editDispatchingHeaderForm').attr('action', `/dispatching/header/${dispatchingId}`);
 
                     // Tampilkan modal
-                    $('#editDispatchingHeaderModal').modal('edit');
+                    $('#editDispatchingHeaderModal').modal('show');
                 },
                 error: function(xhr) {
                     // Tampilkan pesan error jika gagal
