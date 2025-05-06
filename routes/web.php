@@ -51,6 +51,22 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Admin dashboard Route
     Route::get('/admin/dashboard', [HomeController::class, 'adminDashboard'])->name('admin.dashboard');
 
+    Route::get('/setting', [HomeController::class, 'AdminSetting'])->name('setting.admin');
+    Route::get('/setting/profile', [HomeController::class, 'AdminProfile'])->name('setting.admin.profile');
+    Route::put('/setting/profile', [HomeController::class, 'AdminUpdateProfile'])->name('setting.admin.updateProfile');
+    Route::put('/setting/update-password', [HomeController::class, 'updatePassword'])->name('setting.admin.updatePassword');
+    Route::put('/setting/update-user-image', [HomeController::class, 'updateUserImage'])->name('setting.admin.updateUserImage');
+    
+
+    Route::put('/setting/update-company', [HomeController::class, 'AdminUpdateCompany'])->name('setting.admin.updateCompany');
+
+    Route::get('/setting/company', [HomeController::class, 'AdminCompany'])->name('setting.admin.company');
+    Route::put('/setting/company', [HomeController::class, 'AdminUpdateCompany'])->name('setting.admin.updateCompany');
+    Route::get('/setting/backup', [HomeController::class, 'AdminBackup'])->name('setting.admin.backup');
+    Route::post('/setting/backup', [HomeController::class, 'AdminBackupStore'])->name('setting.admin.backup.store');
+    Route::get('/setting/logs', [HomeController::class, 'AdminLogs'])->name('setting.admin.logs');
+
+    
     // Profile page Route
     Route::get('/admin/profile', [HomeController::class, 'AdminProfile'])->name('admin.profile.index');
     // Profile update Route

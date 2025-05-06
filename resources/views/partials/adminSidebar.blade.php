@@ -98,7 +98,7 @@
 
 <!-- Nav Item - Tables -->
 <li class="nav-item">
-    <a class="nav-link" href="tables.html">
+    <a class="nav-link" href="{{ route('setting.admin') }}">
         <i class="fas fa-fw fa-cogs"></i>
         <span>Setting</span></a>
 </li>
