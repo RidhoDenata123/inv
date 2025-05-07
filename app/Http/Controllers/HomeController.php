@@ -83,7 +83,7 @@ class HomeController extends Controller
         $user->save();
 
         // Redirect with flash message
-        return redirect()->route('setting.admin')->with('success', 'Profile updated successfully!');
+        return redirect()->back()->with('success', 'Profile updated successfully!')->with('activeTab', 'myProfile');
     }
 
     // Admin Update Profile Image
@@ -105,7 +105,7 @@ class HomeController extends Controller
         $user->user_img = $path;
         $user->save();
 
-        return redirect()->back()->with('success', 'Profile picture updated successfully!');
+        return redirect()->back()->with('success', 'Profile picture updated successfully!')->with('activeTab', 'myProfile');
     }
 
     // Admin Update update password
@@ -121,22 +121,27 @@ class HomeController extends Controller
 
         // Periksa apakah password saat ini cocok
         if (!Hash::check($request->current_password, $user->password)) {
-            return redirect()->back()->with('error', 'The current password is incorrect.');
+
+            return redirect()->back()->with('error', 'The current password is incorrect.')->with('activeTab', 'myPassword');
         }
         // Periksa apakah password baru sama dengan konfirmasi password
         if ($request->new_password !== $request->new_password_confirmation) {
-            return redirect()->back()->with('error', 'The new password and confirmation password do not match.');
+          
+            return redirect()->back()->with('error', 'The new password and confirmation password do not match.')->with('activeTab', 'myPassword');
+            
         }
         // Periksa apakah password baru sama dengan password lama
         if (Hash::check($request->new_password, $user->password)) {
-            return redirect()->back()->with('error', 'The new password cannot be the same as the current password.');
+
+            return redirect()->back()->with('error', 'The new password cannot be the same as the current password.')->with('activeTab', 'myPassword');
         }
 
         // Perbarui password
         $user->password = bcrypt($request->new_password);
         $user->save();
 
-        return redirect()->back()->with('success', 'Password updated successfully!');
+
+        return redirect()->back()->with('success', 'Password updated successfully!')->with('activeTab', 'myPassword');
     }
 
 
@@ -162,31 +167,39 @@ class HomeController extends Controller
         $userCompany->company_description = $request->company_description;
         $userCompany->company_address = $request->company_address;
         $userCompany->company_email = $request->company_email;
-
         $userCompany->company_phone = $request->company_phone;
         $userCompany->company_fax = $request->company_fax;
         $userCompany->company_website = $request->company_website;
-       
         $userCompany->company_currency = $request->company_currency;
         $userCompany->company_bank_account = $request->company_bank_account;
 
-        // Handle company_img upload
-        if ($request->hasFile('company_img')) {
-            // Delete old company_img if exists
-            if ($userCompany->company_img && Storage::exists('public/' . $userCompany->company_img)) {
-                Storage::delete('public/' . $userCompany->company_img);
-            }
-
-            // Store new company_img
-            $path = $request->file('company_img')->store('company_img', 'public');
-            $userCompany->company_img = $path;
-        }
-
         $userCompany->save();
 
-        return redirect()->back()->with('success', 'Company details updated successfully!');
+
+        return redirect()->back()->with('success', 'Company details updated successfully!')->with('activeTab', 'companyProfile');
     }
 
+    //change company img
+    public function updateCompanyImage(Request $request)
+    {
+        $request->validate([
+            'company_img' => 'required|image|mimes:jpg,jpeg,png|max:2048', // Validasi file
+        ]);
 
+        $userCompany = UserCompany::findOrFail(auth()->user()->company_id);
+
+        // Hapus gambar lama jika ada
+        if ($userCompany->company_img && Storage::exists('public/' . $userCompany->company_img)) {
+            Storage::delete('public/' . $userCompany->company_img);
+        }
+
+        // Simpan gambar baru
+        $path = $request->file('company_img')->store('company_img', 'public');
+        $userCompany->company_img = $path;
+        $userCompany->save();
+
+        
+        return redirect()->back()->with('success', 'Company logo updated successfully!')->with('activeTab', 'companyProfile');
+    }
   
 }

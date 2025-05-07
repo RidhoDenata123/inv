@@ -46,14 +46,15 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="invoice-title">
-                            <h4 class="float-right font-size-15">INVOICE #{{ $dispatchingHeader->dispatching_header_id }} </h4>
+                            
+                            <h4 class="float-right font-size-15">DELIVERY #{{ $dispatchingHeader->dispatching_header_id }} </h4>
                             <div class="mb-4">
-                                <h2 class="mb-1 text-muted">MY COMPANY NAME</h2>
+                                <h2 class="mb-1 text-muted">{{ $userCompany->company_name }}</h2>
                             </div>
                             <div class="text-muted">
-                                <p class="mb-1">3184 Spruce Drive Pittsburgh, PA 15201</p>
-                                <p class="mb-1"><i class="fas fa-envelope"></i> xyz@987.com</p>
-                                <p><i class="fas fa-phone"></i> 012-345-6789</p>
+                                <p class="mb-1">{{ $userCompany->company_address }}</p>
+                                <p class="mb-1"><i class="fas fa-envelope"></i> {{ $userCompany->company_email }}</p>
+                                <p><i class="fas fa-phone"></i> {{ $userCompany->company_phone }}</p>
                             </div>
                         </div>
 

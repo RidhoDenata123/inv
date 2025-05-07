@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
@@ -10,6 +10,8 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ReceivingController;
 use App\Http\Controllers\DispatchingController;
+use App\Http\Controllers\ReportController;
+
 
 
 Route::get('/', function () {
@@ -18,7 +20,8 @@ Route::get('/', function () {
 
 Auth::routes();
 
-
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 
 
 
@@ -59,11 +62,8 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     
 
     Route::put('/setting/update-company', [HomeController::class, 'AdminUpdateCompany'])->name('setting.admin.updateCompany');
-
-    Route::get('/setting/company', [HomeController::class, 'AdminCompany'])->name('setting.admin.company');
-    Route::put('/setting/company', [HomeController::class, 'AdminUpdateCompany'])->name('setting.admin.updateCompany');
-    Route::get('/setting/backup', [HomeController::class, 'AdminBackup'])->name('setting.admin.backup');
-    Route::post('/setting/backup', [HomeController::class, 'AdminBackupStore'])->name('setting.admin.backup.store');
+    Route::put('/setting/update-company-image', [HomeController::class, 'updateCompanyImage'])->name('setting.admin.updateCompanyImage');
+   
     Route::get('/setting/logs', [HomeController::class, 'AdminLogs'])->name('setting.admin.logs');
 
     
@@ -257,6 +257,11 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::get('/dispatching/delivery-note/{id}', [DispatchingController::class, 'printDeliveryNote'])->name('dispatching.deliveryNote');
 
 
+
+//ALL REPORT ROUTE
+
+//Stock Report
+Route::get('/reports/stock', [ReportController::class, 'stockReport'])->name('reports.stock');
 
 });
 

@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Unit;
 use App\Models\Supplier;
 use App\Models\Customer;
+use App\Models\UserCompany;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -232,8 +233,8 @@ class DispatchingController extends Controller
         return redirect()->back()->with('success', 'Dispatching detail confirmed successfully!');
     }
 
-        // Get product unit by product ID
-        public function getUnit($id)
+    // Get product unit by product ID
+    public function getUnit($id)
     {
         // Cari produk berdasarkan product_id
         $product = Product::with('unit')->where('product_id', $id)->first();
@@ -251,15 +252,23 @@ class DispatchingController extends Controller
         $dispatchingHeader = DispatchingHeader::findOrFail($id);
         $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)->get();
     
-        return view('dispatching.invoice', compact('dispatchingHeader', 'dispatchingDetails'));
+        // Ambil data perusahaan berdasarkan company_id pengguna yang sedang login
+        $userCompany = UserCompany::where('company_id', auth()->user()->company_id)->first();
+    
+        return view('dispatching.invoice', compact('dispatchingHeader', 'dispatchingDetails', 'userCompany'));
     }
+    
     // Print delivery note
     public function printDeliveryNote($id)
     {
         $dispatchingHeader = DispatchingHeader::findOrFail($id);
         $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)->get();
-
-        return view('dispatching.delivery-note', compact('dispatchingHeader', 'dispatchingDetails'));
+        
+        // Ambil data perusahaan berdasarkan company_id pengguna yang sedang login
+        $userCompany = UserCompany::where('company_id', auth()->user()->company_id)->first();
+        
+        return view('dispatching.delivery-note', compact('dispatchingHeader', 'dispatchingDetails', 'userCompany'));
     }
 
 }
+

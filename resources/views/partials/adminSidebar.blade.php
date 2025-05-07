@@ -28,12 +28,12 @@
 
 <!-- Nav Item - Data Master Collapse Menu -->
 <li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#MasterData"
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#masterCollapsePages"
         aria-expanded="true" aria-controls="MasterData">
         <i class="fas fa-fw fa-coins"></i>
         <span>Master Data</span>
     </a>
-    <div id="MasterData" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+    <div id="masterCollapsePages" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Master Data :</h6>
             <a class="collapse-item" href="{{ route('products.index') }}">Product</a>
@@ -49,12 +49,12 @@
 
 <!-- Nav Item - Transaction Collapse Menu -->
 <li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#Transaction"
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#transactionsCollapsePages"
         aria-expanded="true" aria-controls="Transaction">
         <i class="fas fa-fw fa-dollar-sign"></i>
         <span>Transaction</span>
     </a>
-    <div id="Transaction" class="collapse" aria-labelledby="headingUtilities"
+    <div id="transactionsCollapsePages" class="collapse" aria-labelledby="headingUtilities"
         data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Transaction :</h6>
@@ -75,12 +75,12 @@
 
 <!-- Nav Item - Pages Collapse Menu -->
 <li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#CollapsePages"
         aria-expanded="true" aria-controls="collapsePages">
         <i class="fas fa-fw fa-history"></i>
         <span>History</span>
     </a>
-    <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+    <div id="CollapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Transaction History :</h6>
             <a class="collapse-item" href="">Receiving</a>
@@ -89,12 +89,35 @@
     </div>
 </li>
 
-<!-- Nav Item - Charts -->
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reportCollapsePages"
+        aria-expanded="true" aria-controls="collapsePages">
+        <i class="far fa-fw fa-file-alt"></i>
+        <span>Report</span>
+    </a>
+    <div id="reportCollapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Reports :</h6>
+            <a class="collapse-item" href="{{ route('reports.stock') }}">Stock Report</a>
+            <a class="collapse-item" href="">Stock Mutation Report</a>
+            <a class="collapse-item" href="">Minimum Stock Report</a>
+            <a class="collapse-item" href="">Receiving Report</a>
+            <a class="collapse-item" href="">Dispatching Report</a>
+            <a class="collapse-item" href="">Stock Adjustment Report</a>
+            <a class="collapse-item" href="">Stock Card Report</a>
+            <a class="collapse-item" href="">Inventory Report</a>
+            <a class="collapse-item" href="">Laporan Nilai Persediaan</a>
+            <a class="collapse-item" href="">Expired Date Report</a>
+        </div>
+    </div>
+</li>
+
+<!-- Nav Item - Charts 
 <li class="nav-item">
     <a class="nav-link" href="">
         <i class="far fa-fw fa-file-alt"></i>
         <span>Report</span></a>
-</li>
+</li>-->
 
 <!-- Nav Item - Tables -->
 <li class="nav-item">
