@@ -9,6 +9,8 @@ use App\Models\Unit;
 use App\Models\Supplier;
 use App\Models\Customer;
 use App\Models\UserCompany;
+use App\Models\StockChangeLog;
+
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -184,54 +186,103 @@ class DispatchingController extends Controller
     // Confirm all pending dispatching details
     public function confirmAll($id)
     {
+        // Ambil Dispatching Header berdasarkan ID
         $dispatchingHeader = DispatchingHeader::where('dispatching_header_id', $id)->firstOrFail();
-
+    
+        // Perbarui status Dispatching Header
         $dispatchingHeader->update([
             'dispatching_header_status' => 'Confirmed',
             'confirmed_at' => now(),
             'confirmed_by' => Auth::user()->id,
         ]);
-
+    
+        // Ambil semua Dispatching Details dengan status 'Pending'
         $pendingDetails = DispatchingDetail::where('dispatching_header_id', $id)
             ->where('dispatching_detail_status', 'Pending')
             ->get();
-
+    
         foreach ($pendingDetails as $detail) {
+            // Ambil produk terkait
+            $product = Product::where('product_id', $detail->product_id)->firstOrFail();
+    
+            // Hitung nilai untuk stock_change_logs
+            $qtyBefore = $product->product_qty;
+            $qtyChanged = $detail->dispatching_qty;
+            $qtyAfter = $qtyBefore - $qtyChanged;
+    
+            // Perbarui product_qty di tabel products
+            $product->update([
+                'product_qty' => $qtyAfter,
+            ]);
+    
+            // Perbarui dispatching_detail_status di tabel dispatching_details
             $detail->update([
                 'dispatching_detail_status' => 'Confirmed',
                 'confirmed_at' => now(),
                 'confirmed_by' => Auth::user()->id,
             ]);
-
-            $product = Product::where('product_id', $detail->product_id)->first();
-            if ($product) {
-                $product->update([
-                    'product_qty' => $product->product_qty - $detail->dispatching_qty,
-                ]);
-            }
+    
+            // Tambahkan data ke tabel stock_change_logs
+            StockChangeLog::create([
+                'stock_change_log_id' => uniqid('SC'),
+                'stock_change_type' => 'Dispatching', // Tipe perubahan
+                'product_id' => $product->product_id,
+                'reference_id' => $detail->dispatching_detail_id,
+                'qty_before' => $qtyBefore,
+                'qty_changed' => -$qtyChanged, // Negatif karena stok berkurang
+                'qty_after' => $qtyAfter,
+                'changed_at' => now(),
+                'changed_by' => Auth::user()->id,
+                'change_note' => 'Dispatching product (bulk confirmation)', // Catatan perubahan
+            ]);
         }
-
+    
+        // Redirect kembali ke halaman sebelumnya dengan pesan sukses
         return redirect()->back()->with('success', 'All pending dispatching details confirmed successfully!');
     }
+
 
     // Confirm dispatching detail by ID
     public function confirmDetail($id)
     {
+        // Ambil Dispatching Detail berdasarkan ID
         $dispatchingDetail = DispatchingDetail::where('dispatching_detail_id', $id)->firstOrFail();
 
+        // Ambil produk terkait
+        $product = Product::where('product_id', $dispatchingDetail->product_id)->firstOrFail();
+
+        // Hitung nilai untuk stock_change_logs
+        $qtyBefore = $product->product_qty;
+        $qtyChanged = $dispatchingDetail->dispatching_qty;
+        $qtyAfter = $qtyBefore - $qtyChanged;
+
+        // Perbarui product_qty di tabel products
+        $product->update([
+            'product_qty' => $qtyAfter,
+        ]);
+
+        // Perbarui dispatching_detail_status di tabel dispatching_details
         $dispatchingDetail->update([
             'dispatching_detail_status' => 'Confirmed',
             'confirmed_at' => now(),
             'confirmed_by' => Auth::user()->id,
         ]);
 
-        $product = Product::where('product_id', $dispatchingDetail->product_id)->first();
-        if ($product) {
-            $product->update([
-                'product_qty' => $product->product_qty - $dispatchingDetail->dispatching_qty,
-            ]);
-        }
+        // Tambahkan data ke tabel stock_change_logs
+        StockChangeLog::create([
+            'stock_change_log_id' => uniqid('SC'),
+            'stock_change_type' => 'Dispatching', // Tipe perubahan
+            'product_id' => $product->product_id,
+            'reference_id' => $dispatchingDetail->dispatching_detail_id,
+            'qty_before' => $qtyBefore,
+            'qty_changed' => -$qtyChanged, // Negatif karena stok berkurang
+            'qty_after' => $qtyAfter,
+            'changed_at' => now(),
+            'changed_by' => Auth::user()->id,
+            'change_note' => 'Dispatching product', // Catatan perubahan
+        ]);
 
+        // Redirect kembali ke halaman detail dengan pesan sukses
         return redirect()->back()->with('success', 'Dispatching detail confirmed successfully!');
     }
 

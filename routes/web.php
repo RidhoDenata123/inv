@@ -93,6 +93,9 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Product change image Route
     Route::put('/products/{id}/change-image', [ProductController::class, 'changeImage'])->name('products.change-image');
 
+     // Product stock adjustment Route
+    Route::put('/products/{id}/adjust-stock', [ProductController::class, 'adjustStock'])->name('products.adjustStock');
+
 // ALL CATEGORY ROUTE
 
     // Category page Route

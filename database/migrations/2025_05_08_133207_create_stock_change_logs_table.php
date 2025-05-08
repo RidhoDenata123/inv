@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('stock_change_log_id')->primary();
             $table->string('stock_change_type');
             $table->string('product_id');
-            $table->string('reference_id');
+            $table->string('reference_id')->nullable();
             $table->integer('qty_before')->default(0);
             $table->integer('qty_changed')->default(0);
             $table->integer('qty_after')->default(0);

@@ -60,4 +60,9 @@ class User extends Authenticatable
             get: fn ($value) =>  ["user", "admin", "manager"][$value],
         );
     }
+    //
+    public function stockChanges()
+    {
+        return $this->hasMany(StockChangeLog::class, 'changed_by', 'id');
+    }
 }

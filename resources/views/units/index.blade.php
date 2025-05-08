@@ -286,114 +286,114 @@
 <!-- Scripts -->
 @section('scripts')
 
-<!-- Page level plugins -->
-<script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <!-- Page level plugins -->
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
-<!-- Datatable -->
-<script>
+    <!-- Datatable -->
+    <script>
+            $(document).ready(function() {
+                $('#unitTable').DataTable({
+                    "paging": false, // Nonaktifkan pagination bawaan DataTables
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": false,
+                    "autoWidth": false,
+                    "responsive": true,
+                });
+            });
+
         $(document).ready(function() {
-            $('#unitTable').DataTable({
-                "paging": false, // Nonaktifkan pagination bawaan DataTables
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": false,
-                "autoWidth": false,
-                "responsive": true,
+            // Tampilkan SweetAlert jika ada session flash message
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '{{ session('success') }}',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: '{{ session('error') }}',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            // Generate random unit_id when the modal is shown
+            $('#addUnitModal').on('show.bs.modal', function() {
+                const randomId = 'UNT-' + Math.floor(100000 + Math.random() * 900000); // Generate random ID
+                $('#addUnitId').val(randomId); // Set the value of unit_id input
+            });
+
+            // Handle click event on "SHOW" button
+            $('.btn-show').on('click', function() {
+                const unitId = $(this).data('unit_id'); // Ambil ID unit dari tombol
+
+                // Lakukan permintaan AJAX ke server
+                $.ajax({
+                    url: `/units/${unitId}`, // URL rute Laravel untuk mendapatkan detail unit
+                    method: 'GET',
+                    success: function(data) {
+                        // Isi modal dengan data unit
+                        $('#detailUnitId').val(data.unit_id);
+                        $('#detailUnitName').val(data.unit_name);
+                        $('#detailUnitDescription').val(data.unit_description);
+
+                        // Tampilkan modal
+                        $('#unitDetailModal').modal('show');
+                    },
+                    error: function(xhr) {
+                        alert('Failed to fetch unit details. Please try again.');
+                    }
+                });
+            });
+
+            // Handle click event on "EDIT" button
+            $('.btn-edit').on('click', function() {
+                const unitId = $(this).data('unit_id'); // Ambil ID unit dari tombol
+
+                // Lakukan permintaan AJAX ke server
+                $.ajax({
+                    url: `/units/${unitId}`, // URL rute Laravel untuk mendapatkan detail unit
+                    method: 'GET',
+                    success: function(data) {
+                        // Isi modal dengan data unit
+                        $('#editUnitId').val(data.unit_id);
+                        $('#editUnitName').val(data.unit_name);
+                        $('#editUnitDescription').val(data.unit_description);
+
+                        // Set action URL untuk form edit
+                        $('#editUnitForm').attr('action', `/units/${unitId}`);
+
+                        // Tampilkan modal
+                        $('#editUnitModal').modal('show');
+                    },
+                    error: function(xhr) {
+                        alert('Failed to fetch unit details. Please try again.');
+                    }
+                });
+            });
+
+            // Handle click event on "DELETE" button
+            $('.btn-delete').on('click', function() {
+                const unitId = $(this).data('unit_id'); // Ambil ID unit dari tombol
+                const unitName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama unit dari tabel
+
+                // Isi modal dengan data unit
+                $('#deleteUnitId').text(unitId);
+                $('#deleteUnitName').text(unitName);
+
+                // Set action URL untuk form delete
+                const deleteUrl = `/units/${unitId}`;
+                $('#deleteUnitForm').attr('action', deleteUrl);
             });
         });
-
-    $(document).ready(function() {
-        // Tampilkan SweetAlert jika ada session flash message
-        @if (session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: '{{ session('success') }}',
-                confirmButtonText: 'OK'
-            });
-        @endif
-
-        @if (session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('error') }}',
-                confirmButtonText: 'OK'
-            });
-        @endif
-
-        // Generate random unit_id when the modal is shown
-        $('#addUnitModal').on('show.bs.modal', function() {
-            const randomId = 'UNT-' + Math.floor(100000 + Math.random() * 900000); // Generate random ID
-            $('#addUnitId').val(randomId); // Set the value of unit_id input
-        });
-
-        // Handle click event on "SHOW" button
-        $('.btn-show').on('click', function() {
-            const unitId = $(this).data('unit_id'); // Ambil ID unit dari tombol
-
-            // Lakukan permintaan AJAX ke server
-            $.ajax({
-                url: `/units/${unitId}`, // URL rute Laravel untuk mendapatkan detail unit
-                method: 'GET',
-                success: function(data) {
-                    // Isi modal dengan data unit
-                    $('#detailUnitId').val(data.unit_id);
-                    $('#detailUnitName').val(data.unit_name);
-                    $('#detailUnitDescription').val(data.unit_description);
-
-                    // Tampilkan modal
-                    $('#unitDetailModal').modal('show');
-                },
-                error: function(xhr) {
-                    alert('Failed to fetch unit details. Please try again.');
-                }
-            });
-        });
-
-        // Handle click event on "EDIT" button
-        $('.btn-edit').on('click', function() {
-            const unitId = $(this).data('unit_id'); // Ambil ID unit dari tombol
-
-            // Lakukan permintaan AJAX ke server
-            $.ajax({
-                url: `/units/${unitId}`, // URL rute Laravel untuk mendapatkan detail unit
-                method: 'GET',
-                success: function(data) {
-                    // Isi modal dengan data unit
-                    $('#editUnitId').val(data.unit_id);
-                    $('#editUnitName').val(data.unit_name);
-                    $('#editUnitDescription').val(data.unit_description);
-
-                    // Set action URL untuk form edit
-                    $('#editUnitForm').attr('action', `/units/${unitId}`);
-
-                    // Tampilkan modal
-                    $('#editUnitModal').modal('show');
-                },
-                error: function(xhr) {
-                    alert('Failed to fetch unit details. Please try again.');
-                }
-            });
-        });
-
-        // Handle click event on "DELETE" button
-        $('.btn-delete').on('click', function() {
-            const unitId = $(this).data('unit_id'); // Ambil ID unit dari tombol
-            const unitName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama unit dari tabel
-
-            // Isi modal dengan data unit
-            $('#deleteUnitId').text(unitId);
-            $('#deleteUnitName').text(unitName);
-
-            // Set action URL untuk form delete
-            const deleteUrl = `/units/${unitId}`;
-            $('#deleteUnitForm').attr('action', deleteUrl);
-        });
-    });
-</script>
+    </script>
 @endsection
 
 @endsection

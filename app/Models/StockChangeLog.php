@@ -56,4 +56,5 @@ class StockChangeLog extends Model
     {
         return $this->belongsTo(Supplier::class, 'supplier_id', 'supplier_id');
     }
+    
 }

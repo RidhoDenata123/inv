@@ -114,11 +114,24 @@
                                                 <i class="fas fa-search"></i>
                                                 </a>
 
+
+                                                <!-- Tombol Stock Adjustment -->
+                                                <button type="button" 
+                                                        class="btn btn-sm btn-warning btn-stock-adjustment mr-2" 
+                                                        data-product_id="{{ $product->product_id }}" 
+                                                        data-toggle="modal" 
+                                                        data-target="#stockAdjustmentModal">
+                                                    <i class="fas fa-tools"></i>
+                                                </button>
+
+
+
                                                 <!-- Dropdown Edit -->
                                                 <div class="btn-group mr-2">
                                                     <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <i class='fas fa-edit'></i>
                                                     </button>
+                                                    
                                                     <div class="dropdown-menu">
                                                         <a href="#" 
                                                         class="dropdown-item btn-edit" 
@@ -752,6 +765,50 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Modal for Stock Adjustment -->
+                <div class="modal fade" id="stockAdjustmentModal" tabindex="-1" role="dialog" aria-labelledby="stockAdjustmentModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <form id="stockAdjustmentForm" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="stockAdjustmentModalLabel">Stock Adjustment</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="adjust_product_id" class="font-weight-bold">Product ID:</label>
+                                        <input type="text" class="form-control" id="adjust_product_id" name="product_id" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adjust_product_name" class="font-weight-bold">Product Name:</label>
+                                        <input type="text" class="form-control" id="adjust_product_name" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adjust_qty_before" class="font-weight-bold">Current Quantity:</label>
+                                        <input type="number" class="form-control" id="adjust_qty_before" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adjust_qty_changed" class="font-weight-bold">Adjustment Quantity:</label>
+                                        <input type="number" class="form-control" id="adjust_qty_changed" name="qty_changed" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="adjust_note" class="font-weight-bold">Adjustment Note:</label>
+                                        <textarea class="form-control" id="adjust_note" name="change_note" rows="3" placeholder="Enter adjustment reason" required></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Submit Adjustment</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                   
             </div>
                 <!-- /.container-fluid -->
@@ -1004,6 +1061,38 @@
                                 }
                             });
                         });
+
+                         // Handle click event on "Stock Adjustment" button
+        $('.btn-stock-adjustment').on('click', function() {
+            const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
+
+            // Lakukan permintaan AJAX ke server untuk mendapatkan data produk
+            $.ajax({
+                url: `/products/${productId}/detail`, // URL rute Laravel untuk mendapatkan detail produk
+                method: 'GET',
+                success: function(data) {
+                    // Isi modal dengan data produk
+                    $('#adjust_product_id').val(data.product_id);
+                    $('#adjust_product_name').val(data.product_name);
+                    $('#adjust_qty_before').val(data.product_qty);
+
+                    // Set action URL untuk form stock adjustment
+                    const adjustUrl = `/products/${productId}/adjust-stock`;
+                    $('#stockAdjustmentForm').attr('action', adjustUrl);
+
+                    // Tampilkan modal
+                    $('#stockAdjustmentModal').modal('show');
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to fetch product details. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
 
                         // Add the following code if you want the name of the file appear on select
                         $(".custom-file-input").on("change", function() {

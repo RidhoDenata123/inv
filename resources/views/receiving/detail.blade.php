@@ -145,10 +145,10 @@
 
                                             <!-- Tombol Confirm -->
                                             <button type="button" 
-                                                    class="btn btn-sm btn-success btn-confirm mr-2" 
-                                                    data-receiving_detail_id="{{ $detail->receiving_detail_id }}" 
-                                                    data-toggle="modal" 
-                                                    data-target="#confirmDetailModal">
+                                                class="btn btn-sm btn-success btn-confirm mr-2" 
+                                                data-receiving_detail_id="{{ $detail->receiving_detail_id }}" 
+                                                data-toggle="modal" 
+                                                data-target="#confirmDetailModal">
                                                 <i class="fas fa-check"></i>
                                             </button>
 

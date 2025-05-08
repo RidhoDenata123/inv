@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Unit;
 use App\Models\Supplier;
+use App\Models\StockChangeLog;
 
 //import return type View
 use Illuminate\View\View;
@@ -244,59 +245,100 @@ class ReceivingController extends Controller
             $receivingHeader->receiving_document = $filePath;
         }
     
-        // Update status header dan detail
+        // Update status header
         $receivingHeader->update([
             'receiving_header_status' => 'Confirmed',
             'confirmed_at' => now(),
             'confirmed_by' => Auth::user()->id,
         ]);
     
+        // Ambil semua Receiving Details dengan status 'Pending'
         $pendingDetails = ReceivingDetail::where('receiving_header_id', $id)
             ->where('receiving_detail_status', 'Pending')
             ->get();
     
         foreach ($pendingDetails as $detail) {
+            // Ambil produk terkait
+            $product = Product::findOrFail($detail->product_id);
+    
+            // Hitung nilai untuk stock_change_logs
+            $qtyBefore = $product->product_qty;
+            $qtyChanged = $detail->receiving_qty;
+            $qtyAfter = $qtyBefore + $qtyChanged;
+    
+            // Perbarui product_qty di tabel products
+            $product->update([
+                'product_qty' => $qtyAfter,
+            ]);
+    
+            // Perbarui receiving_detail_status di tabel receiving_details
             $detail->update([
                 'receiving_detail_status' => 'Confirmed',
                 'confirmed_at' => now(),
                 'confirmed_by' => Auth::user()->id,
             ]);
     
-            // Update inventory (optional, jika ada logika untuk menambah stok)
-            $product = Product::where('product_id', $detail->product_id)->first();
-            if ($product) {
-                $product->update([
-                    'product_qty' => $product->product_qty + $detail->receiving_qty,
-                ]);
-            }
+            // Tambahkan data ke tabel stock_change_logs
+            StockChangeLog::create([
+                'stock_change_log_id' => uniqid('SC'),
+                'stock_change_type' => 'Receiving', // Tipe perubahan
+                'product_id' => $product->product_id,
+                'reference_id' => $detail->receiving_detail_id,
+                'qty_before' => $qtyBefore,
+                'qty_changed' => $qtyChanged,
+                'qty_after' => $qtyAfter,
+                'changed_at' => now(),
+                'changed_by' => Auth::user()->id,
+                'change_note' => 'Receiving product (bulk confirmation)', // Catatan perubahan
+            ]);
         }
     
         return redirect()->back()->with('success', 'All pending receiving details confirmed successfully!');
     }
 
+
     //confirm receiving detail per id
     public function confirmDetail($id)
     {
         // Ambil Receiving Detail berdasarkan ID
-        $receivingDetail = ReceivingDetail::where('receiving_detail_id', $id)->firstOrFail();
+        $receivingDetail = ReceivingDetail::findOrFail($id);
     
-        // Update status Receiving Detail menjadi Confirmed, isi confirmed_at, dan confirmed_by
-        $receivingDetail->update([
-            'receiving_detail_status' => 'Confirmed',
-            'confirmed_at' => now(), // Isi tanggal dan waktu konfirmasi
-            'confirmed_by' => Auth::user()->id, // Isi dengan ID pengguna yang sedang login
+        // Ambil produk terkait
+        $product = Product::findOrFail($receivingDetail->product_id);
+    
+        // Hitung nilai untuk stock_change_logs
+        $qtyBefore = $product->product_qty;
+        $qtyChanged = $receivingDetail->receiving_qty;
+        $qtyAfter = $qtyBefore + $qtyChanged;
+    
+        // Perbarui product_qty di tabel products
+        $product->update([
+            'product_qty' => $qtyAfter,
         ]);
     
-        // Update product_qty pada tabel products
-        $product = Product::where('product_id', $receivingDetail->product_id)->first();
-        if ($product) {
-            $product->update([
-                'product_qty' => $product->product_qty + $receivingDetail->receiving_qty,
-            ]);
-        }
+        // Perbarui receiving_detail_status di tabel receiving_details
+        $receivingDetail->update([
+            'receiving_detail_status' => 'Confirmed',
+            'confirmed_at' => now(),
+            'confirmed_by' => auth()->user()->id,
+        ]);
     
-        // Redirect dengan pesan sukses
-        return redirect()->back()->with('success', 'Receiving detail confirmed successfully!');
+        // Tambahkan data ke tabel stock_change_logs
+        StockChangeLog::create([
+            'stock_change_log_id' => uniqid('SC'),
+            'stock_change_type' => 'Receiving', // Tipe perubahan
+            'product_id' => $product->product_id,
+            'reference_id' => $receivingDetail->receiving_detail_id,
+            'qty_before' => $qtyBefore,
+            'qty_changed' => $qtyChanged,
+            'qty_after' => $qtyAfter,
+            'changed_at' => now(),
+            'changed_by' => auth()->user()->id,
+            'change_note' => 'Receiving product', // Catatan perubahan
+        ]);
+    
+         // Redirect dengan pesan sukses
+         return redirect()->back()->with('success', 'Receiving detail confirmed successfully!');
     }
 
 }

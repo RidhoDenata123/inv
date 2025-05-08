@@ -6,7 +6,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Unit;  
-use App\Models\Supplier;  
+use App\Models\Supplier;
+use App\Models\StockChangeLog;  
 
 //import return type View
 use Illuminate\View\View;
@@ -201,5 +202,45 @@ class ProductController extends Controller
         // Jika produk atau unit tidak ditemukan
         return response()->json(['unit_name' => 'No unit found'], 404);
     }
+
+    //Product Stock Adjustment
+    public function adjustStock(Request $request, $id)
+    {
+        $request->validate([
+            'qty_changed' => 'required|integer',
+            'change_note' => 'required|string|max:255',
+        ]);
+
+        // Ambil produk berdasarkan ID
+        $product = Product::findOrFail($id);
+
+        // Hitung nilai untuk stock_change_logs
+        $qtyBefore = $product->product_qty;
+        $qtyChanged = $request->qty_changed;
+        $qtyAfter = $qtyBefore + $qtyChanged;
+
+        // Perbarui product_qty di tabel products
+        $product->update([
+            'product_qty' => $qtyAfter,
+        ]);
+
+        // Tambahkan data ke tabel stock_change_logs
+        StockChangeLog::create([
+            'stock_change_log_id' => uniqid('SC'),
+            'stock_change_type' => 'Adjustment', // Tipe perubahan
+            'reference_id' => '', // Tipe perubahan
+            'product_id' => $product->product_id,
+            'qty_before' => $qtyBefore,
+            'qty_changed' => $qtyChanged,
+            'qty_after' => $qtyAfter,
+            'changed_at' => now(),
+            'changed_by' => auth()->user()->id,
+            'change_note' => $request->change_note,
+        ]);
+
+        // Redirect kembali dengan pesan sukses
+        return redirect()->back()->with('success', 'Stock adjusted successfully!');
+    }
+
 
 }
