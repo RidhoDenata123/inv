@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('stock_change_logs', function (Blueprint $table) {
             $table->string('stock_change_log_id')->primary();
-            $table->string('stock_change_type ');
+            $table->string('stock_change_type');
             $table->string('product_id');
             $table->string('reference_id');
             $table->integer('qty_before')->default(0);
