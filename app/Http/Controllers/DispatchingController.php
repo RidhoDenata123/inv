@@ -105,7 +105,9 @@ class DispatchingController extends Controller
     public function showById($id)
     {
         $dispatchingHeader = DispatchingHeader::where('dispatching_header_id', $id)->firstOrFail();
-        $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)->get();
+        $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)->paginate(10);
+
+
         $products = Product::where('product_status', 'Active')->get(); // Hanya produk dengan status Active
         $categories = Category::all();
         $units = Unit::all();

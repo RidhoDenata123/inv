@@ -19,6 +19,13 @@
         .bootstrap-select .dropdown-menu {
             font-size: 1rem; /* Ukuran font dropdown */
         }
+        
+        .pagination {
+            margin: 0; /* Hilangkan margin default */
+        }
+        .table-responsive .pagination {
+            justify-content: flex-end; /* Posisikan pagination di kanan */
+        }
     </style>
 
 
@@ -113,7 +120,7 @@
                     <tbody class="text-center">
                         @forelse ($dispatchingDetails as $detail)
                             <tr>
-                                <td>{{ $loop->iteration }}.</td>
+                            <td>{{ ($dispatchingDetails->currentPage() - 1) * $dispatchingDetails->perPage() + $loop->iteration }}.</td>
                                 <td>{{ $detail->dispatching_detail_id }}</td>
                                 <td>
                                     <a href="#" 
@@ -195,6 +202,21 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                    <!-- Info Jumlah Data dan Pagination -->
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <!-- Info Jumlah Data -->
+                        <div class="table">
+                            <p class="mb-0">
+                                Showing {{ $dispatchingDetails->firstItem() }} to {{ $dispatchingDetails->lastItem() }} of {{ $dispatchingDetails->total() }} entries
+                            </p>
+                        </div>
+
+                        <!-- Laravel Pagination -->
+                        <div>
+                            {{ $dispatchingDetails->links('pagination::simple-bootstrap-4') }}
+                        </div>
+                    </div>
             </div>
 
             <hr>
@@ -557,11 +579,11 @@
     <script>
         $(document).ready(function() {
             $('#dispatchingDetailTable').DataTable({
-                "paging": true,
+                "paging": false,
                 "lengthChange": true,
                 "searching": true,
                 "ordering": true,
-                "info": true,
+                "info": false,
                 "autoWidth": false,
                 "responsive": true,
             });

@@ -116,17 +116,17 @@
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $detail->product->product_name }}</td>
-                                                <td>{{ number_format($detail->product->selling_price, 2) }}</td>
+                                                <td>Rp.{{ number_format($detail->product->selling_price, 2) }}</td>
                                                 <td>{{ $detail->dispatching_qty }}</td>
                                                 <td>{{ $detail->product->unit->unit_name }}</td>
-                                                <td class="text-right">Rp {{ number_format($rowTotal, 2) }}</td>
+                                                <td class="text-right">Rp.{{ number_format($rowTotal, 2) }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <td colspan="5" class="text-right"><strong>Total :</strong></td>
-                                            <td class="text-right"><strong>Rp {{ number_format($grandTotal, 2) }}</strong></td>
+                                            <td class="text-right"><strong>Rp.{{ number_format($grandTotal, 2) }}</strong></td>
                                         </tr>
                                     </tfoot>
                                 </table>

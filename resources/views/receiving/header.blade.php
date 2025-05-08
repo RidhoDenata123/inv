@@ -1,5 +1,20 @@
 @extends('layouts.adminApp')
 
+
+@section('styles')
+    <style>
+        .pagination {
+            margin: 0; /* Hilangkan margin default */
+        }
+        .table-responsive .pagination {
+            justify-content: flex-end; /* Posisikan pagination di kanan */
+        }
+        
+    </style>
+
+
+@endsection
+
 @section('content')
 
 
@@ -36,7 +51,7 @@
                     <tbody class="text-center">
                         @forelse ($receiving_headers as $header)
                             <tr>
-                                <td>{{ $loop->iteration }}.</td>
+                                <td>{{ ($receiving_headers->currentPage() - 1) * $receiving_headers->perPage() + $loop->iteration }}.</td>
                                 <td>{{ $header->receiving_header_id }}</td>
                                 <td>{{ $header->receiving_header_name }}</td>
                                 <td>{{ $header->created_at ? \Carbon\Carbon::parse($header->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
@@ -95,7 +110,22 @@
                         @endforelse
                     </tbody>
                 </table>
-                {{ $receiving_headers->links() }}
+
+                    <!-- Info Jumlah Data dan Pagination -->
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <!-- Info Jumlah Data -->
+                        <div class="table">
+                            <p class="mb-0">
+                                Showing {{ $receiving_headers->firstItem() }} to {{ $receiving_headers->lastItem() }} of {{ $receiving_headers->total() }} entries
+                            </p>
+                        </div>
+
+                        <!-- Laravel Pagination -->
+                        <div>
+                            {{ $receiving_headers->links('pagination::simple-bootstrap-4') }}
+                        </div>
+                    </div>
+
             </div>
         </div>
     </div>
@@ -276,11 +306,11 @@
 <script>
     $(document).ready(function() {
         $('#receivingHeaderTable').DataTable({
-            "paging": true,
+            "paging": false,
             "lengthChange": true,
             "searching": true,
             "ordering": true,
-            "info": true,
+            "info": false,
             "autoWidth": false,
             "responsive": true,
         });

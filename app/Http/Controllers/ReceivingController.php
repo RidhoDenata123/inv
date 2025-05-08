@@ -137,15 +137,15 @@ class ReceivingController extends Controller
     {
         // Ambil data Receiving Header berdasarkan ID
         $receivingHeader = ReceivingHeader::where('receiving_header_id', $id)->firstOrFail();
-
-        // Ambil data Receiving Details yang terkait dengan Receiving Header
-        $receivingDetails = ReceivingDetail::where('receiving_header_id', $id)->get();
-
+    
+        // Ambil data Receiving Details dengan pagination
+        $receivingDetails = ReceivingDetail::where('receiving_header_id', $id)->paginate(10);
+    
         $products = Product::all();
         $categories = Category::all();
         $units = Unit::all();
         $suppliers = Supplier::all();
-
+    
         // Tampilkan view detail dengan data Receiving Header, Receiving Details, dan Products
         return view('receiving.detail', compact('receivingHeader', 'receivingDetails', 'products', 'categories', 'units', 'suppliers'));
     }

@@ -19,7 +19,16 @@
         .bootstrap-select .dropdown-menu {
             font-size: 1rem; /* Ukuran font dropdown */
         }
+
+        .pagination {
+            margin: 0; /* Hilangkan margin default */
+        }
+        .table-responsive .pagination {
+            justify-content: flex-end; /* Posisikan pagination di kanan */
+        }
     </style>
+
+    
 
 
     @endsection
@@ -59,7 +68,7 @@
                     <tbody class="text-center">
                         @forelse ($dispatching_headers as $header)
                             <tr>
-                                <td>{{ $loop->iteration }}.</td>
+                                <td>{{ ($dispatching_headers->currentPage() - 1) * $dispatching_headers->perPage() + $loop->iteration }}.</td>
                                 <td>{{ $header->dispatching_header_id }}</td>
                                 <td>{{ $header->dispatching_header_name }}</td>
                                 <td>{{ $header->customer_id ? \App\Models\Customer::find($header->customer_id)->customer_name : 'N/A' }}</td>
@@ -117,7 +126,20 @@
                         @endforelse
                     </tbody>
                 </table>
-                {{ $dispatching_headers->links() }}
+                    <!-- Info Jumlah Data dan Pagination -->
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <!-- Info Jumlah Data -->
+                        <div class="table">
+                            <p class="mb-0">
+                                Showing {{ $dispatching_headers->firstItem() }} to {{ $dispatching_headers->lastItem() }} of {{ $dispatching_headers->total() }} entries
+                            </p>
+                        </div>
+
+                        <!-- Laravel Pagination -->
+                        <div>
+                            {{ $dispatching_headers->links('pagination::simple-bootstrap-4') }}
+                        </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -318,11 +340,11 @@
 <script>
     $(document).ready(function() {
         $('#dispatchingHeaderTable').DataTable({
-            "paging": true,
+            "paging": false,
             "lengthChange": true,
             "searching": true,
             "ordering": true,
-            "info": true,
+            "info": false,
             "autoWidth": false,
             "responsive": true,
         });

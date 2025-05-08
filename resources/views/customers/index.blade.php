@@ -1,5 +1,20 @@
 @extends('layouts.adminApp')
   
+@section('styles')
+    <style>
+        .pagination {
+            margin: 0; /* Hilangkan margin default */
+        }
+        .table-responsive .pagination {
+            justify-content: flex-end; /* Posisikan pagination di kanan */
+        }
+        
+    </style>
+
+
+@endsection
+
+
 @section('content')
 
 @if (session('status'))
@@ -38,7 +53,7 @@
                     <tbody>
                         @forelse ($customers as $customer)
                             <tr>
-                                <td>{{ $loop->iteration }}.</td> <!-- Nomor otomatis -->
+                            <td>{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}.</td> <!-- Nomor otomatis -->
                                 <td>{{ $customer->customer_id }}</td>
                                 <td>{{ $customer->customer_name }}</td>
                                 <td>{{ $customer->customer_email }}</td>
@@ -83,7 +98,22 @@
                         @endforelse
                     </tbody>
                 </table>
-                {{ $customers->links() }}
+
+                    <!-- Info Jumlah Data dan Pagination -->
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <!-- Info Jumlah Data -->
+                        <div class="table">
+                            <p class="mb-0">
+                                Showing {{ $customers->firstItem() }} to {{ $customers->lastItem() }} of {{ $customers->total() }} entries
+                            </p>
+                        </div>
+
+                        <!-- Laravel Pagination -->
+                        <div>
+                            {{ $customers->links('pagination::simple-bootstrap-4') }}
+                        </div>
+                    </div>
+
             </div>
         </div>
     </div>
@@ -355,11 +385,11 @@
 <script>
     $(document).ready(function() {
         $('#customerTable').DataTable({
-            "paging": true,
+            "paging": false,
             "lengthChange": true,
             "searching": true,
             "ordering": true,
-            "info": true,
+            "info": false,
             "autoWidth": false,
             "responsive": true,
         });

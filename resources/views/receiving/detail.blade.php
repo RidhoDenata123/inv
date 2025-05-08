@@ -21,6 +21,13 @@
         .bootstrap-select .dropdown-menu {
             font-size: 1rem; /* Ukuran font dropdown */
         }
+
+        .pagination {
+            margin: 0; /* Hilangkan margin default */
+        }
+        .table-responsive .pagination {
+            justify-content: flex-end; /* Posisikan pagination di kanan */
+        }
     </style>
 
 
@@ -94,7 +101,7 @@
                     <tbody class="text-center">
                         @forelse ($receivingDetails as $detail)
                             <tr>
-                                <td>{{ $loop->iteration }}.</td>
+                                <td>{{ ($receivingDetails->currentPage() - 1) * $receivingDetails->perPage() + $loop->iteration }}.</td>
                                 <td>{{ $detail->receiving_detail_id }}</td>
                                 <td>
                                     <a href="#" 
@@ -108,7 +115,7 @@
                                 </td>
                                 <td>{{ $detail->product_id ? $detail->product->product_name : 'No product name' }}</td>
                                 <td>{{ $detail->receiving_qty }}</td>
-                                <td>{{ $detail->product_id ? $detail->product->unit->unit_name : 'No unit' }}</td>
+                                <td>{{ $detail->product_id ? ($detail->product->unit->unit_name ?? 'No unit') : 'No unit' }}</td>
                                 <td>{{ $detail->created_at ? \Carbon\Carbon::parse($detail->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
                                 <td>{{ $detail->created_by ? \App\Models\User::find($detail->created_by)->name : 'N/A' }}</td>
                                 <td>{{ $detail->confirmed_at ? \Carbon\Carbon::parse($detail->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
@@ -183,6 +190,22 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                    <!-- Info Jumlah Data dan Pagination -->
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <!-- Info Jumlah Data -->
+                        <div class="table">
+                            <p class="mb-0">
+                                Showing {{ $receivingDetails->firstItem() }} to {{ $receivingDetails->lastItem() }} of {{ $receivingDetails->total() }} entries
+                            </p>
+                        </div>
+
+                        <!-- Laravel Pagination -->
+                        <div>
+                            {{ $receivingDetails->links('pagination::simple-bootstrap-4') }}
+                        </div>
+                    </div>
+
             </div>
 
             <hr>
@@ -598,11 +621,11 @@
     <script>
     $(document).ready(function() {
         $('#receivingDetailTable').DataTable({
-            "paging": true,
+            "paging": false,
             "lengthChange": true,
             "searching": true,
             "ordering": true,
-            "info": true,
+            "info": false,
             "autoWidth": false,
             "responsive": true,
         });

@@ -2,7 +2,19 @@
   
 @section('content')
 
-   
+@section('styles')
+    <style>
+        .pagination {
+            margin: 0; /* Hilangkan margin default */
+        }
+        .table-responsive .pagination {
+            justify-content: flex-end; /* Posisikan pagination di kanan */
+        }
+        
+    </style>
+
+
+@endsection 
 
 @if (session('status'))
                         <div class="alert alert-success" role="alert">
@@ -40,7 +52,7 @@
                             <tbody>
                                 @forelse ($categories as $category)
                                     <tr>
-                                        <td>{{ $loop->iteration }}.</td> <!-- Nomor otomatis -->
+                                        <td>{{ ($categories->currentPage() - 1) * $categories->perPage() + $loop->iteration }}.</td></td> <!-- Nomor otomatis -->
                                         <td>{{ $category->category_id }}</td>
                                         <td>{{ $category->category_name }}</td>
                                         <td>{{ $category->category_description }}</td>
@@ -85,7 +97,21 @@
                                 @endforelse
                             </tbody>
                         </table>
-                        {{ $categories->links() }}
+                                <!-- Info Jumlah Data dan Pagination -->
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <!-- Info Jumlah Data -->
+                                    <div class="table">
+                                        <p class="mb-0">
+                                            Showing {{ $categories->firstItem() }} to {{ $categories->lastItem() }} of {{ $categories->total() }} entries
+                                        </p>
+                                    </div>
+
+                                    <!-- Laravel Pagination -->
+                                    <div>
+                                        {{ $categories->links('pagination::simple-bootstrap-4') }}
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -287,11 +313,11 @@
                 <script>
                     $(document).ready(function() {
                         $('#categoryTable').DataTable({
-                            "paging": true,
+                            "paging": false,
                             "lengthChange": true,
                             "searching": true,
                             "ordering": true,
-                            "info": true,
+                            "info": false,
                             "autoWidth": false,
                             "responsive": true,
                         
