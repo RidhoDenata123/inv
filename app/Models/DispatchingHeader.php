@@ -45,5 +45,10 @@ class DispatchingHeader extends Model
         {
             return $this->hasMany(DispatchingDetail::class, 'dispatching_header_id', 'dispatching_header_id');
         }
+
+        public function dispatchingDetails()
+        {
+            return $this->hasMany(DispatchingDetail::class, 'dispatching_header_id', 'dispatching_header_id');
+        }
     
 }

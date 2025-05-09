@@ -11,6 +11,7 @@ use App\Models\Supplier;
 use App\Models\Customer;
 use App\Models\UserCompany;
 use App\Models\Report;
+use App\Models\StockChangeLog;
 
 use Illuminate\View\View;
 use Illuminate\Http\Request;
@@ -124,4 +125,35 @@ class ReportController extends Controller
         // Redirect kembali ke halaman laporan dengan pesan sukses
         return redirect()->route('reports.stock')->with('success', 'Stock report generated successfully.');
     }
+    
+
+    public function stockMovementReports(Request $request)
+    {
+        // Ambil parameter start_date dan end_date dari request
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // Query StockChangeLog dengan filter periode
+        $query = StockChangeLog::with('product', 'changedBy')->orderBy('changed_at', 'desc');
+
+        if ($startDate) {
+            $query->whereDate('changed_at', '>=', $startDate);
+        }
+
+        if ($endDate) {
+            $query->whereDate('changed_at', '<=', $endDate);
+        }
+
+        // Jika tidak ada filter, kembalikan paginator kosong
+        if (!$startDate && !$endDate) {
+            $stockChangeLogs = StockChangeLog::whereRaw('1 = 0')->paginate(10); // Paginator kosong
+        } else {
+            // Paginate hasil query
+            $stockChangeLogs = $query->paginate(10);
+        }
+
+        // Kirim data ke view
+        return view('reports.stockMovement', compact('stockChangeLogs', 'startDate', 'endDate'));
+    }
+
 }

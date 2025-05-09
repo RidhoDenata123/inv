@@ -44,5 +44,9 @@ class ReceivingHeader extends Model
         {
             return $this->hasMany(ReceivingDetail::class, 'receiving_header_id', 'receiving_header_id');
         }
-    
+        
+            public function receivingDetails()
+        {
+            return $this->hasMany(ReceivingDetail::class, 'receiving_header_id', 'receiving_header_id');
+        }
 }

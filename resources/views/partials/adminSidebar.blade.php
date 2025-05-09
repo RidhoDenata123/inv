@@ -73,7 +73,7 @@
     Addons
 </div>
 
-<!-- Nav Item - Pages Collapse Menu -->
+<!-- Nav Item - Pages Collapse Menu
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#CollapsePages"
         aria-expanded="true" aria-controls="collapsePages">
@@ -87,7 +87,7 @@
             <a class="collapse-item" href="">Dispatching</a>
         </div>
     </div>
-</li>
+</li> -->
 
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reportCollapsePages"
@@ -99,7 +99,7 @@
         <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Reports :</h6>
             <a class="collapse-item" href="{{ route('reports.stock') }}">Stock Report</a>
-            <a class="collapse-item" href="">Stock Mutation Report</a>
+            <a class="collapse-item" href="{{ route('reports.stockMovement') }}">Stock Movement Report</a>
             <a class="collapse-item" href="">Minimum Stock Report</a>
             <a class="collapse-item" href="">Receiving Report</a>
             <a class="collapse-item" href="">Dispatching Report</a>

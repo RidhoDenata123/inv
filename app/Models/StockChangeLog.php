@@ -56,5 +56,10 @@ class StockChangeLog extends Model
     {
         return $this->belongsTo(Supplier::class, 'supplier_id', 'supplier_id');
     }
+
+    public function changedBy()
+    {
+        return $this->belongsTo(User::class, 'changed_by', 'id');
+    }
     
 }

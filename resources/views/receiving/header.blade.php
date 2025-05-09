@@ -64,18 +64,15 @@
                                         {{ ucfirst($header->receiving_header_status) }}
                                     </span>
                                 </td>
-
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        @if ($header->receiving_header_status === 'Confirmed')
+                                        @if ($header->receivingDetails->where('receiving_detail_status', 'Confirmed')->isNotEmpty())
                                             <!-- Tombol Show Detail -->
                                             <a href="{{ route('receiving.detail.ShowById', $header->receiving_header_id) }}" 
                                             class="btn btn-sm btn-dark mr-2">
-                                                <i class="fas fa-search"></i> 
+                                                <i class="fas fa-search"></i>
                                             </a>
-
-
-                                        @elseif ($header->receiving_header_status === 'Pending')
+                                        @else
                                             <!-- Tombol Show -->
                                             <a href="{{ route('receiving.detail.ShowById', $header->receiving_header_id) }}" 
                                             class="btn btn-sm btn-dark mr-2">
@@ -102,6 +99,7 @@
                                         @endif
                                     </div>
                                 </td>
+
                             </tr>
                         @empty
                             <tr>
@@ -147,19 +145,28 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="receiving_header_id" class="font-weight-bold">Receiving Header ID :</label>
-                            <input type="text" class="form-control" id="addReceivingHeaderId" name="receiving_header_id" readonly>
+                            <input type="text" class="form-control @error('receiving_header_id') is-invalid @enderror" id="addReceivingHeaderId" name="receiving_header_id" readonly>
                             @error('receiving_header_id')
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="form-group">
-                            <label for="receiving_header_name" class="font-weight-bold">Designation :</label>
-                            <input type="text" class="form-control @error('receiving_header_name') is-invalid @enderror" id="receiving_header_name" name="receiving_header_name" value="{{ old('receiving_header_name') }}" placeholder="Enter Designation for this receiving" required>
+                            <label for="adjust_qty_before" class="font-weight-bold">Designation :</label>
+                            <select name="receiving_header_name" class="custom-select @error('receiving_header_name') is-invalid @enderror" required>
+                                <option value="">Select Designation</option>
+                                <option value="Restock">Restock</option>
+                                <option value="Opening Balance">Opening Balance</option>
+                                <option value="Transfer In">Transfer In</option>
+                                <option value="Return from Customer">Return from Customer</option>
+                            
+                            </select>
                             @error('receiving_header_name')
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
+
+            
 
                         <div class="form-group mb-3">
                             <label class="font-weight-bold">Description :</label>
@@ -184,7 +191,7 @@
                     <!-- Modal Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-success">Submit</button>
                     </div>
                 </form>
             </div>
@@ -264,7 +271,13 @@
 
                         <div class="form-group">
                             <label for="editReceivingHeaderName" class="font-weight-bold">Designation:</label>
-                            <input type="text" class="form-control @error('receiving_header_name') is-invalid @enderror" id="editReceivingHeaderName" name="receiving_header_name" required>
+                            <select name="receiving_header_name" id="editReceivingHeaderName" class="custom-select @error('receiving_header_name') is-invalid @enderror" required>
+                                <option value="">Select Designation</option>
+                                <option value="Restock">Restock</option>
+                                <option value="Opening Balance">Opening Balance</option>
+                                <option value="Transfer In">Transfer In</option>
+                                <option value="Return from Customer">Return from Customer</option>
+                            </select>
                             @error('receiving_header_name')
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
@@ -277,7 +290,6 @@
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
-
                     </div>
 
                     <!-- Modal Footer -->
@@ -289,7 +301,6 @@
             </div>
         </div>
     </div>
-
     
 
 
@@ -353,15 +364,14 @@
                 success: function(data) {
                     // Isi modal dengan data receiving header
                     $('#editReceivingHeaderId').val(data.receiving_header_id);
-                    $('#editReceivingHeaderName').val(data.receiving_header_name);
+                    $('#editReceivingHeaderName').val(data.receiving_header_name); // Set nilai pada select
                     $('#editReceivingHeaderDescription').val(data.receiving_header_description);
-                    $('#editReceivingHeaderStatus').val(data.receiving_header_status);
 
                     // Set action URL untuk form edit
                     $('#editReceivingHeaderForm').attr('action', `/receiving/header/${receivingId}`);
 
                     // Tampilkan modal
-                    $('#editReceivingHeaderModal').modal('edit');
+                    $('#editReceivingHeaderModal').modal('show');
                 },
                 error: function(xhr) {
                     // Tampilkan pesan error jika gagal

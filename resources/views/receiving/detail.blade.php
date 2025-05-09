@@ -300,7 +300,7 @@
                         <!-- Modal footer -->
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Save Product</button>
+                            <button type="submit" class="btn btn-success">Receive Product</button>
                         </div>
                         
                     </form>

@@ -768,7 +768,7 @@
 
                 <!-- Modal for Stock Adjustment -->
                 <div class="modal fade" id="stockAdjustmentModal" tabindex="-1" role="dialog" aria-labelledby="stockAdjustmentModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <form id="stockAdjustmentForm" method="POST">
                                 @csrf
@@ -780,30 +780,74 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="adjust_product_id" class="font-weight-bold">Product ID:</label>
-                                        <input type="text" class="form-control" id="adjust_product_id" name="product_id" readonly>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="adjust_product_id" class="font-weight-bold">Product ID :</label>
+                                                <input type="text" class="form-control" id="adjust_product_id" name="product_id" readonly>
+                                            </div>
+                                        </div>   
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="adjust_product_name" class="font-weight-bold">Product Name :</label>
+                                                <input type="text" class="form-control" id="adjust_product_name" readonly>
+                                            </div>
+                                        </div>    
                                     </div>
                                     <div class="form-group">
-                                        <label for="adjust_product_name" class="font-weight-bold">Product Name:</label>
-                                        <input type="text" class="form-control" id="adjust_product_name" readonly>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="adjust_qty_before" class="font-weight-bold">Current Quantity:</label>
+                                        <label for="adjust_qty_before" class="font-weight-bold">Current Quantity :</label>
                                         <input type="number" class="form-control" id="adjust_qty_before" readonly>
                                     </div>
+
+                                <hr>
+                                
                                     <div class="form-group">
-                                        <label for="adjust_qty_changed" class="font-weight-bold">Adjustment Quantity:</label>
-                                        <input type="number" class="form-control" id="adjust_qty_changed" name="qty_changed" required>
+                                        <label for="adjust_qty_before" class="font-weight-bold">Adjustment Type :</label>
+                                        <select name="stock_change_type" class="custom-select" required>
+                                           
+                                            <option value="Stock Adjustment">Stock Adjustment</option>
+                                            <option value="Opening Balance">Opening Balance</option>
+                                            <option value="Transfer In">Transfer In</option>
+                                            <option value="Transfer Out">Transfer Out</option>
+                                            <option value="Return from Customer">Return from Customer</option>
+                                            <option value="Return to Supplier">Return to Supplier</option>
+                                            <option value="Write-off">Write-off</option>
+                                            <option value="Internal Use">Internal Use</option>
+
+                                        </select>
                                     </div>
+
                                     <div class="form-group">
-                                        <label for="adjust_note" class="font-weight-bold">Adjustment Note:</label>
-                                        <textarea class="form-control" id="adjust_note" name="change_note" rows="3" placeholder="Enter adjustment reason" required></textarea>
+                                        <label for="adjust_qty_changed" class="font-weight-bold">Adjustment Quantity :</label>
+                                        <input type="number" class="form-control" id="adjust_qty_changed" name="qty_changed" placeholder="0" required>
+                                        <p class="text-info"><small><span class="text-info"><i class="fas fa-info-circle"></i> <strong>INFO :</strong></span> Use numbers to fill in the amount to be added, to reduce the amount add (-) before the number, Example: -1</small></p>
                                     </div>
+                            
+
+
+                                    <div class="form-group">
+                                        <label for="adjust_note" class="font-weight-bold">Adjustment Note :</label>
+                                        <textarea class="form-control" id="adjust_note" name="change_note" rows="2" placeholder="Enter adjustment reason" required></textarea>
+                                    </div>
+                                    <hr>
+                                    <div class="alert alert-warning">
+                                    <span class="text-warning"><i class="fas fa-exclamation-circle"></i> <strong>ATTENTION</strong>
+                                    <p class="text-warning"><small>This action will be recorded in the stock changelogs, any changes made may affect the stock, please ensure that no errors occur in the changes.</small></p>
+                                    </div>
+
+                                    <div class="form-group form-check">
+                                        <label class="form-check-label">
+                                        <input class="form-check-input" type="checkbox" name="remember" required> I agree to the Terms & Conditions.
+                                        <div class="valid-feedback">Valid.</div>
+                                        <div class="invalid-feedback">Check this box to continue.</div>
+                                        </label>
+                                    </div>
+
+
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-primary">Submit Adjustment</button>
+                                    <button type="submit" class="btn btn-warning">Submit Adjustment</button>
                                 </div>
                             </form>
                         </div>

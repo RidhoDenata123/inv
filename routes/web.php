@@ -263,23 +263,22 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
 //ALL REPORT ROUTE
 
-    //Stock Report
-    Route::get('/reports/stock', [ReportController::class, 'stockReports'])->name('reports.stock');
-
-    // Unit add Route
+    // Report add Route
     Route::post('/reports/stock', [ReportController::class, 'store'])->name('reports.store');
-
-    // Unit detail Route
+    // Report detail Route
     Route::get('/reports/stock-show/{id}', [ReportController::class, 'show'])->name('reports.show');
-
-    // Unit edit Route
+    // Report edit Route
     Route::put('/reports/stock-edit/{id}', [ReportController::class, 'update'])->name('reports.update');
-
-    // Unit delete Route
+    // Report delete Route
     Route::delete('/reports/stock/{id}', [ReportController::class, 'destroy'])->name('reports.destroy');
 
+    //Stock Report
+    Route::get('/reports/stock', [ReportController::class, 'stockReports'])->name('reports.stock');
     //DOMpdf generate stock report
     Route::get('/reports/stock/generate', [ReportController::class, 'generateStockReport'])->name('reports.stockGenerate');
+
+    //Stock Movement Report Route
+    Route::get('/reports/stock-movement', [ReportController::class, 'stockMovementReports'])->name('reports.stockMovement');
 });
 
 

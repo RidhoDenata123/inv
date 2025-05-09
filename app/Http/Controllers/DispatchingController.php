@@ -225,7 +225,7 @@ class DispatchingController extends Controller
             // Tambahkan data ke tabel stock_change_logs
             StockChangeLog::create([
                 'stock_change_log_id' => uniqid('SC'),
-                'stock_change_type' => 'Dispatching', // Tipe perubahan
+                'stock_change_type' => $dispatchingHeader->dispatching_header_name,
                 'product_id' => $product->product_id,
                 'reference_id' => $detail->dispatching_detail_id,
                 'qty_before' => $qtyBefore,
@@ -233,7 +233,7 @@ class DispatchingController extends Controller
                 'qty_after' => $qtyAfter,
                 'changed_at' => now(),
                 'changed_by' => Auth::user()->id,
-                'change_note' => 'Dispatching product (bulk confirmation)', // Catatan perubahan
+                'change_note' => $dispatchingHeader->dispatching_header_description,
             ]);
         }
     
@@ -247,6 +247,9 @@ class DispatchingController extends Controller
     {
         // Ambil Dispatching Detail berdasarkan ID
         $dispatchingDetail = DispatchingDetail::where('dispatching_detail_id', $id)->firstOrFail();
+
+        // Ambil Dispatching Header terkait
+        $dispatchingHeader = DispatchingHeader::where('dispatching_header_id', $dispatchingDetail->dispatching_header_id)->firstOrFail();
 
         // Ambil produk terkait
         $product = Product::where('product_id', $dispatchingDetail->product_id)->firstOrFail();
@@ -271,7 +274,7 @@ class DispatchingController extends Controller
         // Tambahkan data ke tabel stock_change_logs
         StockChangeLog::create([
             'stock_change_log_id' => uniqid('SC'),
-            'stock_change_type' => 'Dispatching', // Tipe perubahan
+            'stock_change_type' => $dispatchingHeader->dispatching_header_name, // Ambil dari dispatching_header_name
             'product_id' => $product->product_id,
             'reference_id' => $dispatchingDetail->dispatching_detail_id,
             'qty_before' => $qtyBefore,
@@ -279,7 +282,7 @@ class DispatchingController extends Controller
             'qty_after' => $qtyAfter,
             'changed_at' => now(),
             'changed_by' => Auth::user()->id,
-            'change_note' => 'Dispatching product', // Catatan perubahan
+            'change_note' => $dispatchingHeader->dispatching_header_description, // Ambil dari dispatching_header_description
         ]);
 
         // Redirect kembali ke halaman detail dengan pesan sukses

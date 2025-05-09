@@ -206,9 +206,11 @@ class ProductController extends Controller
     //Product Stock Adjustment
     public function adjustStock(Request $request, $id)
     {
+        // Validasi input
         $request->validate([
-            'qty_changed' => 'required|integer',
-            'change_note' => 'required|string|max:255',
+            'stock_change_type' => 'required|string', // Validasi tipe perubahan
+            'qty_changed'       => 'required|integer',
+            'change_note'       => 'required|string|max:255',
         ]);
 
         // Ambil produk berdasarkan ID
@@ -217,7 +219,13 @@ class ProductController extends Controller
         // Hitung nilai untuk stock_change_logs
         $qtyBefore = $product->product_qty;
         $qtyChanged = $request->qty_changed;
-        $qtyAfter = $qtyBefore + $qtyChanged;
+
+        // Tentukan qtyAfter berdasarkan stock_change_type
+        if ($request->stock_change_type === 'Dispatching') {
+            $qtyAfter = $qtyBefore - $qtyChanged; // Stok berkurang
+        } else {
+            $qtyAfter = $qtyBefore + $qtyChanged; // Stok bertambah
+        }
 
         // Perbarui product_qty di tabel products
         $product->update([
@@ -227,15 +235,14 @@ class ProductController extends Controller
         // Tambahkan data ke tabel stock_change_logs
         StockChangeLog::create([
             'stock_change_log_id' => uniqid('SC'),
-            'stock_change_type' => 'Adjustment', // Tipe perubahan
-            'reference_id' => '', // Tipe perubahan
-            'product_id' => $product->product_id,
-            'qty_before' => $qtyBefore,
-            'qty_changed' => $qtyChanged,
-            'qty_after' => $qtyAfter,
-            'changed_at' => now(),
-            'changed_by' => auth()->user()->id,
-            'change_note' => $request->change_note,
+            'stock_change_type'   => $request->stock_change_type, // Tipe perubahan
+            'product_id'          => $product->product_id,
+            'qty_before'          => $qtyBefore,
+            'qty_changed'         => $request->stock_change_type === 'Dispatching' ? -$qtyChanged : $qtyChanged, // Negatif jika Dispatching
+            'qty_after'           => $qtyAfter,
+            'changed_at'          => now(),
+            'changed_by'          => auth()->user()->id,
+            'change_note'         => $request->change_note,
         ]);
 
         // Redirect kembali dengan pesan sukses

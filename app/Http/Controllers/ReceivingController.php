@@ -281,7 +281,7 @@ class ReceivingController extends Controller
             // Tambahkan data ke tabel stock_change_logs
             StockChangeLog::create([
                 'stock_change_log_id' => uniqid('SC'),
-                'stock_change_type' => 'Receiving', // Tipe perubahan
+                'stock_change_type' => $receivingHeader->receiving_header_name, 
                 'product_id' => $product->product_id,
                 'reference_id' => $detail->receiving_detail_id,
                 'qty_before' => $qtyBefore,
@@ -289,7 +289,7 @@ class ReceivingController extends Controller
                 'qty_after' => $qtyAfter,
                 'changed_at' => now(),
                 'changed_by' => Auth::user()->id,
-                'change_note' => 'Receiving product (bulk confirmation)', // Catatan perubahan
+                'change_note' => $receivingHeader->receiving_header_description, 
             ]);
         }
     
@@ -302,31 +302,34 @@ class ReceivingController extends Controller
     {
         // Ambil Receiving Detail berdasarkan ID
         $receivingDetail = ReceivingDetail::findOrFail($id);
-    
+
+        // Ambil Receiving Header terkait
+        $receivingHeader = ReceivingHeader::findOrFail($receivingDetail->receiving_header_id);
+
         // Ambil produk terkait
         $product = Product::findOrFail($receivingDetail->product_id);
-    
+
         // Hitung nilai untuk stock_change_logs
         $qtyBefore = $product->product_qty;
         $qtyChanged = $receivingDetail->receiving_qty;
         $qtyAfter = $qtyBefore + $qtyChanged;
-    
+
         // Perbarui product_qty di tabel products
         $product->update([
             'product_qty' => $qtyAfter,
         ]);
-    
+
         // Perbarui receiving_detail_status di tabel receiving_details
         $receivingDetail->update([
             'receiving_detail_status' => 'Confirmed',
             'confirmed_at' => now(),
             'confirmed_by' => auth()->user()->id,
         ]);
-    
+
         // Tambahkan data ke tabel stock_change_logs
         StockChangeLog::create([
             'stock_change_log_id' => uniqid('SC'),
-            'stock_change_type' => 'Receiving', // Tipe perubahan
+            'stock_change_type' => $receivingHeader->receiving_header_name, // Ambil dari receiving_header_name
             'product_id' => $product->product_id,
             'reference_id' => $receivingDetail->receiving_detail_id,
             'qty_before' => $qtyBefore,
@@ -334,11 +337,11 @@ class ReceivingController extends Controller
             'qty_after' => $qtyAfter,
             'changed_at' => now(),
             'changed_by' => auth()->user()->id,
-            'change_note' => 'Receiving product', // Catatan perubahan
+            'change_note' => $receivingHeader->receiving_header_description, // Ambil dari receiving_header_description
         ]);
-    
-         // Redirect dengan pesan sukses
-         return redirect()->back()->with('success', 'Receiving detail confirmed successfully!');
+
+        // Redirect dengan pesan sukses
+        return redirect()->back()->with('success', 'Receiving detail confirmed successfully!');
     }
 
 }

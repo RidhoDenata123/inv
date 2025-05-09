@@ -85,13 +85,13 @@
 
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        @if ($header->dispatching_header_status === 'Confirmed')
+                                        @if ($header->dispatchingDetails->where('dispatching_detail_status', 'Confirmed')->isNotEmpty())
                                             <!-- Tombol Show Detail -->
                                             <a href="{{ route('dispatching.detail.ShowById', $header->dispatching_header_id) }}" 
                                             class="btn btn-sm btn-dark mr-2">
-                                                <i class="fas fa-search"></i> 
+                                                <i class="fas fa-search"></i>
                                             </a>
-                                        @elseif ($header->dispatching_header_status === 'Pending')
+                                        @else
                                             <!-- Tombol Show -->
                                             <a href="{{ route('dispatching.detail.ShowById', $header->dispatching_header_id) }}" 
                                             class="btn btn-sm btn-dark mr-2">
@@ -104,7 +104,7 @@
                                             data-dispatching_id="{{ $header->dispatching_header_id }}" 
                                             data-toggle="modal" 
                                             data-target="#editDispatchingHeaderModal">
-                                                <i class="fas fa-edit"></i>
+                                                <i class="fas fa-edit"></i> 
                                             </a>
 
                                             <!-- Tombol Delete -->
@@ -167,13 +167,22 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="dispatching_header_name" class="font-weight-bold">Designation :</label>
-                            <input type="text" class="form-control @error('dispatching_header_name') is-invalid @enderror" id="dispatching_header_name" name="dispatching_header_name" value="{{ old('dispatching_header_name') }}" placeholder="Enter Designation for this dispatching" required>
+                       <div class="form-group">
+                            <label for="adjust_qty_before" class="font-weight-bold">Designation :</label>
+                            <select name="dispatching_header_name" class="custom-select @error('dispatching_header_name') is-invalid @enderror" required>
+                                <option value="">Select Designation</option>
+                                <option value="Sales Order">Sales Order</option>
+                                <option value="Transfer Out">Transfer Out</option>
+                                <option value="Return from Customer">Return to Supplier</option>
+                            
+                            </select>
                             @error('dispatching_header_name')
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
+
+
+
 
                         <div class="form-group">
                             <label for="customer_id" class="font-weight-bold">Customer :</label>
@@ -207,7 +216,7 @@
                     <!-- Modal Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-success">Submit</button>
                     </div>
                 </form>
             </div>
