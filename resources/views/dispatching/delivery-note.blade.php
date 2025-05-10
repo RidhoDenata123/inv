@@ -88,7 +88,7 @@
                         <!-- end row -->
 
                         <div class="py-2">
-                            <h5 class="font-size-15">Order Summary</h5>
+                            <h5 class="font-size-15">Delivery Summary</h5>
 
                             <div class="table-responsive">
                                 <table class="table table-centered mb-0">
@@ -132,7 +132,62 @@
                                 </table>
                             </div>
                             <hr>
-                            <p class="text-center">Thank you for your business!</p>
+
+                            <div class="row">
+                                <div class="col-sm-5 text-left">
+                                    <!-- begin invoice-note -->
+                                    <div class="invoice-note">
+                                  <span>* Make all cheques payable to {{ $userCompany->company_name }}<br>
+                                        * Payment is due within 3 days<br></span>
+                                      
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2 text-center">
+                                    <!-- begin invoice-note -->
+                                    <div class="invoice-note">
+                                        <table class="table table-sm table-borderless">
+                                            <tbody>
+                                            <tr>
+                                                <td>sincerely</td>
+                                            </tr>
+                                            <tr>
+                                                <td><br></td>
+                                            </tr>
+                                            <tr>
+                                                <td><br></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong><u>{{ Auth::user()->name }}</u></strong></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                 <div class="col-sm-5 text-right">
+                                    <div class="invoice-note">
+                                        <span><strong>PAYMENT INFORMATION</strong><br>
+                                        National Bank-{{ $userCompany->company_currency }}<br>
+                                        {{ $userCompany->company_bank_account }}<br>
+                                        {{ $userCompany->company_name }}<br></span>
+             
+                                    </div>
+                                </div>                                
+                            </div>
+                        <hr>
+                                    <!-- begin invoice-footer -->
+                                    <div class="invoice-footer">
+                                        <p class="text-center m-b-5 f-w-600">
+                                        THANK YOU FOR YOUR BUSINESS
+                                        </p>
+                                        <p class="text-center mb-1">
+                                        <span class="m-r-10"><i class="fa fa-fw fa-lg fa-globe"></i> {{ $userCompany->company_website }}</span>
+                                        <span class="m-r-10"><i class="fa fa-fw fa-lg fa-phone-volume"></i> {{ $userCompany->company_phone }} </span>
+                                        <span class="m-r-10"><i class="fa fa-fw fa-lg fa-envelope"></i> {{ $userCompany->company_email }}</span>
+                                        </p>
+                                    </div>
+                                    <!-- end invoice-footer -->
 
                             <div class="d-print-none mt-4">
                                 <div class="float-left">

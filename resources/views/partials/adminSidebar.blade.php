@@ -104,10 +104,7 @@
             <a class="collapse-item" href="">Receiving Report</a>
             <a class="collapse-item" href="">Dispatching Report</a>
             <a class="collapse-item" href="">Stock Adjustment Report</a>
-            <a class="collapse-item" href="">Stock Card Report</a>
-            <a class="collapse-item" href="">Inventory Report</a>
-            <a class="collapse-item" href="">Laporan Nilai Persediaan</a>
-            <a class="collapse-item" href="">Expired Date Report</a>
+
         </div>
     </div>
 </li>
