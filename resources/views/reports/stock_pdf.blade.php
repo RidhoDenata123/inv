@@ -3,25 +3,34 @@
 <head>
     <title>Stock Report</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        table, th, td {
-            border: 1px solid black;
-        }
         th, td {
+            border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
         th {
             background-color: #f2f2f2;
         }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
-    <h1>Stock Report</h1>
-    <p>Generated at: {{ now()->format('Y-m-d H:i:s') }}</p>
+        <div class="header">
+        <h2>STOCK REPORT</h2>
+       <p>{{ now()->timezone('Asia/Jakarta')->format('l, d F Y H:i') }}</p>
+        </div>
+    
     <table>
         <thead>
             <tr>

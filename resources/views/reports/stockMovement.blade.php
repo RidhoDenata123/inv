@@ -2,32 +2,45 @@
 
 @section('content')
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-alt"></i> Stock Movement Report</h1>
+    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-chart-bar"></i> Stock Movement Report</h1>
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Stock Movement Logs</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Stock Movement Report</h6>
         </div>
         <div class="card-body">
 
     <!-- Search Form -->
-        <form method="GET" action="{{ route('reports.stockMovement') }}" class="mb-4">
-            <div class="row">
-                <div class="col-md-4">
-                    <label for="start_date" class="font-weight-bold">Start Date:</label>
-                    <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
-                </div>
-                <div class="col-md-4">
-                    <label for="end_date" class="font-weight-bold">End Date:</label>
-                    <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date') }}">
-                </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary mr-2">Search</button>
-                    <a href="{{ route('reports.stockMovement') }}" class="btn btn-secondary">Reset</a>
-                </div>
-            </div>
-        </form>
+<!-- Form GET untuk pencarian -->
+<form method="GET" action="{{ route('reports.stockMovement') }}" class="mb-4">
+    <div class="row">
+        <div class="col-md-4">
+            <label for="start_date" class="font-weight-bold">Start Date :</label>
+            <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request('start_date') }}">
+        </div>
+        <div class="col-md-4">
+            <label for="end_date" class="font-weight-bold">End Date :</label>
+            <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date') }}">
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary mr-2"><i class='fas fa-search'></i> Search</button>	
+            <a href="{{ route('reports.stockMovement') }}" class="btn btn-secondary"><i class="fas fa-sync"></i> Reset</a>
+        </div>
+    </div>
+</form>
 
+<!-- Form POST untuk Generate Report -->
+@if (request('start_date') && request('end_date'))
+    <form method="POST" action="{{ route('reports.stockMovement.generate') }}">
+        @csrf
+        <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+        <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+        <button type="submit" class="btn btn-danger">
+            <i class="fas fa-file-pdf"></i> Generate
+        </button>
+    </form>
+@endif
+<hr>
             <div class="table-responsive">
                 <table class="table table-sm table-bordered" id="stockChangeLogTable" width="100%" cellspacing="0">
                     <thead>
@@ -45,7 +58,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if ($stockChangeLogs->isEmpty() && (!$startDate && !$endDate))
+                        @if (!$startDate || !$endDate)
                             <tr>
                                 <td colspan="10" class="text-center">Please enter a Start Date and End Date to view data.</td>
                             </tr>
@@ -72,11 +85,21 @@
                     </tbody>
                 </table>
             </div>
+    
+                    <!-- Info Jumlah Data dan Pagination -->
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <!-- Info Jumlah Data -->
+                        <div class="table">
+                            <p class="mb-0">
+                                Showing {{ $stockChangeLogs->firstItem() }} to {{ $stockChangeLogs->lastItem() }} of {{ $stockChangeLogs->total() }} entries
+                            </p>
+                        </div>
 
-            <!-- Pagination -->
-            <div class="d-flex justify-content-end mt-3">
-                {{ $stockChangeLogs->links('pagination::bootstrap-4') }}
-            </div>
+                        <!-- Laravel Pagination -->
+                        <div>
+                             {{ $stockChangeLogs->appends(request()->query())->links('pagination::simple-bootstrap-4') }}
+                        </div>
+                    </div>
         </div>
     </div>
 </div>

@@ -50,8 +50,7 @@
         
     </style>
 
-
-    @endsection
+@endsection
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
@@ -68,8 +67,8 @@
                         <div class="card-body">
                         <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addProductModal"><i class='fas fa-plus'></i> Add Product</a>
                        
-                            <div class="table-responsive">
-                            <table id="productTable" class="table table-bordered">
+                    <div class="table-responsive">
+                        <table id="productTable" class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th scope="col">No.</th>
@@ -187,674 +186,651 @@
                     </div>
 
                     
-                <!-- Modal for add Product -->
-                <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                        
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Add Product</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-            
-                                <!-- Modal body -->
-                                <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-
-                                    <div class="modal-body">
-
-                                        <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Product ID :</label>
-                                                    <input type="text" class="form-control @error('product_id') is-invalid @enderror" id="product_id" name="product_id" value="{{ old('product_id') }}" placeholder="Generated automatically" readonly>
-
-                                                        <!-- error message for product_id -->
-                                                        @error('product_id')
-                                                            <div class="alert alert-danger mt-2">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
-                                                </div>
-
-                                        <div class="row">
-                                            <div class="col">                    
-                                                <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Product name :</label>
-                                                    <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="product_name" name="product_name" value="{{ old('product_name') }}" placeholder="Enter product name" require>
-
-                                                        <!-- error message for product_name -->
-                                                        @error('product_name')
-                                                            <div class="alert alert-danger mt-2">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
-                                                </div>
-                                            </div>
-                                            <div class="col">
-
-                                            <div class="form-group mb-3">
-                                                <label class="font-weight-bold">Product Category:</label>
-                                                <select class="form-control selectpicker @error('product_category') is-invalid @enderror" 
-                                                        id="product_category" 
-                                                        name="product_category" 
-                                                        data-live-search="true" 
-                                                        data-style="btn-light" 
-                                                        required>
-                                                    <option value="" selected>Select a category</option>
-                                                    @foreach ($categories as $category)
-                                                        <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
-                                                    @endforeach
-                                                </select>
-
-                                                <!-- Error message for product_category -->
-                                                @error('product_category')
-                                                    <div class="alert alert-danger mt-2">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-
-                                            </div>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label class="font-weight-bold">Product Description</label>
-                                            <textarea class="form-control @error('product_description') is-invalid @enderror" name="product_description" rows="3" placeholder="Enter product description">{{ old('product_description') }}</textarea>
-                                        
-                                            <!-- error message for product_description -->
-                                            @error('product_description')
-                                                <div class="alert alert-danger mt-2">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-
-                                        <div class="form-group mb-3">
-                                            <label class="font-weight-bold">Product Quantity :</label>
-                                            <input type="number" class="form-control @error('product_qty') is-invalid @enderror" id="product_qty" name="product_qty" value="{{ old('product_qty') }}" placeholder="Enter product quantity" require>
-
-                                                <!-- error message for product_qty -->
-                                                @error('product_qty')
-                                                    <div class="alert alert-danger mt-2">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                        </div>  
-                                        <div class="row">
-                                            <div class="col">                    
-                                                <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Purchase Price :</label>
-                                                    <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" placeholder="Enter purchase price" require>
-
-                                                        <!-- error message for purchase_price -->
-                                                        @error('purchase_price')
-                                                            <div class="alert alert-danger mt-2">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
-                                                </div>
-                                            </div>
-                                            <div class="col">
-                                                    <div class="form-group mb-3">
-                                                            <label class="font-weight-bold">Selling Price :</label>
-                                                            <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" name="selling_price" value="{{ old('selling_price') }}" placeholder="Enter selling price" require>
-
-                                                                <!-- error message for selling_price -->
-                                                                @error('selling_price')
-                                                                    <div class="alert alert-danger mt-2">
-                                                                        {{ $message }}
-                                                                    </div>
-                                                                @enderror
-                                                    </div>      
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">                    
-                                                <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Product Unit:</label>
-                                                    <select class="form-control selectpicker @error('product_unit') is-invalid @enderror" 
-                                                            id="product_unit" 
-                                                            name="product_unit" 
-                                                            data-live-search="true" 
-                                                            data-style="btn-light" 
-                                                            required>
-                                                        <option value="" selected>Select a unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ $unit->unit_id }}">{{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-
-                                                    <!-- Error message for product_unit -->
-                                                    @error('product_unit')
-                                                        <div class="alert alert-danger mt-2">
-                                                            {{ $message }}
-                                                        </div>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            <div class="col">
-                                                <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Supplier:</label>
-                                                    <select class="form-control selectpicker @error('supplier_id') is-invalid @enderror" 
-                                                            id="supplier_id" 
-                                                            name="supplier_id" 
-                                                            data-live-search="true" 
-                                                            data-style="btn-light" 
-                                                            required>
-                                                        <option value="" selected>Select a supplier</option>
-                                                        @foreach ($suppliers as $supplier)
-                                                            <option value="{{ $supplier->supplier_id }}">{{ $supplier->supplier_name }}</option>
-                                                        @endforeach
-                                                    </select>
-
-                                                    <!-- Error message for supplier_id -->
-                                                    @error('supplier_id')
-                                                        <div class="alert alert-danger mt-2">
-                                                            {{ $message }}
-                                                        </div>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label class="font-weight-bold">Product Status : </label>
-                                            <br>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" id="product_status_active" name="product_status" value="active" class="custom-control-input" {{ old('product_status') === 'active' ? 'checked' : '' }}>
-                                                <label class="custom-control-label" for="product_status_active">Active</label>
-                                            </div>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" id="product_status_inactive" name="product_status" value="inactive" class="custom-control-input" {{ old('product_status') === 'inactive' ? 'checked' : '' }}>
-                                                <label class="custom-control-label" for="product_status_inactive">Inactive</label>
-                                            </div>
-
-                                            <!-- Error message for product_status -->
-                                            @error('product_status')
-                                                <div class="alert alert-danger mt-2">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-
-                                            <hr>
-
-                                        <label class="font-weight-bold">Product image :</label>
-                                        <div class="custom-file">
-                                            <input type="file" class="custom-file-input @error('product_img') is-invalid @enderror" name="product_img" id="product_img">
-                                            <label class="custom-file-label" for="customFile">Choose file</label>
-                                            <!-- error message for product_img -->
-                                            @error('product_img')
-                                                <div class="alert alert-danger mt-2">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <!-- Modal footer -->
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                        <button type="submit" class="btn btn-primary">Save Product</button>
-                                    </div>
-                                    
-                                </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal for Show Product Details -->
-                <div class="modal fade" id="productDetailModal" tabindex="-1" role="dialog" aria-labelledby="productDetailModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="productDetailModalLabel">Product Details</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row">
-                                    <!-- Produk img -->
-                                    <div class="col-md-4 text-center mb-3 mb-md-0">
-                                        <img id="detailProductImage" src="" alt="Product Image" class="img-fluid rounded" style="max-height: 300px;">
-                                    </div>
-
-                                    <!-- Produk Detail -->
-                                    <div class="col-md-8">
-
-                                    <div class="card">
-                                    
-                                        <div class="card-body">          
-                                            <p><strong>Product ID :</strong> <span id="detailProductId"></span></p>
-                                            
-                                                <h1><strong><span id="detailProductName"></span></strong></h1>
-                                            
-                                            <p> <span id="detailProductDescription"></span></p>
-                                            <hr>
-
-                                            <div class="row">
-                                                <div class="col-sm-5"><p><strong>Category :</strong></p></div>
-                                                <div class="col-sm-5"><p><span id="detailProductCategory"></span></p></div>  
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-5"><p><strong>Purchase Price :</strong></p></div>
-                                                <div class="col-sm-5"><p><span id="detailPurchasePrice"></span></p></div>  
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-5"><p><strong>Selling Price :</strong></p></div>
-                                                <div class="col-sm-5"><p><span id="detailSellingPrice"></span></p></div>  
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-5"><p><strong>Quantity :</strong></p></div>
-                                                <div class="col-sm-5"><p><span id="detailProductQty"></span></p></div>  
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-5"><p><strong>Unit :</strong></p></div>
-                                                <div class="col-sm-5"><p><span id="detailProductUnit"></span></p></div>  
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-5"><p><strong>Supplier :</strong></p></div>
-                                                <div class="col-sm-5"><p><span id="detailSupplierId"></span></p></div>  
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-sm-5"><p><strong>Status :</strong></p></div>
-                                                <div class="col-sm-5"><p><span id="detailProductStatus" class="badge"></span></p></div>  
-                                            </div>
-                                           
-                                        </div>
-                                    </div>
-                                                
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-               <!-- Modal for Delete Confirmation -->
-                <div class="modal fade" id="deleteProductModal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteProductModalLabel">Delete Product</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <form id="deleteProductForm" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <div class="modal-body">
-                                    
-                                    <p><span class="text-primary"> {{ Auth::user()->name }}</span>, are you sure you want to delete "<strong><span id="deleteProductId"></span> - <span id="deleteProductName"></span></strong>" ?</p>
-                                    <div class="alert alert-danger">
-                                    <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> <strong>WARNING</strong></span>
-                                    <p class="text-danger"><small>This action cannot be undone, the selected product data will be permanently deleted !</small></p>
-                                    </div>
-                                    
-                                    
-                                    <div class="form-group form-check">
-                                        <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="remember" required> I agree to the Terms & Conditions.
-                                        <div class="valid-feedback">Valid.</div>
-                                        <div class="invalid-feedback">Check this box to continue.</div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it</button>
-                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>     
-
-                <!-- Modal for Edit Product -->
-                <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                        
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Edit Product</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-            
-                                <!-- Modal body -->
-                                <form id="editProductForm" method="POST">
-                                @csrf
-                                @method('PUT')
-                                    <div class="modal-body">
-
-                                        <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Product ID :</label>
-                                                    <input type="text" class="form-control @error('product_id') is-invalid @enderror" id="edit_product_id" name="product_id" value="{{ old('product_id') }}" placeholder="Input product id" readonly>
-
-                                                        <!-- error message for product_id -->
-                                                        @error('product_id')
-                                                            <div class="alert alert-danger mt-2">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
-                                                </div>
-
-                                        <div class="row">
-                                            <div class="col">                    
-                                                <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Product name :</label>
-                                                    <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="edit_product_name" name="product_name" value="{{ old('product_name') }}" placeholder="Input product name" require>
-
-                                                        <!-- error message for product_name -->
-                                                        @error('product_name')
-                                                            <div class="alert alert-danger mt-2">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
-                                                </div>
-
-                                            </div>
-
-                                            <div class="col">
-                                                <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Product Category:</label>
-                                                    <select class="form-control selectpicker @error('product_category') is-invalid @enderror" 
-                                                            id="edit_product_category" 
-                                                            name="product_category" 
-                                                            data-live-search="true" 
-                                                            data-style="btn-light" 
-                                                            required>
-                                                        <option value="" disabled>Select a category</option>
-                                                        @foreach ($categories as $category)
-                                                            <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
-                                                        @endforeach
-                                                    </select>
-
-                                                    <!-- Error message for product_category -->
-                                                    @error('product_category')
-                                                        <div class="alert alert-danger mt-2">
-                                                            {{ $message }}
-                                                        </div>
-                                                    @enderror
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-
-                                        <div class="form-group mb-3">
-                                            <label class="font-weight-bold">Product Description</label>
-                                            <textarea class="form-control @error('product_description') is-invalid @enderror" id="edit_product_description" name="product_description" rows="3" placeholder="Input product description">{{ old('product_description') }}</textarea>
-                                        
-                                            <!-- error message for product_description -->
-                                            @error('product_description')
-                                                <div class="alert alert-danger mt-2">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-
-                                        <div class="form-group mb-3">
-                                            <label class="font-weight-bold">Product Quantity :</label>
-                                            <input type="number" class="form-control @error('product_qty') is-invalid @enderror" id="edit_product_qty" name="product_qty" value="{{ old('product_qty') }}" placeholder="Input product quantity" require>
-
-                                                <!-- error message for product_qty -->
-                                                @error('product_qty')
-                                                    <div class="alert alert-danger mt-2">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                        </div>  
-
-                                        <div class="row">
-                                            <div class="col">                    
-                                                <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Purchase Price :</label>
-                                                    <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" id="edit_purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" placeholder="Input purchase price" require>
-
-                                                        <!-- error message for purchase_price -->
-                                                        @error('purchase_price')
-                                                            <div class="alert alert-danger mt-2">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
-                                                </div>
-
-                                            </div>
-
-                                            <div class="col">
-                                                    <div class="form-group mb-3">
-                                                            <label class="font-weight-bold">Selling Price :</label>
-                                                            <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="edit_selling_price" name="selling_price" value="{{ old('selling_price') }}" placeholder="Input selling price" require>
-
-                                                                <!-- error message for selling_price -->
-                                                                @error('selling_price')
-                                                                    <div class="alert alert-danger mt-2">
-                                                                        {{ $message }}
-                                                                    </div>
-                                                                @enderror
-                                                    </div>      
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col">                    
-                                                <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Product Unit:</label>
-                                                    <select class="form-control selectpicker @error('product_unit') is-invalid @enderror" 
-                                                            id="edit_product_unit" 
-                                                            name="product_unit" 
-                                                            data-live-search="true" 
-                                                            data-style="btn-light" 
-                                                            required>
-                                                        <option value="" disabled>Select a unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ $unit->unit_id }}">{{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-
-                                                    <!-- Error message for product_unit -->
-                                                    @error('product_unit')
-                                                        <div class="alert alert-danger mt-2">
-                                                            {{ $message }}
-                                                        </div>
-                                                    @enderror
-                                                </div>
-                                            </div>
-
-                                            <div class="col">
-                                                <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Supplier:</label>
-                                                    <select class="form-control selectpicker @error('supplier_id') is-invalid @enderror" 
-                                                            id="edit_supplier_id" 
-                                                            name="supplier_id" 
-                                                            data-live-search="true" 
-                                                            data-style="btn-light" 
-                                                            required>
-                                                        <option value="" disabled>Select a supplier</option>
-                                                        @foreach ($suppliers as $supplier)
-                                                            <option value="{{ $supplier->supplier_id }}">{{ $supplier->supplier_name }}</option>
-                                                        @endforeach
-                                                    </select>
-
-                                                    <!-- Error message for supplier_id -->
-                                                    @error('supplier_id')
-                                                        <div class="alert alert-danger mt-2">
-                                                            {{ $message }}
-                                                        </div>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group mb-3">
-                                            <label class="font-weight-bold">Product Status:</label>
-                                            <br>
-
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" id="edit_product_status_active" name="product_status" value="active" class="custom-control-input">
-                                                <label class="custom-control-label" for="edit_product_status_active">Active</label>
-                                            </div>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" id="edit_product_status_inactive" name="product_status" value="inactive" class="custom-control-input">
-                                                <label class="custom-control-label" for="edit_product_status_inactive">Inactive</label>
-                                            </div>
-
-                                            <!-- Error message for product_status -->
-                                            @error('product_status')
-                                                <div class="alert alert-danger mt-2">
-                                                    {{ $message }}
-                                                </div>
-                                            @enderror
-                                        </div>
-
-                                    </div>
-
-                                    <!-- Modal footer -->
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                                    </div>
-                                    
-                                </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal for Change Product Image -->
-                <div class="modal fade" id="changeImageModal" tabindex="-1" role="dialog" aria-labelledby="changeImageModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="changeImageModalLabel">Change Product Image</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <form id="changeImageForm" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                @method('PUT')
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label class="font-weight-bold">Current Image :</label>
-                                        <div class="text-center mb-3">
-                                            <img id="currentProductImage" src="" alt="Current Product Image" class="img-fluid rounded" style="max-height: 200px;">
-                                        </div>
-                                    </div>
-
-                                    <hr>
-
-                                    <label class="font-weight-bold">New Image :</label>
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input @error('product_img') is-invalid @enderror" name="product_img" id="new_product_image" required>
-                                        <label class="custom-file-label" for="customFile">Choose file</label>
-                          
-                                    </div>
-
-
-
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal for Stock Adjustment -->
-                <div class="modal fade" id="stockAdjustmentModal" tabindex="-1" role="dialog" aria-labelledby="stockAdjustmentModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <form id="stockAdjustmentForm" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="stockAdjustmentModalLabel">Stock Adjustment</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="adjust_product_id" class="font-weight-bold">Product ID :</label>
-                                                <input type="text" class="form-control" id="adjust_product_id" name="product_id" readonly>
-                                            </div>
-                                        </div>   
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="adjust_product_name" class="font-weight-bold">Product Name :</label>
-                                                <input type="text" class="form-control" id="adjust_product_name" readonly>
-                                            </div>
-                                        </div>    
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="adjust_qty_before" class="font-weight-bold">Current Quantity :</label>
-                                        <input type="number" class="form-control" id="adjust_qty_before" readonly>
-                                    </div>
-
-                                <hr>
+                        <!-- Modal for add Product -->
+                        <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
                                 
-                                    <div class="form-group">
-                                        <label for="adjust_qty_before" class="font-weight-bold">Adjustment Type :</label>
-                                        <select name="stock_change_type" class="custom-select" required>
-                                           
-                                            <option value="Stock Adjustment">Stock Adjustment</option>
-                                            <option value="Opening Balance">Opening Balance</option>
-                                            <option value="Transfer In">Transfer In</option>
-                                            <option value="Transfer Out">Transfer Out</option>
-                                            <option value="Return from Customer">Return from Customer</option>
-                                            <option value="Return to Supplier">Return to Supplier</option>
-                                            <option value="Write-off">Write-off</option>
-                                            <option value="Internal Use">Internal Use</option>
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Add Product</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                    
+                                        <!-- Modal body -->
+                                        <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+                                            @csrf
 
-                                        </select>
-                                    </div>
+                                            <div class="modal-body">
 
-                                    <div class="form-group">
-                                        <label for="adjust_qty_changed" class="font-weight-bold">Adjustment Quantity :</label>
-                                        <input type="number" class="form-control" id="adjust_qty_changed" name="qty_changed" placeholder="0" required>
-                                        <p class="text-info"><small><span class="text-info"><i class="fas fa-info-circle"></i> <strong>INFO :</strong></span> Use numbers to fill in the amount to be added, to reduce the amount add (-) before the number, Example: -1</small></p>
-                                    </div>
-                            
+                                                <div class="form-group mb-3">
+                                                            <label class="font-weight-bold">Product ID :</label>
+                                                            <input type="text" class="form-control @error('product_id') is-invalid @enderror" id="product_id" name="product_id" value="{{ old('product_id') }}" placeholder="Generated automatically" readonly>
 
+                                                                <!-- error message for product_id -->
+                                                                @error('product_id')
+                                                                    <div class="alert alert-danger mt-2">
+                                                                        {{ $message }}
+                                                                    </div>
+                                                                @enderror
+                                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="adjust_note" class="font-weight-bold">Adjustment Note :</label>
-                                        <textarea class="form-control" id="adjust_note" name="change_note" rows="2" placeholder="Enter adjustment reason" required></textarea>
-                                    </div>
-                                    <hr>
-                                    <div class="alert alert-warning">
-                                    <span class="text-warning"><i class="fas fa-exclamation-circle"></i> <strong>ATTENTION</strong>
-                                    <p class="text-warning"><small>This action will be recorded in the stock changelogs, any changes made may affect the stock, please ensure that no errors occur in the changes.</small></p>
-                                    </div>
+                                                <div class="row">
+                                                    <div class="col">                    
+                                                        <div class="form-group mb-3">
+                                                            <label class="font-weight-bold">Product name :</label>
+                                                            <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="product_name" name="product_name" value="{{ old('product_name') }}" placeholder="Enter product name" require>
 
-                                    <div class="form-group form-check">
-                                        <label class="form-check-label">
-                                        <input class="form-check-input" type="checkbox" name="remember" required> I agree to the Terms & Conditions.
-                                        <div class="valid-feedback">Valid.</div>
-                                        <div class="invalid-feedback">Check this box to continue.</div>
-                                        </label>
-                                    </div>
+                                                                <!-- error message for product_name -->
+                                                                @error('product_name')
+                                                                    <div class="alert alert-danger mt-2">
+                                                                        {{ $message }}
+                                                                    </div>
+                                                                @enderror
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
 
+                                                    <div class="form-group mb-3">
+                                                        <label class="font-weight-bold">Product Category:</label>
+                                                        <select class="form-control selectpicker @error('product_category') is-invalid @enderror" 
+                                                                id="product_category" 
+                                                                name="product_category" 
+                                                                data-live-search="true" 
+                                                                data-style="btn-light" 
+                                                                required>
+                                                            <option value="" selected>Select a category</option>
+                                                            @foreach ($categories as $category)
+                                                                <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
+                                                            @endforeach
+                                                        </select>
 
+                                                        <!-- Error message for product_category -->
+                                                        @error('product_category')
+                                                            <div class="alert alert-danger mt-2">
+                                                                {{ $message }}
+                                                            </div>
+                                                        @enderror
+                                                    </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold">Product Description</label>
+                                                    <textarea class="form-control @error('product_description') is-invalid @enderror" name="product_description" rows="3" placeholder="Enter product description">{{ old('product_description') }}</textarea>
+                                                
+                                                    <!-- error message for product_description -->
+                                                    @error('product_description')
+                                                        <div class="alert alert-danger mt-2">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                </div>
+
+                                                <!-- product qty -->
+                                                <input type="hidden" class="form-control" id="product_qty" name="product_qty" value="0">
+
+                                                
+                                                <div class="row">
+                                                    <div class="col">                    
+                                                        <div class="form-group mb-3">
+                                                            <label class="font-weight-bold">Purchase Price :</label>
+                                                            <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" placeholder="Enter purchase price" require>
+
+                                                                <!-- error message for purchase_price -->
+                                                                @error('purchase_price')
+                                                                    <div class="alert alert-danger mt-2">
+                                                                        {{ $message }}
+                                                                    </div>
+                                                                @enderror
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                            <div class="form-group mb-3">
+                                                                    <label class="font-weight-bold">Selling Price :</label>
+                                                                    <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" name="selling_price" value="{{ old('selling_price') }}" placeholder="Enter selling price" require>
+
+                                                                        <!-- error message for selling_price -->
+                                                                        @error('selling_price')
+                                                                            <div class="alert alert-danger mt-2">
+                                                                                {{ $message }}
+                                                                            </div>
+                                                                        @enderror
+                                                            </div>      
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col">                    
+                                                        <div class="form-group mb-3">
+                                                            <label class="font-weight-bold">Product Unit:</label>
+                                                            <select class="form-control selectpicker @error('product_unit') is-invalid @enderror" 
+                                                                    id="product_unit" 
+                                                                    name="product_unit" 
+                                                                    data-live-search="true" 
+                                                                    data-style="btn-light" 
+                                                                    required>
+                                                                <option value="" selected>Select a unit</option>
+                                                                @foreach ($units as $unit)
+                                                                    <option value="{{ $unit->unit_id }}">{{ $unit->unit_name }}</option>
+                                                                @endforeach
+                                                            </select>
+
+                                                            <!-- Error message for product_unit -->
+                                                            @error('product_unit')
+                                                                <div class="alert alert-danger mt-2">
+                                                                    {{ $message }}
+                                                                </div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-group mb-3">
+                                                            <label class="font-weight-bold">Supplier:</label>
+                                                            <select class="form-control selectpicker @error('supplier_id') is-invalid @enderror" 
+                                                                    id="supplier_id" 
+                                                                    name="supplier_id" 
+                                                                    data-live-search="true" 
+                                                                    data-style="btn-light" 
+                                                                    required>
+                                                                <option value="" selected>Select a supplier</option>
+                                                                @foreach ($suppliers as $supplier)
+                                                                    <option value="{{ $supplier->supplier_id }}">{{ $supplier->supplier_name }}</option>
+                                                                @endforeach
+                                                            </select>
+
+                                                            <!-- Error message for supplier_id -->
+                                                            @error('supplier_id')
+                                                                <div class="alert alert-danger mt-2">
+                                                                    {{ $message }}
+                                                                </div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold">Product Status : </label>
+                                                    <br>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" id="product_status_active" name="product_status" value="active" class="custom-control-input" {{ old('product_status') === 'active' ? 'checked' : '' }}>
+                                                        <label class="custom-control-label" for="product_status_active">Active</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" id="product_status_inactive" name="product_status" value="inactive" class="custom-control-input" {{ old('product_status') === 'inactive' ? 'checked' : '' }}>
+                                                        <label class="custom-control-label" for="product_status_inactive">Inactive</label>
+                                                    </div>
+
+                                                    <!-- Error message for product_status -->
+                                                    @error('product_status')
+                                                        <div class="alert alert-danger mt-2">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                </div>
+
+                                                    <hr>
+
+                                                <label class="font-weight-bold">Product image :</label>
+                                                <div class="custom-file">
+                                                    <input type="file" class="custom-file-input @error('product_img') is-invalid @enderror" name="product_img" id="product_img">
+                                                    <label class="custom-file-label" for="customFile">Choose file</label>
+                                                    <!-- error message for product_img -->
+                                                    @error('product_img')
+                                                        <div class="alert alert-danger mt-2">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            <!-- Modal footer -->
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-primary">Save Product</button>
+                                            </div>
+                                            
+                                        </form>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-warning">Submit Adjustment</button>
-                                </div>
-                            </form>
+                            </div>
                         </div>
-                    </div>
-                </div>
+
+                        <!-- Modal for Show Product Details -->
+                        <div class="modal fade" id="productDetailModal" tabindex="-1" role="dialog" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="productDetailModalLabel">Product Details</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <!-- Produk img -->
+                                            <div class="col-md-4 text-center mb-3 mb-md-0">
+                                                <img id="detailProductImage" src="" alt="Product Image" class="img-fluid rounded" style="max-height: 300px;">
+                                            </div>
+
+                                            <!-- Produk Detail -->
+                                            <div class="col-md-8">
+
+                                            <div class="card">
+                                            
+                                                <div class="card-body">          
+                                                    <p><strong>Product ID :</strong> <span id="detailProductId"></span></p>
+                                                    
+                                                        <h1><strong><span id="detailProductName"></span></strong></h1>
+                                                    
+                                                    <p> <span id="detailProductDescription"></span></p>
+                                                    <hr>
+
+                                                    <div class="row">
+                                                        <div class="col-sm-5"><p><strong>Category :</strong></p></div>
+                                                        <div class="col-sm-5"><p><span id="detailProductCategory"></span></p></div>  
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-5"><p><strong>Purchase Price :</strong></p></div>
+                                                        <div class="col-sm-5"><p><span id="detailPurchasePrice"></span></p></div>  
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-5"><p><strong>Selling Price :</strong></p></div>
+                                                        <div class="col-sm-5"><p><span id="detailSellingPrice"></span></p></div>  
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-5"><p><strong>Quantity :</strong></p></div>
+                                                        <div class="col-sm-5"><p><span id="detailProductQty"></span></p></div>  
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-5"><p><strong>Unit :</strong></p></div>
+                                                        <div class="col-sm-5"><p><span id="detailProductUnit"></span></p></div>  
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-5"><p><strong>Supplier :</strong></p></div>
+                                                        <div class="col-sm-5"><p><span id="detailSupplierId"></span></p></div>  
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-5"><p><strong>Status :</strong></p></div>
+                                                        <div class="col-sm-5"><p><span id="detailProductStatus" class="badge"></span></p></div>  
+                                                    </div>
+                                                
+                                                </div>
+                                            </div>
+                                                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!-- Modal for Delete Confirmation -->
+                        <div class="modal fade" id="deleteProductModal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteProductModalLabel">Delete Product</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form id="deleteProductForm" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <div class="modal-body">
+                                            
+                                            <p><span class="text-primary"> {{ Auth::user()->name }}</span>, are you sure you want to delete "<strong><span id="deleteProductId"></span> - <span id="deleteProductName"></span></strong>" ?</p>
+                                            <div class="alert alert-danger">
+                                            <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> <strong>WARNING</strong></span>
+                                            <p class="text-danger"><small>This action cannot be undone, the selected product data will be permanently deleted !</small></p>
+                                            </div>
+                                            
+                                            
+                                            <div class="form-group form-check">
+                                                <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" name="remember" required> I agree to the Terms & Conditions.
+                                                <div class="valid-feedback">Valid.</div>
+                                                <div class="invalid-feedback">Check this box to continue.</div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No, keep it</button>
+                                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>     
+
+                        <!-- Modal for Edit Product -->
+                        <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Edit Product</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                    
+                                        <!-- Modal body -->
+                                        <form id="editProductForm" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                            <div class="modal-body">
+
+                                                <div class="form-group mb-3">
+                                                            <label class="font-weight-bold">Product ID :</label>
+                                                            <input type="text" class="form-control @error('product_id') is-invalid @enderror" id="edit_product_id" name="product_id" value="{{ old('product_id') }}" placeholder="Input product id" readonly>
+
+                                                                <!-- error message for product_id -->
+                                                                @error('product_id')
+                                                                    <div class="alert alert-danger mt-2">
+                                                                        {{ $message }}
+                                                                    </div>
+                                                                @enderror
+                                                        </div>
+
+                                                <div class="row">
+                                                    <div class="col">                    
+                                                        <div class="form-group mb-3">
+                                                            <label class="font-weight-bold">Product name :</label>
+                                                            <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="edit_product_name" name="product_name" value="{{ old('product_name') }}" placeholder="Input product name" require>
+
+                                                                <!-- error message for product_name -->
+                                                                @error('product_name')
+                                                                    <div class="alert alert-danger mt-2">
+                                                                        {{ $message }}
+                                                                    </div>
+                                                                @enderror
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="col">
+                                                        <div class="form-group mb-3">
+                                                            <label class="font-weight-bold">Product Category:</label>
+                                                            <select class="form-control selectpicker @error('product_category') is-invalid @enderror" 
+                                                                    id="edit_product_category" 
+                                                                    name="product_category" 
+                                                                    data-live-search="true" 
+                                                                    data-style="btn-light" 
+                                                                    required>
+                                                                <option value="" disabled>Select a category</option>
+                                                                @foreach ($categories as $category)
+                                                                    <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
+                                                                @endforeach
+                                                            </select>
+
+                                                            <!-- Error message for product_category -->
+                                                            @error('product_category')
+                                                                <div class="alert alert-danger mt-2">
+                                                                    {{ $message }}
+                                                                </div>
+                                                            @enderror
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold">Product Description</label>
+                                                    <textarea class="form-control @error('product_description') is-invalid @enderror" id="edit_product_description" name="product_description" rows="3" placeholder="Input product description">{{ old('product_description') }}</textarea>
+                                                
+                                                    <!-- error message for product_description -->
+                                                    @error('product_description')
+                                                        <div class="alert alert-danger mt-2">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                </div>
+
+                                                <input type="number" class="form-control" id="edit_product_qty" name="product_qty"  require>
+
+                                                
+
+                                                <div class="row">
+                                                    <div class="col">                    
+                                                        <div class="form-group mb-3">
+                                                            <label class="font-weight-bold">Purchase Price :</label>
+                                                            <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" id="edit_purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" placeholder="Input purchase price" require>
+
+                                                                <!-- error message for purchase_price -->
+                                                                @error('purchase_price')
+                                                                    <div class="alert alert-danger mt-2">
+                                                                        {{ $message }}
+                                                                    </div>
+                                                                @enderror
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div class="col">
+                                                            <div class="form-group mb-3">
+                                                                    <label class="font-weight-bold">Selling Price :</label>
+                                                                    <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="edit_selling_price" name="selling_price" value="{{ old('selling_price') }}" placeholder="Input selling price" require>
+
+                                                                        <!-- error message for selling_price -->
+                                                                        @error('selling_price')
+                                                                            <div class="alert alert-danger mt-2">
+                                                                                {{ $message }}
+                                                                            </div>
+                                                                        @enderror
+                                                            </div>      
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col">                    
+                                                        <div class="form-group mb-3">
+                                                            <label class="font-weight-bold">Product Unit:</label>
+                                                            <select class="form-control selectpicker @error('product_unit') is-invalid @enderror" 
+                                                                    id="edit_product_unit" 
+                                                                    name="product_unit" 
+                                                                    data-live-search="true" 
+                                                                    data-style="btn-light" 
+                                                                    required>
+                                                                <option value="" disabled>Select a unit</option>
+                                                                @foreach ($units as $unit)
+                                                                    <option value="{{ $unit->unit_id }}">{{ $unit->unit_name }}</option>
+                                                                @endforeach
+                                                            </select>
+
+                                                            <!-- Error message for product_unit -->
+                                                            @error('product_unit')
+                                                                <div class="alert alert-danger mt-2">
+                                                                    {{ $message }}
+                                                                </div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col">
+                                                        <div class="form-group mb-3">
+                                                            <label class="font-weight-bold">Supplier:</label>
+                                                            <select class="form-control selectpicker @error('supplier_id') is-invalid @enderror" 
+                                                                    id="edit_supplier_id" 
+                                                                    name="supplier_id" 
+                                                                    data-live-search="true" 
+                                                                    data-style="btn-light" 
+                                                                    required>
+                                                                <option value="" disabled>Select a supplier</option>
+                                                                @foreach ($suppliers as $supplier)
+                                                                    <option value="{{ $supplier->supplier_id }}">{{ $supplier->supplier_name }}</option>
+                                                                @endforeach
+                                                            </select>
+
+                                                            <!-- Error message for supplier_id -->
+                                                            @error('supplier_id')
+                                                                <div class="alert alert-danger mt-2">
+                                                                    {{ $message }}
+                                                                </div>
+                                                            @enderror
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group mb-3">
+                                                    <label class="font-weight-bold">Product Status:</label>
+                                                    <br>
+
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" id="edit_product_status_active" name="product_status" value="active" class="custom-control-input">
+                                                        <label class="custom-control-label" for="edit_product_status_active">Active</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio custom-control-inline">
+                                                        <input type="radio" id="edit_product_status_inactive" name="product_status" value="inactive" class="custom-control-input">
+                                                        <label class="custom-control-label" for="edit_product_status_inactive">Inactive</label>
+                                                    </div>
+
+                                                    <!-- Error message for product_status -->
+                                                    @error('product_status')
+                                                        <div class="alert alert-danger mt-2">
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                </div>
+
+                                            </div>
+
+                                            <!-- Modal footer -->
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                            </div>
+                                            
+                                        </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal for Change Product Image -->
+                        <div class="modal fade" id="changeImageModal" tabindex="-1" role="dialog" aria-labelledby="changeImageModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="changeImageModalLabel">Change Product Image</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form id="changeImageForm" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label class="font-weight-bold">Current Image :</label>
+                                                <div class="text-center mb-3">
+                                                    <img id="currentProductImage" src="" alt="Current Product Image" class="img-fluid rounded" style="max-height: 200px;">
+                                                </div>
+                                            </div>
+
+                                            <hr>
+
+                                            <label class="font-weight-bold">New Image :</label>
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input @error('product_img') is-invalid @enderror" name="product_img" id="new_product_image" required>
+                                                <label class="custom-file-label" for="customFile">Choose file</label>
+                                
+                                            </div>
+
+
+
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal for Stock Adjustment -->
+                        <div class="modal fade" id="stockAdjustmentModal" tabindex="-1" role="dialog" aria-labelledby="stockAdjustmentModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <form id="stockAdjustmentForm" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="stockAdjustmentModalLabel">Stock Adjustment</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="adjust_product_id" class="font-weight-bold">Product ID :</label>
+                                                        <input type="text" class="form-control" id="adjust_product_id" name="product_id" readonly>
+                                                    </div>
+                                                </div>   
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="adjust_product_name" class="font-weight-bold">Product Name :</label>
+                                                        <input type="text" class="form-control" id="adjust_product_name" readonly>
+                                                    </div>
+                                                </div>    
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="adjust_qty_before" class="font-weight-bold">Current Quantity :</label>
+                                                <input type="number" class="form-control" id="adjust_qty_before" readonly>
+                                            </div>
+
+                                        <hr>
+                                        
+                                            <div class="form-group">
+                                                <label for="adjust_qty_changed" class="font-weight-bold">Adjustment Quantity :</label>
+                                                <input type="number" class="form-control" id="adjust_qty_changed" name="qty_changed" placeholder="0" required>
+                                                <p class="text-info"><small><span class="text-info"><i class="fas fa-info-circle"></i> <strong>INFO :</strong></span> Use numbers to fill in the amount to be added, to reduce the amount add (-) before the number, Example: -1</small></p>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="adjust_qty_before" class="font-weight-bold">Adjustment Type :</label>
+                                                <select name="stock_change_type" class="custom-select" required>
+                                                
+                                                    <option value="Stock Adjustment">Stock Adjustment</option>
+                                                    <option value="Write-off">Write-off</option>
+
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="adjust_note" class="font-weight-bold">Adjustment Note :</label>
+                                                <textarea class="form-control" id="adjust_note" name="change_note" rows="2" placeholder="Enter adjustment reason" required></textarea>
+                                            </div>
+                                            <hr>
+                                            <div class="alert alert-warning">
+                                            <span class="text-warning"><i class="fas fa-exclamation-circle"></i> <strong>ATTENTION</strong>
+                                            <p class="text-warning"><small>This action will be recorded in the stock changelogs, any changes made may affect the stock, please ensure that no errors occur in the changes.</small></p>
+                                            </div>
+
+                                            <div class="form-group form-check">
+                                                <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" name="remember" required> I agree to the Terms & Conditions.
+                                                <div class="valid-feedback">Valid.</div>
+                                                <div class="invalid-feedback">Check this box to continue.</div>
+                                                </label>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-warning">Submit Adjustment</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                   
-            </div>
+                </div>
                 <!-- /.container-fluid -->
 
 @section('scripts')

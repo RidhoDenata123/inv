@@ -261,7 +261,7 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group mb-3">
-                                        <label class="font-weight-bold">Product:</label>
+                                        <label class="font-weight-bold">Product :</label>
                                         <select class="form-control selectpicker" id="product_id" name="product_id" data-live-search="true" required>
                                             <option value="" disabled selected>Select a product</option>
                                             @foreach ($products as $product)
@@ -271,15 +271,30 @@
                                     </div>
                                 </div>
                                 <div class="col">
+
                                     <div class="form-group mb-3">
-                                        <label class="font-weight-bold">Quantity:</label>
+                                        <label class="font-weight-bold">Quantity :</label>
                                         <div class="input-group mb-3">
-                                            <input type="number" class="form-control" id="dispatching_qty" name="dispatching_qty" placeholder="Enter quantity" required>
+                                            <input type="number" class="form-control" id="dispatching_qty" name="dispatching_qty" min="1" placeholder="" required>
                                             <div class="input-group-append">
                                                 <span class="input-group-text" id="product_unit">unit</span>
                                             </div>
                                         </div>
+                                        <!-- Tempat untuk alert warning -->
+
+                                    <div id="dispatching_qty_warning" class="alert alert-warning alert-dismissible fade show" style="display: none;">
+                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                        <span class="text-warning">
+                                            <i class="fas fa-exclamation-triangle"></i> <strong>WARNING</strong>
+                                        </span>
+                                        <p class="text-warning">
+                                            <small>The quantity cannot exceed the maximum available stock.</small>
+                                        </p>
                                     </div>
+
+
+                                    </div>
+
                                 </div>
                         
                             </div>
@@ -292,7 +307,7 @@
                         <!-- Modal footer -->
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Save Product</button>
+                            <button type="submit" class="btn btn-success">Dispatch Product</button>
                         </div>
                         
                     </form>
@@ -439,7 +454,7 @@
                     <div class="modal-body">
                         <!-- Detail ID -->
                         <div class="form-group mb-3">
-                            <label class="font-weight-bold">Detail ID:</label>
+                            <label class="font-weight-bold">Detail ID :</label>
                             <input type="text" class="form-control" id="edit_dispatching_detail_id" name="dispatching_detail_id" readonly>
                         </div>
 
@@ -447,7 +462,7 @@
                             <!-- Product Dropdown -->
                             <div class="col">
                                 <div class="form-group mb-3">
-                                    <label class="font-weight-bold">Product:</label>
+                                    <label class="font-weight-bold">Product :</label>
                                     <select class="form-control selectpicker" id="edit_product_id" name="product_id" data-live-search="true" required>
                                         <option value="" disabled>Select a product</option>
                                         @foreach ($products as $product)
@@ -459,15 +474,27 @@
 
                             <!-- Quantity Input -->
                             <div class="col">
+
                                 <div class="form-group mb-3">
-                                    <label class="font-weight-bold">Quantity:</label>
+                                    <label class="font-weight-bold">Quantity :</label>
                                     <div class="input-group mb-3">
                                         <input type="number" class="form-control" id="edit_dispatching_qty" name="dispatching_qty" placeholder="Enter quantity" required>
                                         <div class="input-group-append">
                                             <span class="input-group-text" id="edit_product_unit">unit</span>
                                         </div>
                                     </div>
+                                    <!-- Tempat untuk alert warning -->
+                                    <div id="edit_dispatching_qty_warning" class="alert alert-warning alert-dismissible fade show" style="display: none;">
+                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                        <span class="text-warning">
+                                            <i class="fas fa-exclamation-triangle"></i> <strong>WARNING</strong>
+                                        </span>
+                                        <p class="text-warning">
+                                            <small>The quantity cannot exceed the maximum available stock.</small>
+                                        </p>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
 
@@ -791,6 +818,7 @@
                 $('#confirmDetailModal').modal('show');
             });
 
+            
             // APPEND UNIT ADD DETAIL
             $('#product_id').on('change', function() {
                 const productId = $(this).val(); // Ambil product_id yang dipilih
@@ -836,27 +864,125 @@
                 }
             });
 
-            // Ketika modal Edit Dispatching Detail ditampilkan
-            $('#editDispatchingDetailModal').on('show.bs.modal', function() {
-                const productId = $('#edit_product_id').val(); // Ambil product_id yang sudah dipilih
 
-                if (productId) {
-                    // Lakukan permintaan AJAX ke server untuk mendapatkan unit
-                    $.ajax({
-                        url: `/products/${productId}/unit`, // Endpoint untuk mendapatkan unit
-                        method: 'GET',
-                        success: function(response) {
-                            $('#edit_product_unit').text(response.unit_name); // Tampilkan unit
-                        },
-                        error: function(xhr) {
-                            $('#edit_product_unit').text('unit'); // Reset unit jika terjadi error
-                            console.error('Failed to fetch unit:', xhr.responseText);
-                        }
-                    });
-                } else {
-                    $('#edit_product_unit').text('unit'); // Reset unit jika tidak ada produk yang dipilih
-                }
-            });
+            // DISPATCHING QTY LIMITER FOR ADD MODAL
+                $('#product_id').on('change', function() {
+                    const productId = $(this).val(); // Ambil product_id yang dipilih
+
+                    if (productId) {
+                        // Lakukan permintaan AJAX ke server
+                        $.ajax({
+                            url: `/products/${productId}/qty`, // Endpoint untuk mendapatkan product_qty
+                            method: 'GET',
+                            success: function(response) {
+                                const maxQty = response.product_qty; // Ambil jumlah maksimum dari server
+                                $('#dispatching_qty').attr('max', maxQty); // Atur nilai maksimum
+                                $('#dispatching_qty').attr('placeholder', `Max: ${maxQty}`); // Tambahkan placeholder
+                                $('#dispatching_qty_warning').hide(); // Sembunyikan warning jika ada
+                            },
+                            error: function(xhr) {
+                                console.error('Failed to fetch product quantity:', xhr.responseText);
+                                // Reset nilai maksimum jika terjadi error
+                                $('#dispatching_qty').attr('max', '');
+                                $('#dispatching_qty').attr('placeholder', 'Enter quantity');
+                                $('#dispatching_qty_warning').hide(); // Sembunyikan warning jika ada
+                            }
+                        });
+                    } else {
+                        // Reset nilai maksimum jika tidak ada produk yang dipilih
+                        $('#dispatching_qty').attr('max', '');
+                        $('#dispatching_qty').attr('placeholder', 'Enter quantity');
+                        $('#dispatching_qty_warning').hide(); // Sembunyikan warning jika ada
+                    }
+                });
+                // Validasi input dispatching_qty
+                $('#dispatching_qty').on('input', function() {
+                    const maxQty = parseInt($(this).attr('max')); // Ambil nilai maksimum
+                    const currentQty = parseInt($(this).val()); // Ambil nilai yang diinput
+
+                    if (currentQty > maxQty) {
+                        $(this).val(maxQty); // Jika nilai melebihi maksimum, set ke maksimum
+                        $('#dispatching_qty_warning').show(); // Tampilkan warning
+                    } else {
+                        $('#dispatching_qty_warning').hide(); // Sembunyikan warning jika valid
+                    }
+                });
+
+            // DISPATCHING QTY LIMITER FOR EDIT MODAL
+                $('#edit_product_id').on('change', function() {
+                    const productId = $(this).val(); // Ambil product_id yang dipilih
+
+                    if (productId) {
+                        // Lakukan permintaan AJAX ke server
+                        $.ajax({
+                            url: `/products/${productId}/qty`, // Endpoint untuk mendapatkan product_qty
+                            method: 'GET',
+                            success: function(response) {
+                                const maxQty = response.product_qty; // Ambil jumlah maksimum dari server
+                                $('#edit_dispatching_qty').attr('max', maxQty); // Atur nilai maksimum
+                                $('#edit_dispatching_qty').attr('placeholder', `Max: ${maxQty}`); // Tambahkan placeholder
+                                $('#edit_dispatching_qty_warning').hide(); // Sembunyikan warning jika ada
+                            },
+                            error: function(xhr) {
+                                console.error('Failed to fetch product quantity:', xhr.responseText);
+                                // Reset nilai maksimum jika terjadi error
+                                $('#edit_dispatching_qty').attr('max', '');
+                                $('#edit_dispatching_qty').attr('placeholder', 'Enter quantity');
+                                $('#edit_dispatching_qty_warning').hide(); // Sembunyikan warning jika ada
+                            }
+                        });
+                    } else {
+                        // Reset nilai maksimum jika tidak ada produk yang dipilih
+                        $('#edit_dispatching_qty').attr('max', '');
+                        $('#edit_dispatching_qty').attr('placeholder', 'Enter quantity');
+                        $('#edit_dispatching_qty_warning').hide(); // Sembunyikan warning jika ada
+                    }
+                });
+
+                // Validasi input dispatching_qty pada modal Edit Detail
+                $('#edit_dispatching_qty').on('input', function() {
+                    const maxQty = parseInt($(this).attr('max')); // Ambil nilai maksimum
+                    const currentQty = parseInt($(this).val()); // Ambil nilai yang diinput
+
+                    if (currentQty > maxQty) {
+                        $(this).val(maxQty); // Jika nilai melebihi maksimum, set ke maksimum
+                        $('#edit_dispatching_qty_warning').show(); // Tampilkan warning
+                    } else {
+                        $('#edit_dispatching_qty_warning').hide(); // Sembunyikan warning jika valid
+                    }
+                });
+
+                // Ketika modal Edit Dispatching Detail ditampilkan
+                $('#editDispatchingDetailModal').on('show.bs.modal', function() {
+                    const productId = $('#edit_product_id').val(); // Ambil product_id yang sudah dipilih
+
+                    if (productId) {
+                        // Lakukan permintaan AJAX ke server untuk mendapatkan unit dan qty
+                        $.ajax({
+                            url: `/products/${productId}/qty`, // Endpoint untuk mendapatkan product_qty
+                            method: 'GET',
+                            success: function(response) {
+                                const maxQty = response.product_qty; // Ambil jumlah maksimum dari server
+                                $('#edit_dispatching_qty').attr('max', maxQty); // Atur nilai maksimum
+                                $('#edit_dispatching_qty').attr('placeholder', `Max: ${maxQty}`); // Tambahkan placeholder
+                                $('#edit_dispatching_qty_warning').hide(); // Sembunyikan warning jika ada
+                            },
+                            error: function(xhr) {
+                                console.error('Failed to fetch product quantity:', xhr.responseText);
+                                // Reset nilai maksimum jika terjadi error
+                                $('#edit_dispatching_qty').attr('max', '');
+                                $('#edit_dispatching_qty').attr('placeholder', 'Enter quantity');
+                                $('#edit_dispatching_qty_warning').hide(); // Sembunyikan warning jika ada
+                            }
+                        });
+                    } else {
+                        // Reset nilai maksimum jika tidak ada produk yang dipilih
+                        $('#edit_dispatching_qty').attr('max', '');
+                        $('#edit_dispatching_qty').attr('placeholder', 'Enter quantity');
+                        $('#edit_dispatching_qty_warning').hide(); // Sembunyikan warning jika ada
+                    }
+                });
+
             
         });
     </script>

@@ -27,7 +27,7 @@ class SupplierController extends Controller
     public function index() : View
     {
         //get all suppliers
-        $suppliers = Supplier::latest()->paginate(10);
+        $suppliers = Supplier::orderBy('created_at', 'desc')->paginate(10);
 
         //render view with suppliers
         return view('suppliers.index', compact('suppliers'));

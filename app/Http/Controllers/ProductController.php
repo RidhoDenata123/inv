@@ -30,7 +30,9 @@ class ProductController extends Controller
      */
     public function index() : View
     {
-        $products = Product::with('category', 'unit', 'supplier')->paginate(10);
+        $products = Product::with('category', 'unit', 'supplier')
+        ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at secara descending
+        ->paginate(10);
         $categories = Category::all();
         $units = Unit::all();
         $suppliers = Supplier::all();
@@ -202,6 +204,18 @@ class ProductController extends Controller
         // Jika produk atau unit tidak ditemukan
         return response()->json(['unit_name' => 'No unit found'], 404);
     }
+
+    //GET QTY
+    public function getProductQty($productId)
+    {
+        // Cari produk berdasarkan product_id
+        $product = Product::findOrFail($productId);
+
+        // Kembalikan response JSON dengan product_qty
+        return response()->json(['product_qty' => $product->product_qty]);
+    }
+
+
 
     //Product Stock Adjustment
     public function adjustStock(Request $request, $id)

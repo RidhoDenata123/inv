@@ -69,7 +69,7 @@
                             <!-- Tab Content -->
                             <div class="tab-content pt-3">
                                 <!-- My Profile Tab -->
-                                <div class="tab-pane active" id="myProfile">
+                                <div class="tab-pane fade show active" id="myProfile">
 
                                     <form action="{{ route('setting.admin.updateProfile') }}" method="POST">
                                         @csrf
@@ -263,7 +263,7 @@
 
 
                                 <!-- Company Profile Tab -->
-                                <div class="tab-pane" id="companyProfile">
+                                <div class="tab-pane fade show" id="companyProfile">
                                     <form action="{{ route('setting.admin.updateCompany') }}" method="POST" enctype="multipart/form-data">
                                         @csrf
                                         @method('PUT')

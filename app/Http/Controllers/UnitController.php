@@ -27,7 +27,7 @@ class UnitController extends Controller
     public function index() : View
     {
         //get all Units
-        $units = Unit::latest()->paginate(10);
+        $units = Unit::orderBy('created_at', 'desc')->paginate(10);
 
         //render view with Units
         return view('units.index', compact('units'));

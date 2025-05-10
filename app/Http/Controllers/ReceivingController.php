@@ -38,7 +38,7 @@ class ReceivingController extends Controller
     public function index() : View
     {
         //get all ReceivingHeaders
-        $receiving_headers = ReceivingHeader::paginate(10); // Ambil data dengan pagination
+        $receiving_headers = ReceivingHeader::orderBy('created_at', 'desc')->paginate(10);
 
         //render view with receiving headers
         return view('receiving.header', compact('receiving_headers'));
@@ -140,7 +140,9 @@ class ReceivingController extends Controller
         $receivingHeader = ReceivingHeader::where('receiving_header_id', $id)->firstOrFail();
     
         // Ambil data Receiving Details dengan pagination
-        $receivingDetails = ReceivingDetail::where('receiving_header_id', $id)->paginate(10);
+        $receivingDetails = ReceivingDetail::where('receiving_header_id', $id)
+        ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at secara descending
+        ->paginate(10);
     
         $products = Product::all();
         $categories = Category::all();

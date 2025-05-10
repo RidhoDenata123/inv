@@ -264,7 +264,7 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group mb-3">
-                                        <label class="font-weight-bold">Product:</label>
+                                        <label class="font-weight-bold">Product :</label>
                                         <select class="form-control selectpicker" id="product_id" name="product_id" data-live-search="true" required>
                                             <option value="" disabled selected>Select a product</option>
                                             @foreach ($products as $product)
@@ -275,7 +275,7 @@
                                 </div>
                                 <div class="col">
                                     <div class="form-group mb-3">
-                                        <label class="font-weight-bold">Quantity:</label>
+                                        <label class="font-weight-bold">Quantity :</label>
                                         <div class="input-group mb-3">
                                             <input type="number" class="form-control" id="receiving_qty" name="receiving_qty" placeholder="Enter quantity" required>
                                             <div class="input-group-append">
@@ -447,14 +447,14 @@
                     <div class="modal-body">
                         <!-- Detail ID -->
                         <div class="form-group mb-3">
-                            <label class="font-weight-bold">Detail ID:</label>
+                            <label class="font-weight-bold">Detail ID :</label>
                             <input type="text" class="form-control" id="edit_receiving_detail_id" name="receiving_detail_id" readonly>
                         </div>
 
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group mb-3">
-                                        <label class="font-weight-bold">Product:</label>
+                                        <label class="font-weight-bold">Product :</label>
                                         <select class="form-control selectpicker" id="edit_product_id" name="product_id" data-live-search="true" required>
                                             <option value="" disabled>Select a product</option>
                                             @foreach ($products as $product)
@@ -466,7 +466,7 @@
 
                                 <div class="col">
                                     <div class="form-group mb-3">
-                                        <label class="font-weight-bold">Quantity:</label>
+                                        <label class="font-weight-bold">Quantity :</label>
                                         <div class="input-group mb-3">
                                             <input type="number" class="form-control" id="edit_receiving_qty" name="receiving_qty" placeholder="Enter quantity" required>
                                             <div class="input-group-append">

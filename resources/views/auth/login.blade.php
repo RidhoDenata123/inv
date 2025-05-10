@@ -5,6 +5,7 @@
 
 @section('content')
 
+
 <body class="bg-gradient-primary">
 
     <div class="container">
@@ -19,7 +20,7 @@
                         <!-- Nested Row within Card Body -->
                         <div class="row">
                             <div class="col-lg-6 d-none d-lg-block bg-login-image">
-                                <img src="{{ asset('img/erika.jpg') }}" alt="Login Image" class="img-fluid">
+                                <img src="{{ asset('img/hero_img.webp') }}" alt="Login Image" class="img-fluid">
 
                             </div>
                             <div class="col-lg-6">

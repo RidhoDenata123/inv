@@ -24,7 +24,7 @@ class CustomerController extends Controller
     public function index(): View
     {
         // Get all customers
-        $customers = Customer::latest()->paginate(10);
+        $customers = Customer::orderBy('created_at', 'desc')->paginate(10);
 
         // Render view with customers
         return view('customers.index', compact('customers'));

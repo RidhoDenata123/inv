@@ -16,7 +16,7 @@ use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+}); 
 
 Auth::routes();
 
@@ -237,6 +237,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // get unit
     Route::get('/products/{id}/unit', [DispatchingController::class, 'getUnit'])->name('products.getUnit');
+    Route::get('/products/{productId}/qty', [ProductController::class, 'getProductQty']);
 
     // Dispatching Header delete Route
     Route::delete('/dispatching/detail/{id}', [DispatchingController::class, 'destroyDetail'])->name('dispatching.detail.destroy');
@@ -263,12 +264,18 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
 //ALL REPORT ROUTE
 
+    //Report Archive
+    Route::get('/archive', [ReportController::class, 'archive'])->name('reports.archive');
+    
+
     // Report add Route
     Route::post('/reports/stock', [ReportController::class, 'store'])->name('reports.store');
     // Report detail Route
     Route::get('/reports/stock-show/{id}', [ReportController::class, 'show'])->name('reports.show');
+    
     // Report edit Route
     Route::put('/reports/stock-edit/{id}', [ReportController::class, 'update'])->name('reports.update');
+
     // Report delete Route
     Route::delete('/reports/stock/{id}', [ReportController::class, 'destroy'])->name('reports.destroy');
 
@@ -279,6 +286,9 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     //Stock Movement Report Route
     Route::get('/reports/stock-movement', [ReportController::class, 'stockMovementReports'])->name('reports.stockMovement');
+
+    Route::post('/reports/stock-movement/generate', [ReportController::class, 'generateStockMovementReport'])->name('reports.stockMovement.generate');
+    
 });
 
 

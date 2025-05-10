@@ -109,12 +109,13 @@
     </div>
 </li>
 
-<!-- Nav Item - Charts 
+<!-- Nav Item - Charts -->
 <li class="nav-item">
-    <a class="nav-link" href="">
-        <i class="far fa-fw fa-file-alt"></i>
-        <span>Report</span></a>
-</li>-->
+    <a class="nav-link" href="{{ route('reports.archive') }}">
+        <i class="fas fa-fw fa-archive"></i>
+        <span>Archive</span>
+    </a>
+</li>
 
 <!-- Nav Item - Tables -->
 <li class="nav-item">

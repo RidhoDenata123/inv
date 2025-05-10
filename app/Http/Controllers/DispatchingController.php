@@ -22,7 +22,7 @@ class DispatchingController extends Controller
     // Show all dispatching headers
     public function index(): View
     {
-        $dispatching_headers = DispatchingHeader::paginate(10); // Ambil data dengan pagination
+        $dispatching_headers = DispatchingHeader::orderBy('created_at', 'desc')->paginate(10);
         $customers = Customer::all(); // Ambil semua data customer
         return view('dispatching.header', compact('dispatching_headers', 'customers'));
     }
@@ -107,10 +107,16 @@ class DispatchingController extends Controller
     public function showById($id)
     {
         $dispatchingHeader = DispatchingHeader::where('dispatching_header_id', $id)->firstOrFail();
-        $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)->paginate(10);
 
+        $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)
+        ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at secara descending
+        ->paginate(10);
 
-        $products = Product::where('product_status', 'Active')->get(); // Hanya produk dengan status Active
+        // Filter produk dengan status Active dan quantity > 0
+        $products = Product::where('product_status', 'Active')
+        ->where('product_qty', '>', 0)
+        ->get();
+        
         $categories = Category::all();
         $units = Unit::all();
         $suppliers = Supplier::all();
@@ -300,6 +306,12 @@ class DispatchingController extends Controller
         }
 
         return response()->json(['unit_name' => 'No unit found'], 404);
+    }
+    //GET PRODUCT QTY
+    public function getProductQty($productId)
+    {
+        $product = Product::findOrFail($productId);
+        return response()->json(['product_qty' => $product->product_qty]);
     }
 
     // Print invoice
