@@ -502,15 +502,15 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="form-group">
-                                            <label for="report_title">Report Title</label>
+                                            <label for="report_title">Report Title :</label>
                                             <input type="text" class="form-control" id="report_title" name="report_title" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="report_description">Description</label>
+                                            <label for="report_description">Description :</label>
                                             <textarea class="form-control" id="report_description" name="report_description" rows="3" required></textarea>
                                         </div>
                                         <div class="form-group">
-                                            <label for="report_document">Upload Document</label>
+                                            <label for="report_document">Upload Document :</label>
                                             <input type="file" class="form-control-file" id="report_document" name="report_document" accept=".pdf,.doc,.docx,.xlsx,.jpg,.png">
                                         </div>
                                     </div>
@@ -538,11 +538,11 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="form-group">
-                                            <label for="edit_report_title">Report Title</label>
+                                            <label for="edit_report_title" class="font-weight-bold">Report Title :</label>
                                             <input type="text" class="form-control" id="edit_report_title" name="report_title" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="edit_report_description">Description</label>
+                                            <label for="edit_report_description" class="font-weight-bold">Description :</label>
                                             <textarea class="form-control" id="edit_report_description" name="report_description" rows="3" required></textarea>
                                         </div>
         
@@ -578,8 +578,24 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <p>Are you sure you want to delete this report?</p>
-                                        <p><strong>Report Title:</strong> <span id="deleteReportTitle"></span></p>
+
+                                            <p><span class="text-primary"> {{ Auth::user()->name }}</span>, are you sure you want to delete "<strong><span id="deleteReportTitle"></span></strong>" ?</p>
+                                            <div class="alert alert-danger">
+                                            <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> <strong>WARNING</strong></span>
+                                            <p class="text-danger"><small>This action cannot be undone, the selected product data will be permanently deleted !</small></p>
+                                            </div>
+                                            
+                                            
+                                            <div class="form-group form-check">
+                                                <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" name="remember" required> I agree to the Terms & Conditions.
+                                                <div class="valid-feedback">Valid.</div>
+                                                <div class="invalid-feedback">Check this box to continue.</div>
+                                                </label>
+                                            </div>
+
+
+
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
