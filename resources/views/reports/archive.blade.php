@@ -86,7 +86,7 @@
                                             <td>{{ ($stockReports->currentPage() - 1) * $stockReports->perPage() + $loop->iteration }}.</td>
                                             <td>{{ $stock->report_title }}</td>
                                             <td>{{ $stock->report_description }}</td>
-                                            <td>{{ $stock->created_at }}</td>
+                                            <td>{{ $stock->created_at ? \Carbon\Carbon::parse($stock->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
                                             <td>{{ $stock->generated_by }}</td>
                                             <td>
                                                 @if ($stock->report_document)
@@ -97,11 +97,11 @@
                                             </td>
                                             <td>
                                                 <!-- Edit Button -->
-                                                <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $stock->id }}" data-toggle="modal" data-target="#editReportModal">
+                                                <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $stock->report_id  }}" data-toggle="modal" data-target="#editReportModal">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                                 <!-- Delete Button -->
-                                                <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $stock->id }}" data-toggle="modal" data-target="#deleteReportModal">
+                                                <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $stock->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </td>
@@ -154,7 +154,7 @@
                                                 <td>{{ ($stockMovementReports->currentPage() - 1) * $stockMovementReports->perPage() + $loop->iteration }}.</td>
                                                 <td>{{ $movement->report_title }}</td>
                                                 <td>{{ $movement->report_description }}</td>
-                                                <td>{{ $movement->created_at }}</td>
+                                                <td>{{ $movement->created_at ? \Carbon\Carbon::parse($movement->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
                                                 <td>{{ $movement->generated_by }}</td>
                                                 <td>
                                                     @if ($movement->report_document)
@@ -165,11 +165,11 @@
                                                 </td>
                                                 <td>
                                                     <!-- Edit Button -->
-                                                    <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $movement->id }}" data-toggle="modal" data-target="#editReportModal">
+                                                    <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $movement->report_id  }}" data-toggle="modal" data-target="#editReportModal">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
                                                     <!-- Delete Button -->
-                                                    <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $movement->id }}" data-toggle="modal" data-target="#deleteReportModal">
+                                                    <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $movement->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </button>
                                                 </td>
@@ -181,7 +181,7 @@
                                         @endforelse
                                     </tbody>
                                 </table>
-                            </div>
+                      
 
                             <!-- Info Jumlah Data dan Pagination -->
                             <div class="d-flex justify-content-between align-items-center mt-2">
@@ -202,22 +202,286 @@
                         </div>
                     </div>
 
-                     <!-- minimum Tab -->
+                    <!-- minimum Tab -->
                     <div class="tab-pane fade show" id="minimum">
+                        <div class="table-responsive">
+                            
+                                <table class="table table-sm table-bordered" id="minimumTable" width="100%" cellspacing="0">
+                                     <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Report Title</th>
+                                            <th>Description</th>
+                                            <th>Generated At</th>
+                                            <th>Generated By</th>
+                                            <th>Document</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($stockMinimumReports as $minimum)
+                                            <tr>
+                                                <td>{{ ($stockMinimumReports->currentPage() - 1) * $stockMinimumReports->perPage() + $loop->iteration }}.</td>
+                                                <td>{{ $minimum->report_title }}</td>
+                                                <td>{{ $minimum->report_description }}</td>
+                                                <td>{{ $minimum->created_at ? \Carbon\Carbon::parse($minimum->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
+                                                <td>{{ $minimum->generated_by }}</td>
+                                                <td>
+                                                    @if ($minimum->report_document)
+                                                        <a href="{{ asset('storage/' . $minimum->report_document) }}" target="_blank">View Document</a>
+                                                    @else
+                                                        No Document
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <!-- Edit Button -->
+                                                    <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $minimum->report_id  }}" data-toggle="modal" data-target="#editReportModal">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <!-- Delete Button -->
+                                                    <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $minimum->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center">No Stock Minimum Reports Available</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                           
+
+                            <!-- Info Jumlah Data dan Pagination -->
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <!-- Info Jumlah Data -->
+                                <div class="table">
+                                    <p class="mb-0">
+                                        Showing {{ $stockMinimumReports->firstItem() }} to {{ $stockMinimumReports->lastItem() }} of {{ $stockMinimumReports->total() }} entries
+                                    </p>
+                                </div>
+
+                                <!-- Laravel Pagination -->
+                                <div>
+                                    {{ $stockMinimumReports->links('pagination::simple-bootstrap-4') }}
+                                </div>
+                            </div>
+
+            
+                        </div>
                     </div>
 
-                     <!-- receiving Tab -->
+                    <!-- receiving Tab -->
                     <div class="tab-pane fade show" id="receiving">
+                        <div class="table-responsive">
+                            
+                                <table class="table table-sm table-bordered" id="receivingTable" width="100%" cellspacing="0">
+                                     <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Report Title</th>
+                                            <th>Description</th>
+                                            <th>Generated At</th>
+                                            <th>Generated By</th>
+                                            <th>Document</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($receivingReports as $receiving)
+                                            <tr>
+                                                <td>{{ ($receivingReports->currentPage() - 1) * $receivingReports->perPage() + $loop->iteration }}.</td>
+                                                <td>{{ $receiving->report_title }}</td>
+                                                <td>{{ $receiving->report_description }}</td>
+                                                <td>{{ $receiving->created_at ? \Carbon\Carbon::parse($receiving->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
+                                                <td>{{ $receiving->generated_by }}</td>
+                                                <td>
+                                                    @if ($receiving->report_document)
+                                                        <a href="{{ asset('storage/' . $receiving->report_document) }}" target="_blank">View Document</a>
+                                                    @else
+                                                        No Document
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <!-- Edit Button -->
+                                                    <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $receiving->report_id  }}" data-toggle="modal" data-target="#editReportModal">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <!-- Delete Button -->
+                                                    <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $receiving->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center">No Receiving Reports Available</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                           
+
+                            <!-- Info Jumlah Data dan Pagination -->
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <!-- Info Jumlah Data -->
+                                <div class="table">
+                                    <p class="mb-0">
+                                        Showing {{ $receivingReports->firstItem() }} to {{ $receivingReports->lastItem() }} of {{ $receivingReports->total() }} entries
+                                    </p>
+                                </div>
+
+                                <!-- Laravel Pagination -->
+                                <div>
+                                    {{ $receivingReports->links('pagination::simple-bootstrap-4') }}
+                                </div>
+                            </div>
+
+            
+                        </div>
                     </div>
 
-                     <!-- dispatching Tab -->
+                    <!-- dispatching Tab -->
                     <div class="tab-pane fade show" id="dispatching">
-                    </div>
+                        <div class="table-responsive">
+                            
+                                <table class="table table-sm table-bordered" id="dispatchingTable" width="100%" cellspacing="0">
+                                     <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Report Title</th>
+                                            <th>Description</th>
+                                            <th>Generated At</th>
+                                            <th>Generated By</th>
+                                            <th>Document</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($dispatchingReports as $dispatching)
+                                            <tr>
+                                                <td>{{ ($dispatchingReports->currentPage() - 1) * $dispatchingReports->perPage() + $loop->iteration }}.</td>
+                                                <td>{{ $dispatching->report_title }}</td>
+                                                <td>{{ $dispatching->report_description }}</td>
+                                                <td>{{ $dispatching->created_at ? \Carbon\Carbon::parse($dispatching->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
+                                                <td>{{ $dispatching->generated_by }}</td>
+                                                <td>
+                                                    @if ($dispatching->report_document)
+                                                        <a href="{{ asset('storage/' . $dispatching->report_document) }}" target="_blank">View Document</a>
+                                                    @else
+                                                        No Document
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <!-- Edit Button -->
+                                                    <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $dispatching->report_id  }}" data-toggle="modal" data-target="#editReportModal">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <!-- Delete Button -->
+                                                    <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $dispatching->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center">No Dispatching Reports Available</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                           
 
-                     <!-- adjustment Tab -->
-                    <div class="tab-pane fade show" id="adjustment">
-                        
+                            <!-- Info Jumlah Data dan Pagination -->
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <!-- Info Jumlah Data -->
+                                <div class="table">
+                                    <p class="mb-0">
+                                        Showing {{ $dispatchingReports->firstItem() }} to {{ $dispatchingReports->lastItem() }} of {{ $dispatchingReports->total() }} entries
+                                    </p>
+                                </div>
+
+                                <!-- Laravel Pagination -->
+                                <div>
+                                    {{ $dispatchingReports->links('pagination::simple-bootstrap-4') }}
+                                </div>
+                            </div>
+
+            
+                        </div>
                     </div>
+               
+                    <!-- adjustment Tab -->
+                    <div class="tab-pane fade show" id="adjustment">
+                        <div class="table-responsive">
+                            
+                                <table class="table table-sm table-bordered" id="adjustmentTable" width="100%" cellspacing="0">
+                                     <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Report Title</th>
+                                            <th>Description</th>
+                                            <th>Generated At</th>
+                                            <th>Generated By</th>
+                                            <th>Document</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($adjustmentReports as $adjustment)
+                                            <tr>
+                                                <td>{{ ($adjustmentReports->currentPage() - 1) * $adjustmentReports->perPage() + $loop->iteration }}.</td>
+                                                <td>{{ $adjustment->report_title }}</td>
+                                                <td>{{ $adjustment->report_description }}</td>
+                                                <td>{{ $adjustment->created_at ? \Carbon\Carbon::parse($adjustment->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
+                                                <td>{{ $adjustment->generated_by }}</td>
+                                                <td>
+                                                    @if ($adjustment->report_document)
+                                                        <a href="{{ asset('storage/' . $adjustment->report_document) }}" target="_blank">View Document</a>
+                                                    @else
+                                                        No Document
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <!-- Edit Button -->
+                                                    <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $adjustment->report_id  }}" data-toggle="modal" data-target="#editReportModal">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <!-- Delete Button -->
+                                                    <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $adjustment->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center">No Stock Adjustment Reports Available</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                           
+
+                            <!-- Info Jumlah Data dan Pagination -->
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <!-- Info Jumlah Data -->
+                                <div class="table">
+                                    <p class="mb-0">
+                                        Showing {{ $adjustmentReports->firstItem() }} to {{ $adjustmentReports->lastItem() }} of {{ $adjustmentReports->total() }} entries
+                                    </p>
+                                </div>
+
+                                <!-- Laravel Pagination -->
+                                <div>
+                                    {{ $adjustmentReports->links('pagination::simple-bootstrap-4') }}
+                                </div>
+                            </div>
+
+            
+                        </div>
+                    </div>
+            
 
                 </div>
         </div>
@@ -281,10 +545,15 @@
                                             <label for="edit_report_description">Description</label>
                                             <textarea class="form-control" id="edit_report_description" name="report_description" rows="3" required></textarea>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="edit_report_document">Upload Document</label>
-                                            <input type="file" class="form-control-file" id="edit_report_document" name="report_document" accept=".pdf,.doc,.docx,.xlsx,.jpg,.png">
+        
+                                        <label class="font-weight-bold">Replace Document :</label>
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input @error('report_document') is-invalid @enderror" name="report_document" id="edit_report_document" accept=".pdf,.doc,.docx,.xlsx,.jpg,.png">
+                                            <label class="custom-file-label" for="customFile">Choose file</label>
                                         </div>
+                              
+
+
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -320,7 +589,7 @@
                             </div>
                         </div>
                     </div>
-
+    </div>
 
 
 <!-- Scripts -->
@@ -347,6 +616,62 @@
     <script>
         $(document).ready(function() {
             $('#movementTable').DataTable({
+                "paging": false, // Nonaktifkan pagination bawaan DataTables
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": false,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#minimumTable').DataTable({
+                "paging": false, // Nonaktifkan pagination bawaan DataTables
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": false,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#receivingTable').DataTable({
+                "paging": false, // Nonaktifkan pagination bawaan DataTables
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": false,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
+    
+    <script>
+        $(document).ready(function() {
+            $('#dispatchingTable').DataTable({
+                "paging": false, // Nonaktifkan pagination bawaan DataTables
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": false,
+                "autoWidth": false,
+                "responsive": true,
+            });
+        });
+    </script>
+
+        <script>
+        $(document).ready(function() {
+            $('#adjustmentTable').DataTable({
                 "paging": false, // Nonaktifkan pagination bawaan DataTables
                 "lengthChange": true,
                 "searching": true,
@@ -387,7 +712,7 @@
 
                 // Lakukan permintaan AJAX ke server
                 $.ajax({
-                    url: `/reports/${reportId}/edit`, // URL rute Laravel untuk mendapatkan detail report
+                    url: `/reports/show/${reportId}`, // URL rute Laravel untuk mendapatkan detail report
                     method: 'GET',
                     success: function(data) {
                         // Isi modal dengan data report
@@ -395,7 +720,7 @@
                         $('#edit_report_description').val(data.report_description);
 
                         // Set action URL untuk form edit
-                        $('#editReportForm').attr('action', `/reports-edit/${reportId}`);
+                        $('#editReportForm').attr('action', `/reports/update/${reportId}`);
 
                         // Tampilkan modal
                         $('#editReportModal').modal('show');
@@ -412,12 +737,21 @@
                 const reportTitle = $(this).closest('tr').find('td:nth-child(2)').text(); // Ambil judul report dari tabel
 
                 // Set action URL untuk form delete
-                const deleteUrl = `/reports/stock/${reportId}`;
+                const deleteUrl = `/reports/delete/${reportId}`;
                 $('#deleteReportForm').attr('action', deleteUrl);
 
                 // Tampilkan judul report di modal
                 $('#deleteReportTitle').text(reportTitle);
             });
+
+
+            // Add the following code if you want the name of the file appear on select
+            $(".custom-file-input").on("change", function() {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+            });
+
+
         });
     </script>
 @endsection

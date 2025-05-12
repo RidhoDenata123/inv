@@ -45,6 +45,22 @@ class ReportController extends Controller
     
         return redirect()->route('reports.stock')->with('success', 'Report added successfully.');
     }
+
+    //SHOW REPORT
+    public function show($id)
+    {
+        \Log::info("Fetching report with ID: $id");
+
+        // Ambil data report berdasarkan report_id
+        $report = Report::where('report_id', $id)->first();
+
+        if (!$report) {
+            return response()->json(['message' => 'Report not found'], 404);
+        }
+
+        return response()->json($report);
+    }
+
     //UPDATE REPORT
     public function update(Request $request, $id)
     {
@@ -68,7 +84,7 @@ class ReportController extends Controller
             'report_description' => $request->report_description,
         ]);
     
-        return redirect()->route('reports.stock')->with('success', 'Report updated successfully.');
+        return redirect()->route('reports.archive')->with('success', 'Report updated successfully.');
     }
     //DELETE REPORT
     public function destroy($id)
@@ -81,7 +97,7 @@ class ReportController extends Controller
     
         $report->delete();
     
-        return redirect()->route('reports.stock')->with('success', 'Report deleted successfully.');
+        return redirect()->route('reports.archive')->with('success', 'Report deleted successfully.');
     }
 
     //ARCHIVE
@@ -90,9 +106,12 @@ class ReportController extends Controller
         // Ambil data untuk masing-masing tab
         $stockReports = Report::where('report_type', 'stock')->orderBy('created_at', 'desc')->paginate(10);
         $stockMovementReports = Report::where('report_type', 'stock_movement')->orderBy('created_at', 'desc')->paginate(10);
-
+        $stockMinimumReports = Report::where('report_type', 'minimum_stock')->orderBy('created_at', 'desc')->paginate(10);
+        $receivingReports = Report::where('report_type', 'receiving')->orderBy('created_at', 'desc')->paginate(10);
+        $dispatchingReports = Report::where('report_type', 'dispatching')->orderBy('created_at', 'desc')->paginate(10);
+        $adjustmentReports = Report::where('report_type', 'stock_adjustment')->orderBy('created_at', 'desc')->paginate(10);
         // Kirim data ke view
-        return view('reports.archive', compact('stockReports', 'stockMovementReports'));
+        return view('reports.archive', compact('stockReports', 'stockMovementReports', 'stockMinimumReports', 'receivingReports', 'dispatchingReports', 'adjustmentReports'));
     }
 
     //STOCK REPORTS PAGE
@@ -135,9 +154,10 @@ class ReportController extends Controller
         ]);
 
         // Redirect kembali ke halaman laporan dengan pesan sukses
-        return redirect()->route('reports.stock')->with('success', 'Stock report generated successfully.');
+        return redirect()->route('reports.archive')->with('success', 'Stock report generated successfully.');
     }
     
+
     //Stock Movement Report
     public function stockMovementReports(Request $request)
     {
@@ -207,7 +227,182 @@ class ReportController extends Controller
         ]);
 
         // Redirect kembali ke halaman laporan dengan pesan sukses
-        return redirect()->route('reports.stockMovement')->with('success', 'Stock Movement Report generated successfully.');
+        return redirect()->route('reports.archive')->with('success', 'Stock Movement Report generated successfully.');
     }
 
+
+    //Stock Minimum Report
+    public function minimumStockReport()
+    {
+        // Ambil data produk dengan product_qty kurang dari 5
+        $products = Product::where('product_qty', '<', 5)->orderBy('product_qty', 'asc')->paginate(10);
+
+        // Kirim data ke view
+        return view('reports.minimumStock', compact('products'));
+    }
+
+    //GENERATE STOCK MINIMUM REPORT with DOm pdf
+    public function generateMinimumStockReport()
+    {
+        // Ambil data produk dengan product_qty kurang dari 5
+        $products = Product::where('product_qty', '<', 5)->orderBy('product_qty', 'asc')->get();
+
+        // Generate PDF menggunakan view
+        $pdf = Pdf::loadView('reports.minimumStockPDF', compact('products'));
+
+        // Nama file PDF
+        $fileName = 'minimum_stock_report_' . now()->format('d_m_Y') . '.pdf';
+
+        // Simpan file PDF ke storage (folder public/reports)
+        Storage::disk('public')->put('reports/' . $fileName, $pdf->output());
+
+        // Buat data baru di tabel reports
+        Report::create([
+            'report_id' => uniqid('REP'),
+            'report_type' => 'minimum_stock',
+            'report_title' => 'Minimum Stock Report ' . now()->format('d_m_Y'),
+            'report_description' => 'Generated minimum stock report.',
+            'report_document' => 'reports/' . $fileName,
+            'generated_by' => auth()->user()->name,
+        ]);
+
+        // Redirect kembali ke halaman laporan dengan pesan sukses
+        return redirect()->route('reports.archive')->with('success', 'Minimum Stock Report generated successfully.');
+    }
+
+
+    //Receiving Report
+    public function receivingReport()
+    {
+        // Ambil data dari StockChangeLog dengan stock_change_type tertentu
+        $receivingLogs = StockChangeLog::whereIn('stock_change_type', ['Restock', 'Opening Balance', 'Transfer In', 'Return from Customer'])
+            ->orderBy('changed_at', 'desc')
+            ->paginate(10);
+
+        // Kirim data ke view
+        return view('reports.receivingReport', compact('receivingLogs'));
+    }
+
+    //GENERATE RECEIVING REPORT with DOm pdf
+    public function generateReceivingReport()
+    {
+        // Ambil data dari StockChangeLog dengan stock_change_type tertentu
+        $receivingLogs = StockChangeLog::whereIn('stock_change_type', ['Restock', 'Opening Balance', 'Transfer In', 'Return from Customer'])
+            ->orderBy('changed_at', 'desc')
+            ->get();
+
+        // Generate PDF menggunakan view
+        $pdf = Pdf::loadView('reports.receivingReportPDF', compact('receivingLogs'));
+
+        // Nama file PDF
+        $fileName = 'receiving_report_' . now()->format('d_m_Y') . '.pdf';
+
+        // Simpan file PDF ke storage (folder public/reports)
+        Storage::disk('public')->put('reports/' . $fileName, $pdf->output());
+
+        // Buat data baru di tabel reports
+        Report::create([
+            'report_id' => uniqid('REP'),
+            'report_type' => 'receiving',
+            'report_title' => 'Receiving Report ' . now()->format('d_m_Y'),
+            'report_description' => 'Generated receiving report.',
+            'report_document' => 'reports/' . $fileName,
+            'generated_by' => auth()->user()->name,
+        ]);
+
+        // Redirect kembali ke halaman laporan dengan pesan sukses
+        return redirect()->route('reports.archive')->with('success', 'Receiving Report generated successfully.');
+    }
+
+
+    //Dispatching Report
+    public function dispatchingReport()
+    {
+        // Ambil data dari StockChangeLog dengan stock_change_type tertentu
+        $dispatchingLogs = StockChangeLog::whereIn('stock_change_type', ['Sales Order', 'Transfer Out', 'Return to Supplier'])
+            ->orderBy('changed_at', 'desc')
+            ->paginate(10);
+
+        // Kirim data ke view
+        return view('reports.dispatchingReport', compact('dispatchingLogs'));
+    }
+
+    //GENERATE DISPATCHING REPORT with DOm pdf
+    public function generateDispatchingReport()
+    {
+        // Ambil data dari StockChangeLog dengan stock_change_type tertentu
+        $dispatchingLogs = StockChangeLog::whereIn('stock_change_type', ['Sales Order', 'Transfer Out', 'Return to Supplier'])
+            ->orderBy('changed_at', 'desc')
+            ->get();
+
+        // Generate PDF menggunakan view
+        $pdf = Pdf::loadView('reports.dispatchingReportPDF', compact('dispatchingLogs'));
+
+        // Nama file PDF
+        $fileName = 'dispatching_report_' . now()->format('d_m_Y') . '.pdf';
+
+        // Simpan file PDF ke storage (folder public/reports)
+        Storage::disk('public')->put('reports/' . $fileName, $pdf->output());
+
+        // Buat data baru di tabel reports
+        Report::create([
+            'report_id' => uniqid('REP'),
+            'report_type' => 'dispatching',
+            'report_title' => 'Dispatching Report ' . now()->format('d_m_Y'),
+            'report_description' => 'Generated dispatching report for stock changes of type Sales Order, Transfer Out, and Return to Supplier.',
+            'report_document' => 'reports/' . $fileName,
+            'generated_by' => auth()->user()->name,
+        ]);
+
+        // Redirect kembali ke halaman laporan dengan pesan sukses
+        return redirect()->route('reports.archive')->with('success', 'Dispatching Report generated successfully.');
+    }
+
+
+    //Stock adjustment Report
+    public function stockAdjustmentReport()
+    {
+        // Ambil data dari StockChangeLog dengan stock_change_type tertentu
+        $adjustmentLogs = StockChangeLog::whereIn('stock_change_type', ['Stock Adjustment', 'Write-Off'])
+            ->orderBy('changed_at', 'desc')
+            ->paginate(10);
+
+        // Kirim data ke view
+        return view('reports.stockAdjustmentReport', compact('adjustmentLogs'));
+    }
+
+    //GENERATE STOCK ADJUSTMENT REPORT with DOm pdf
+    public function generateStockAdjustmentReport()
+    {
+        // Ambil data dari StockChangeLog dengan stock_change_type tertentu
+        $adjustmentLogs = StockChangeLog::whereIn('stock_change_type', ['Stock Adjustment', 'Write-Off'])
+            ->orderBy('changed_at', 'desc')
+            ->get();
+
+        // Generate PDF menggunakan view
+        $pdf = Pdf::loadView('reports.stockAdjustmentReportPDF', compact('adjustmentLogs'));
+
+        // Nama file PDF
+        $fileName = 'stock_adjustment_report_' . now()->format('d_m_Y') . '.pdf';
+
+        // Simpan file PDF ke storage (folder public/reports)
+        Storage::disk('public')->put('reports/' . $fileName, $pdf->output());
+
+        // Buat data baru di tabel reports
+        Report::create([
+            'report_id' => uniqid('REP'),
+            'report_type' => 'stock_adjustment',
+            'report_title' => 'Stock Adjustment Report ' . now()->format('d_m_Y'),
+            'report_description' => 'Generated stock adjustment report.',
+            'report_document' => 'reports/' . $fileName,
+            'generated_by' => auth()->user()->name,
+        ]);
+
+        // Redirect kembali ke halaman laporan dengan pesan sukses
+        return redirect()->route('reports.archive')->with('success', 'Stock Adjustment Report generated successfully.');
+    }
+
+
+
 }
+

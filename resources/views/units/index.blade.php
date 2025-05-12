@@ -359,7 +359,7 @@
 
                 // Lakukan permintaan AJAX ke server
                 $.ajax({
-                    url: `/units/${unitId}`, // URL rute Laravel untuk mendapatkan detail unit
+                    url: `/units/show/${unitId}`, // URL rute Laravel untuk mendapatkan detail unit
                     method: 'GET',
                     success: function(data) {
                         // Isi modal dengan data unit

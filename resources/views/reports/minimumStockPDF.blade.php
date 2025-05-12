@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Stock Report</title>
+    <title>Minimum Stock Report</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,10 +27,9 @@
 </head>
 <body>
         <div class="header">
-        <h2>STOCK REPORT</h2>
-       <p>Generated at : {{ now()->timezone('Asia/Jakarta')->format('l, d F Y H:i') }}</p>
+            <h2>MINIMUM STOCK REPORT</h2>
+            <p>Generated at : {{ now()->timezone('Asia/Jakarta')->format('l, d F Y H:i') }}</p>
         </div>
-    
     <table>
         <thead>
             <tr>
@@ -40,8 +39,6 @@
                 <th>Category</th>
                 <th>Quantity</th>
                 <th>Unit</th>
-                <th>Purchase Price</th>
-                <th>Selling Price</th>
             </tr>
         </thead>
         <tbody>
@@ -51,10 +48,8 @@
                     <td>{{ $product->product_id }}</td>
                     <td>{{ $product->product_name }}</td>
                     <td>{{ $product->category->category_name ?? 'N/A' }}</td>
-                    <td>{{ $product->product_qty }}</td>
+                    <td class="text-danger">{{ $product->product_qty }}</td>
                     <td>{{ $product->unit->unit_name ?? 'N/A' }}</td>
-                    <td>{{ number_format($product->purchase_price, 2) }}</td>
-                    <td>{{ number_format($product->selling_price, 2) }}</td>
                 </tr>
             @endforeach
         </tbody>

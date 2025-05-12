@@ -100,10 +100,10 @@
             <h6 class="collapse-header">Reports :</h6>
             <a class="collapse-item" href="{{ route('reports.stock') }}">Stock Report</a>
             <a class="collapse-item" href="{{ route('reports.stockMovement') }}">Stock Movement Report</a>
-            <a class="collapse-item" href="">Minimum Stock Report</a>
-            <a class="collapse-item" href="">Receiving Report</a>
-            <a class="collapse-item" href="">Dispatching Report</a>
-            <a class="collapse-item" href="">Stock Adjustment Report</a>
+            <a class="collapse-item" href="{{ route('reports.minimumStock') }}">Minimum Stock Report</a>
+            <a class="collapse-item" href="{{ route('reports.receiving') }}">Receiving Report</a>
+            <a class="collapse-item" href="{{ route('reports.dispatching') }}">Dispatching Report</a>
+            <a class="collapse-item" href="{{ route('reports.stockAdjustment') }}">Stock Adjustment Report</a>
 
         </div>
     </div>

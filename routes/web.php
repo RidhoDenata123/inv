@@ -271,14 +271,13 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Report add Route
     Route::post('/reports/stock', [ReportController::class, 'store'])->name('reports.store');
     // Report detail Route
-    Route::get('/reports/stock-show/{id}', [ReportController::class, 'show'])->name('reports.show');
-    
+    Route::get('/reports/show/{id}', [ReportController::class, 'show'])->name('reports.show');
     // Report edit Route
-    Route::put('/reports/stock-edit/{id}', [ReportController::class, 'update'])->name('reports.update');
-
+    Route::put('/reports/update/{id}', [ReportController::class, 'update'])->name('reports.update');
     // Report delete Route
-    Route::delete('/reports/stock/{id}', [ReportController::class, 'destroy'])->name('reports.destroy');
+    Route::delete('/reports/delete/{id}', [ReportController::class, 'destroy'])->name('reports.destroy');
 
+    
     //Stock Report
     Route::get('/reports/stock', [ReportController::class, 'stockReports'])->name('reports.stock');
     //DOMpdf generate stock report
@@ -286,9 +285,30 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     //Stock Movement Report Route
     Route::get('/reports/stock-movement', [ReportController::class, 'stockMovementReports'])->name('reports.stockMovement');
-
+    //DOMpdf generate stock movement report
     Route::post('/reports/stock-movement/generate', [ReportController::class, 'generateStockMovementReport'])->name('reports.stockMovement.generate');
     
+    //Stock minimum Report Route
+    Route::get('/reports/minimum-stock', [ReportController::class, 'minimumStockReport'])->name('reports.minimumStock');
+    //DOMpdf generate stock minimum report
+    Route::post('/reports/minimum-stock/generate', [ReportController::class, 'generateMinimumStockReport'])->name('reports.minimumStock.generate');
+
+    //Receiving Report Route
+    Route::get('/reports/receiving', [ReportController::class, 'receivingReport'])->name('reports.receiving');
+    //DOMpdf generate Receiving report
+    Route::post('/reports/receiving/generate', [ReportController::class, 'generateReceivingReport'])->name('reports.receiving.generate');
+
+    //Dispatching Report Route
+    Route::get('/reports/dispatching', [ReportController::class, 'dispatchingReport'])->name('reports.dispatching');
+    //DOMpdf generate Dispatching report
+    Route::post('/reports/dispatching/generate', [ReportController::class, 'generateDispatchingReport'])->name('reports.dispatching.generate');
+
+    //Stock adjustment Report Route
+    Route::get('/reports/stock-adjustment', [ReportController::class, 'stockAdjustmentReport'])->name('reports.stockAdjustment');
+    //DOMpdf generate stock adjustment report
+    Route::post('/reports/stock-adjustment/generate', [ReportController::class, 'generateStockAdjustmentReport'])->name('reports.stockAdjustment.generate');
+
+
 });
 
 

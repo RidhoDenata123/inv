@@ -465,7 +465,7 @@
                             </div>
                         </div>
 
-                    <!-- Modal for Delete Confirmation -->
+                        <!-- Modal for Delete Confirmation -->
                         <div class="modal fade" id="deleteProductModal" tabindex="-1" role="dialog" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
@@ -531,13 +531,13 @@
                                                                         {{ $message }}
                                                                     </div>
                                                                 @enderror
-                                                        </div>
+                                                </div>
 
                                                 <div class="row">
                                                     <div class="col">                    
                                                         <div class="form-group mb-3">
                                                             <label class="font-weight-bold">Product name :</label>
-                                                            <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="edit_product_name" name="product_name" value="{{ old('product_name') }}" placeholder="Input product name" require>
+                                                            <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="edit_product_name" name="product_name" value="{{ old('product_name') }}" placeholder="Input product name" required>
 
                                                                 <!-- error message for product_name -->
                                                                 @error('product_name')
@@ -546,7 +546,6 @@
                                                                     </div>
                                                                 @enderror
                                                         </div>
-
                                                     </div>
 
                                                     <div class="col">
@@ -571,10 +570,9 @@
                                                                 </div>
                                                             @enderror
                                                         </div>
-
                                                     </div>
-                                                </div>
 
+                                                </div>
 
                                                 <div class="form-group mb-3">
                                                     <label class="font-weight-bold">Product Description</label>
@@ -588,15 +586,13 @@
                                                     @enderror
                                                 </div>
 
-                                                <input type="number" class="form-control" id="edit_product_qty" name="product_qty"  require>
-
-                                                
+                                                <input type="hidden" class="form-control" id="edit_product_qty" name="product_qty"  require>
 
                                                 <div class="row">
                                                     <div class="col">                    
                                                         <div class="form-group mb-3">
                                                             <label class="font-weight-bold">Purchase Price :</label>
-                                                            <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" id="edit_purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" placeholder="Input purchase price" require>
+                                                            <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" id="edit_purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" placeholder="Input purchase price" required>
 
                                                                 <!-- error message for purchase_price -->
                                                                 @error('purchase_price')
@@ -611,7 +607,7 @@
                                                     <div class="col">
                                                             <div class="form-group mb-3">
                                                                     <label class="font-weight-bold">Selling Price :</label>
-                                                                    <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="edit_selling_price" name="selling_price" value="{{ old('selling_price') }}" placeholder="Input selling price" require>
+                                                                    <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="edit_selling_price" name="selling_price" value="{{ old('selling_price') }}" placeholder="Input selling price" required>
 
                                                                         <!-- error message for selling_price -->
                                                                         @error('selling_price')
@@ -796,7 +792,7 @@
                                                 <select name="stock_change_type" class="custom-select" required>
                                                 
                                                     <option value="Stock Adjustment">Stock Adjustment</option>
-                                                    <option value="Write-off">Write-off</option>
+                                                    <option value="Write-Off">Write-Off</option>
 
                                                 </select>
                                             </div>

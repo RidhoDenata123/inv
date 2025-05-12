@@ -70,7 +70,7 @@
                             @foreach ($stockChangeLogs as $log)
                                 <tr>
                                     <td>{{ ($stockChangeLogs->currentPage() - 1) * $stockChangeLogs->perPage() + $loop->iteration }}.</td>
-                                    <td>{{ $log->changed_at }}</td>
+                                    <td>{{ $log->changed_at ? \Carbon\Carbon::parse($log->changed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
                                     <td>{{ $log->product->product_id ?? 'N/A' }}</td>
                                     <td>{{ $log->product->product_name ?? 'N/A' }}</td>
                                     <td>{{ $log->stock_change_type }}</td>
@@ -112,6 +112,7 @@
     <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
+    
     <!-- Datatable -->
     <script>
             $(document).ready(function() {
@@ -125,6 +126,7 @@
                     "responsive": true,
                 });
             });
+            
 
         $(document).ready(function() {
             // Tampilkan SweetAlert jika ada session flash message
