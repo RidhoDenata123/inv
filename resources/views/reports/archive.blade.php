@@ -579,10 +579,10 @@
                                     </div>
                                     <div class="modal-body">
 
-                                            <p><span class="text-primary"> {{ Auth::user()->name }}</span>, are you sure you want to delete "<strong><span id="deleteReportTitle"></span></strong>" ?</p>
+                                            <p><span class="text-primary"> {{ Auth::user()->name }}</span>, are you sure you want to delete <br>"<strong><span id="deleteReportTitle"></span></strong>" ?</p>
                                             <div class="alert alert-danger">
                                             <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> <strong>WARNING</strong></span>
-                                            <p class="text-danger"><small>This action cannot be undone, the selected product data will be permanently deleted !</small></p>
+                                            <p class="text-danger"><small>This action cannot be undone, the selected Report data will be permanently deleted !</small></p>
                                             </div>
                                             
                                             
@@ -685,7 +685,7 @@
         });
     </script>
 
-        <script>
+    <script>
         $(document).ready(function() {
             $('#adjustmentTable').DataTable({
                 "paging": false, // Nonaktifkan pagination bawaan DataTables

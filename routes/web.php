@@ -54,19 +54,31 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Admin dashboard Route
     Route::get('/admin/dashboard', [HomeController::class, 'adminDashboard'])->name('admin.dashboard');
 
+//ALL SETTING ROUTE
+
+    //ADMIN SETTING PAGE
     Route::get('/setting', [HomeController::class, 'AdminSetting'])->name('setting.admin');
+    //ADMIN SETTING PROFILE
     Route::get('/setting/profile', [HomeController::class, 'AdminProfile'])->name('setting.admin.profile');
+    //ADMIN SETTING UPDATEPROFILE
     Route::put('/setting/profile', [HomeController::class, 'AdminUpdateProfile'])->name('setting.admin.updateProfile');
+    //ADMIN SETTING UPDATE PASSWORD
     Route::put('/setting/update-password', [HomeController::class, 'updatePassword'])->name('setting.admin.updatePassword');
+    //ADMIN SETTING CHANGE IMAGE
     Route::put('/setting/update-user-image', [HomeController::class, 'updateUserImage'])->name('setting.admin.updateUserImage');
-    
-
+    //ADMIN SETTING COMPANY UPDATE
     Route::put('/setting/update-company', [HomeController::class, 'AdminUpdateCompany'])->name('setting.admin.updateCompany');
+    //ADMIN SETTING COMPANY CHANGE IMAGE
     Route::put('/setting/update-company-image', [HomeController::class, 'updateCompanyImage'])->name('setting.admin.updateCompanyImage');
-   
-    Route::get('/setting/logs', [HomeController::class, 'AdminLogs'])->name('setting.admin.logs');
+    //ADMIN SETTING ADD BANK ACCOUNT
+    Route::post('/setting/add-bank', [HomeController::class, 'addBankAccount'])->name('setting.admin.addBankAccount');
+    //ADMIN SETTING SHOW BANK ACCOUNT
+    Route::get('/setting/show-bank/{id}', [HomeController::class, 'showBankAccount'])->name('setting.admin.showBankAccount');
+    //ADMIN SETTING EDIT BANK ACCOUNT
+    Route::put('/setting/update-bank/{id}', [HomeController::class, 'updateBankAccount'])->name('setting.admin.updateBankAccount');
+    //ADMIN SETTING DELETE BANK ACCOUNT
+    Route::delete('/setting/delete-bank/{id}', [HomeController::class, 'deleteBankAccount'])->name('setting.admin.deleteBankAccount');
 
-    
     // Profile page Route
     Route::get('/admin/profile', [HomeController::class, 'AdminProfile'])->name('admin.profile.index');
     // Profile update Route

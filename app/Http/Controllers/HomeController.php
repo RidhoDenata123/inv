@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\UserCompany;
+use App\Models\BankAccount;
 use Illuminate\Http\RedirectResponse;
 
 class HomeController extends Controller
@@ -48,8 +49,9 @@ class HomeController extends Controller
     {
         $user = auth()->user(); // Ambil data user yang sedang login
         $usercompany = UserCompany::where('company_id', $user->company_id)->first(); // Ambil data perusahaan berdasarkan company_id user
+        $BankAccounts = BankAccount::orderBy('created_at', 'desc')->paginate(5);
     
-        return view('setting.admin', compact('user', 'usercompany'));
+        return view('setting.admin', compact('user', 'usercompany', 'BankAccounts'));
     }
 
     // Admin Profile
@@ -201,5 +203,69 @@ class HomeController extends Controller
         
         return redirect()->back()->with('success', 'Company logo updated successfully!')->with('activeTab', 'companyProfile');
     }
-  
+
+    //ADD BANK ACCOUNT
+    public function addBankAccount(Request $request): RedirectResponse
+    {
+        //validate form
+        $request->validate([
+            'account_id'        => 'required',
+            'account_name'      => 'required',
+            'bank_name'         => 'required',
+        ]);
+
+        //create BankAccount
+        BankAccount::create([
+            'account_id'        => $request->account_id,
+            'account_name'      => $request->account_name,
+            'bank_name'         => $request->bank_name,
+        ]);
+
+        //redirect to index
+        return redirect()->back()->with('success', 'Bank Account added successfully!')->with('activeTab', 'companyProfile');
+        
+    }
+
+   // Tampilkan data bank account (untuk modal edit, AJAX)
+    public function showBankAccount($id)
+    {
+        $bank = BankAccount::where('account_id', $id)->first();
+        if (!$bank) {
+            return response()->json(['message' => 'Bank account not found'], 404);
+        }
+        return response()->json($bank);
+    }
+
+    // Update data bank account
+    public function updateBankAccount (Request $request, $id)
+    {
+        $bank = BankAccount::where('account_id', $id)->firstOrFail();
+
+        $request->validate([
+            'account_name' => 'required|string|max:255',
+            'bank_name' => 'required|string|max:255',
+        ]);
+
+        $bank->update([
+            'account_name' => $request->account_name,
+            'bank_name' => $request->bank_name,
+        ]);
+
+        return redirect()->route('setting.admin')->with('success', 'Bank account updated successfully.');
+    }
+
+    //delete bank
+    public function deleteBankAccount($id)
+    {
+        $bank = BankAccount::where('account_id', $id)->first();
+
+        if (!$bank) {
+            return redirect()->back()->with('error', 'Bank account not found.');
+        }
+
+        $bank->delete();
+
+        return redirect()->route('setting.admin')->with('success', 'Bank account deleted successfully!');
+    }
+    
 }

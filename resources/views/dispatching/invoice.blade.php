@@ -40,6 +40,7 @@
 
             #CompanyLogo {
             margin-right: 0px; /* Tambahkan jarak antara logo dan teks */
+            margin-left: 0px; /* Tambahkan jarak antara logo dan teks */
         }
     </style>
 </head>
@@ -55,19 +56,16 @@
                             
                             
                             <div class="mb-4">
-                                <h2 class="mb-1 text-muted">{{ $userCompany->company_name }}</h2>
-                            <!--  Logo and name 
+                                
+                            <!--  Logo and name -->
                                 <div class="row align-items-center">
-                                    
                                     <div class="col-auto">
                                         <img id="CompanyLogo" src="{{ $userCompany->company_img ? asset('storage/' . $userCompany->company_img) : asset('img/logo_primary.png') }}" alt="Company Logo" class="img-fluid rounded" style="max-height: 45px;">
                                     </div>
-
-                                  
                                     <div class="col">
                                         <h2 class="mb-1 text-muted">{{ $userCompany->company_name }}</h2>
                                     </div>
-                                </div>-->
+                                </div>
                                 
                             </div>
                             <div class="text-muted">
@@ -98,7 +96,7 @@
                                     </div>
                                     <div class="mt-4">
                                         <h5 class="font-size-15 mb-1">Invoice Date :</h5>
-                                        <p>{{ $dispatchingHeader->confirmed_at ? \Carbon\Carbon::parse($dispatchingHeader->confirmed_at)->format('d F Y') : 'N/A' }}</p>
+                                        <p>{{ now()->timezone('Asia/Jakarta')->format('l, d F Y') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -187,9 +185,9 @@
                                  <div class="col-sm-5 text-right">
                                     <div class="invoice-note">
                                         <span><strong>PAYMENT INFORMATION</strong><br>
-                                        National Bank-{{ $userCompany->company_currency }}<br>
+                                        {{ $bankAccount ? $bankAccount->bank_name : '-' }} - {{ $userCompany->company_currency }}<br>
                                         {{ $userCompany->company_bank_account }}<br>
-                                        {{ $userCompany->company_name }}<br></span>
+                                        {{ $bankAccount ? $bankAccount->account_name : '-' }}<br></span>
              
                                     </div>
                                 </div>                                

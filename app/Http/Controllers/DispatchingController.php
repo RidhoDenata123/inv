@@ -9,6 +9,7 @@ use App\Models\Unit;
 use App\Models\Supplier;
 use App\Models\Customer;
 use App\Models\UserCompany;
+use App\Models\BankAccount;
 use App\Models\StockChangeLog;
 
 use Illuminate\View\View;
@@ -319,11 +320,12 @@ class DispatchingController extends Controller
     {
         $dispatchingHeader = DispatchingHeader::findOrFail($id);
         $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)->get();
-    
+        
         // Ambil data perusahaan berdasarkan company_id pengguna yang sedang login
         $userCompany = UserCompany::where('company_id', auth()->user()->company_id)->first();
+        $bankAccount = BankAccount::where('account_id', $userCompany->company_bank_account)->first();
     
-        return view('dispatching.invoice', compact('dispatchingHeader', 'dispatchingDetails', 'userCompany'));
+        return view('dispatching.invoice', compact('dispatchingHeader', 'dispatchingDetails', 'userCompany', 'bankAccount'));
     }
     
     // Print delivery note
@@ -334,8 +336,10 @@ class DispatchingController extends Controller
         
         // Ambil data perusahaan berdasarkan company_id pengguna yang sedang login
         $userCompany = UserCompany::where('company_id', auth()->user()->company_id)->first();
+        $bankAccount = BankAccount::where('account_id', $userCompany->company_bank_account)->first();
+    
         
-        return view('dispatching.delivery-note', compact('dispatchingHeader', 'dispatchingDetails', 'userCompany'));
+        return view('dispatching.delivery-note', compact('dispatchingHeader', 'dispatchingDetails', 'userCompany', 'bankAccount'));
     }
 
 }

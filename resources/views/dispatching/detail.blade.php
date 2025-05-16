@@ -29,7 +29,7 @@
     </style>
 
 
-    @endsection
+@endsection
 
 @section('content')
 

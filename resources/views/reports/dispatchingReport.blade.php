@@ -88,8 +88,7 @@
                                             {{ $dispatchingLogs->links('pagination::simple-bootstrap-4') }}
                                         </div>
                                     </div>
-                            </div>
-                        </div>
+                  
                     </div>
 
           
