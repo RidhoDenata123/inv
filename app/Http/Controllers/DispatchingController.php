@@ -342,5 +342,336 @@ class DispatchingController extends Controller
         return view('dispatching.delivery-note', compact('dispatchingHeader', 'dispatchingDetails', 'userCompany', 'bankAccount'));
     }
 
+
+    //USER
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     // Show all dispatching headers
+    public function UserDispatching(): View
+    {
+        $dispatching_headers = DispatchingHeader::orderBy('created_at', 'desc')->paginate(10);
+        $customers = Customer::all(); // Ambil semua data customer
+        return view('dispatching.user_header', compact('dispatching_headers', 'customers'));
+    }
+
+    // Create dispatching header
+    public function UserStoreHeader(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'dispatching_header_id'             => 'required',
+            'dispatching_header_name'           => 'required',
+            'customer_id'                       => 'required',
+            'dispatching_header_description'    => 'nullable',
+            'created_by'                        => 'required',
+            'dispatching_header_status'         => 'required',
+            'confirmed_by'                      => 'nullable',
+            'confirmed_at'                      => 'nullable|date',
+        ]);
+
+        DispatchingHeader::create([
+            'dispatching_header_id'             => $request->dispatching_header_id,
+            'dispatching_header_name'           => $request->dispatching_header_name,
+            'customer_id'                       => $request->customer_id,
+            'dispatching_header_description'    => $request->dispatching_header_description,
+            'created_by'                        => $request->created_by,
+            'dispatching_header_status'         => $request->dispatching_header_status,
+            'confirmed_by'                      => $request->confirmed_by,
+            'confirmed_at'                      => $request->confirmed_at,
+        ]);
+
+        return redirect()->route('dispatching.user_header')->with('success', 'Dispatching draft created successfully!');
+    }
+
+    // Edit dispatching header
+    public function UserEditHeader($id)
+    {
+        $dispatchingHeader = DispatchingHeader::find($id);
+
+        if (!$dispatchingHeader) {
+            return response()->json(['error' => 'Dispatching Header not found'], 404);
+        }
+
+        return response()->json($dispatchingHeader);
+    }
+
+    // Update dispatching header
+    public function UserUpdateHeader(Request $request, $id)
+    {
+        $request->validate([
+            'dispatching_header_name'           => 'required',
+            'customer_id'                       => 'required',
+            'dispatching_header_description'    => 'nullable',
+            
+        ]);
+
+        $dispatching_header = DispatchingHeader::where('dispatching_header_id', $id)->first();
+
+        if (!$dispatching_header) {
+            return response()->json(['message' => 'Dispatching draft not found'], 404);
+        }
+
+        $dispatching_header->update([
+            'dispatching_header_name'           => $request->dispatching_header_name,
+            'customer_id'                       => $request->customer_id,
+            'dispatching_header_description'    => $request->dispatching_header_description,
+            
+        ]);
+
+        return redirect()->route('dispatching.user_header')->with('success', 'Dispatching draft updated successfully.');
+    }
+
+    // Delete dispatching header
+    public function UserDestroyHeader($id)
+    {
+        $dispatchingHeader = DispatchingHeader::where('dispatching_header_id', $id)->firstOrFail();
+        $dispatchingHeader->details()->delete(); // Hapus semua Dispatching Details terkait
+        $dispatchingHeader->delete(); // Hapus Dispatching Header
+
+        return redirect()->route('dispatching.user_header')->with('success', 'Dispatching header and details deleted successfully!');
+    }
+
+    // Show dispatching header by ID
+    public function UserShowDetail($id)
+    {
+        $dispatchingHeader = DispatchingHeader::where('dispatching_header_id', $id)->firstOrFail();
+
+        $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)
+        ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at secara descending
+        ->paginate(10);
+
+        // Filter produk dengan status Active dan quantity > 0
+        $products = Product::where('product_status', 'Active')
+        ->where('product_qty', '>', 0)
+        ->get();
+        
+        $categories = Category::all();
+        $units = Unit::all();
+        $suppliers = Supplier::all();
+
+        return view('dispatching.user_detail', compact('dispatchingHeader', 'dispatchingDetails', 'products', 'categories', 'units', 'suppliers'));
+    }
+
+    // Create dispatching detail
+    public function UserAddDetail(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'dispatching_detail_id'             => 'required',
+            'dispatching_header_id'             => 'required',
+            'product_id'                        => 'required',
+            'dispatching_qty'                   => 'required',
+            'created_by'                        => 'nullable',
+            'dispatching_detail_status'         => 'nullable',
+            'confirmed_by'                      => 'nullable',
+            'confirmed_at'                      => 'nullable|date',
+        ]);
+
+        DispatchingDetail::create([
+            'dispatching_detail_id'             => $request->dispatching_detail_id,
+            'dispatching_header_id'             => $request->dispatching_header_id,
+            'product_id'                        => $request->product_id,
+            'dispatching_qty'                   => $request->dispatching_qty,
+            'created_by'                        => $request->created_by,
+            'dispatching_detail_status'         => $request->dispatching_detail_status,
+            'confirmed_by'                      => $request->confirmed_by,
+            'confirmed_at'                      => $request->confirmed_at,
+        ]);
+
+        return redirect()->back()->with('success', 'Dispatching detail added successfully!');
+    }
+
+    // Delete dispatching detail
+    public function UserDestroyDetail($id)
+    {
+        $dispatchingDetail = DispatchingDetail::findOrFail($id);
+        $dispatchingDetail->delete();
+
+        return redirect()->back()->with('success', 'Dispatching detail deleted successfully!');
+    }
+
+    
+
+    // Edit dispatching detail
+    public function UserEditDetail($id)
+    {
+        $dispatchingDetail = DispatchingDetail::where('dispatching_detail_id', $id)->first();
+    
+        if (!$dispatchingDetail) {
+            return response()->json(['error' => 'Dispatching detail not found'], 404);
+        }
+    
+        return response()->json($dispatchingDetail);
+    }
+
+    // Update dispatching detail
+    public function UserUpdateDetail(Request $request, $id)
+    {
+        $dispatchingDetail = DispatchingDetail::findOrFail($id);
+
+        $request->validate([
+            'product_id' => 'required|string|exists:products,product_id',
+            'dispatching_qty' => 'required|integer|min:1',
+            'dispatching_detail_status' => 'required|string|in:Pending,Confirmed',
+        ]);
+
+        $dispatchingDetail->update($request->all());
+
+        return redirect()->back()->with('success', 'Dispatching detail updated successfully!');
+    }
+
+    // Confirm all pending dispatching details
+    public function UserConfirmAll($id)
+    {
+        // Ambil Dispatching Header berdasarkan ID
+        $dispatchingHeader = DispatchingHeader::where('dispatching_header_id', $id)->firstOrFail();
+    
+        // Perbarui status Dispatching Header
+        $dispatchingHeader->update([
+            'dispatching_header_status' => 'Confirmed',
+            'confirmed_at' => now(),
+            'confirmed_by' => Auth::user()->id,
+        ]);
+    
+        // Ambil semua Dispatching Details dengan status 'Pending'
+        $pendingDetails = DispatchingDetail::where('dispatching_header_id', $id)
+            ->where('dispatching_detail_status', 'Pending')
+            ->get();
+    
+        foreach ($pendingDetails as $detail) {
+            // Ambil produk terkait
+            $product = Product::where('product_id', $detail->product_id)->firstOrFail();
+    
+            // Hitung nilai untuk stock_change_logs
+            $qtyBefore = $product->product_qty;
+            $qtyChanged = $detail->dispatching_qty;
+            $qtyAfter = $qtyBefore - $qtyChanged;
+    
+            // Perbarui product_qty di tabel products
+            $product->update([
+                'product_qty' => $qtyAfter,
+            ]);
+    
+            // Perbarui dispatching_detail_status di tabel dispatching_details
+            $detail->update([
+                'dispatching_detail_status' => 'Confirmed',
+                'confirmed_at' => now(),
+                'confirmed_by' => Auth::user()->id,
+            ]);
+    
+            // Tambahkan data ke tabel stock_change_logs
+            StockChangeLog::create([
+                'stock_change_log_id' => uniqid('SC'),
+                'stock_change_type' => $dispatchingHeader->dispatching_header_name,
+                'product_id' => $product->product_id,
+                'reference_id' => $detail->dispatching_detail_id,
+                'qty_before' => $qtyBefore,
+                'qty_changed' => -$qtyChanged, // Negatif karena stok berkurang
+                'qty_after' => $qtyAfter,
+                'changed_at' => now(),
+                'changed_by' => Auth::user()->id,
+                'change_note' => $dispatchingHeader->dispatching_header_description,
+            ]);
+        }
+    
+        // Redirect kembali ke halaman sebelumnya dengan pesan sukses
+        return redirect()->back()->with('success', 'All pending dispatching details confirmed successfully!');
+    }
+
+
+    // Confirm dispatching detail by ID
+    public function UserConfirmDetail($id)
+    {
+        // Ambil Dispatching Detail berdasarkan ID
+        $dispatchingDetail = DispatchingDetail::where('dispatching_detail_id', $id)->firstOrFail();
+
+        // Ambil Dispatching Header terkait
+        $dispatchingHeader = DispatchingHeader::where('dispatching_header_id', $dispatchingDetail->dispatching_header_id)->firstOrFail();
+
+        // Ambil produk terkait
+        $product = Product::where('product_id', $dispatchingDetail->product_id)->firstOrFail();
+
+        // Hitung nilai untuk stock_change_logs
+        $qtyBefore = $product->product_qty;
+        $qtyChanged = $dispatchingDetail->dispatching_qty;
+        $qtyAfter = $qtyBefore - $qtyChanged;
+
+        // Perbarui product_qty di tabel products
+        $product->update([
+            'product_qty' => $qtyAfter,
+        ]);
+
+        // Perbarui dispatching_detail_status di tabel dispatching_details
+        $dispatchingDetail->update([
+            'dispatching_detail_status' => 'Confirmed',
+            'confirmed_at' => now(),
+            'confirmed_by' => Auth::user()->id,
+        ]);
+
+        // Tambahkan data ke tabel stock_change_logs
+        StockChangeLog::create([
+            'stock_change_log_id' => uniqid('SC'),
+            'stock_change_type' => $dispatchingHeader->dispatching_header_name, // Ambil dari dispatching_header_name
+            'product_id' => $product->product_id,
+            'reference_id' => $dispatchingDetail->dispatching_detail_id,
+            'qty_before' => $qtyBefore,
+            'qty_changed' => -$qtyChanged, // Negatif karena stok berkurang
+            'qty_after' => $qtyAfter,
+            'changed_at' => now(),
+            'changed_by' => Auth::user()->id,
+            'change_note' => $dispatchingHeader->dispatching_header_description, // Ambil dari dispatching_header_description
+        ]);
+
+        // Redirect kembali ke halaman detail dengan pesan sukses
+        return redirect()->back()->with('success', 'Dispatching detail confirmed successfully!');
+    }
+
+        // Get product unit by product ID
+    public function UserGetUnit($id)
+    {
+        // Cari produk berdasarkan product_id
+        $product = Product::with('unit')->where('product_id', $id)->first();
+
+        if ($product && $product->unit) {
+            return response()->json(['unit_name' => $product->unit->unit_name]);
+        }
+
+        return response()->json(['unit_name' => 'No unit found'], 404);
+    }
+    //GET PRODUCT QTY
+    public function UserGetProductQty($productId)
+    {
+        $product = Product::findOrFail($productId);
+        return response()->json(['product_qty' => $product->product_qty]);
+    }
+
+
+    // Print invoice
+    public function UserPrintInvoice($id)
+    {
+        $dispatchingHeader = DispatchingHeader::findOrFail($id);
+        $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)->get();
+        
+        // Ambil data perusahaan berdasarkan company_id pengguna yang sedang login
+        $userCompany = UserCompany::where('company_id', auth()->user()->company_id)->first();
+        $bankAccount = BankAccount::where('account_id', $userCompany->company_bank_account)->first();
+    
+        return view('dispatching.invoice', compact('dispatchingHeader', 'dispatchingDetails', 'userCompany', 'bankAccount'));
+    }
+    
+    // Print delivery note
+    public function UserPrintDeliveryNote($id)
+    {
+        $dispatchingHeader = DispatchingHeader::findOrFail($id);
+        $dispatchingDetails = DispatchingDetail::where('dispatching_header_id', $id)->get();
+        
+        // Ambil data perusahaan berdasarkan company_id pengguna yang sedang login
+        $userCompany = UserCompany::where('company_id', auth()->user()->company_id)->first();
+        $bankAccount = BankAccount::where('account_id', $userCompany->company_bank_account)->first();
+    
+        
+        return view('dispatching.delivery-note', compact('dispatchingHeader', 'dispatchingDetails', 'userCompany', 'bankAccount'));
+    }
+
+
+
 }
 

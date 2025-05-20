@@ -40,6 +40,59 @@ Route::middleware(['auth', 'user-access:user'])->group(function () {
     // Profile update Route
     Route::put('/user/profile', [HomeController::class, 'updateProfile'])->name('user.profile.update');
 
+// ALL DISPATCHING HEADER TRANSACTION ROUTE  
+
+    // Dispatching Header page Route
+    Route::get('/user/dispatching/header', [DispatchingController::class, 'UserDispatching'])->name('dispatching.user_header');
+    // Dispatching Header add Route
+    Route::post('/user/dispatching/header', [DispatchingController::class, 'UserStoreHeader'])->name('dispatching.user_header.UserStoreHeader');
+    // Dispatching Header edit Route
+    Route::get('/user/dispatching/header/{id}', [DispatchingController::class, 'UserEditHeader'])->name('dispatching.user_header.UserEditHeader');
+    // Dispatching Header update Route
+    Route::put('/user/dispatching/header/{id}', [DispatchingController::class, 'UserUpdateHeader'])->name('dispatching.user_header.UserUpdateHeader');
+    // Dispatching Header delete Route
+    Route::delete('/user/dispatching/header/{id}', [DispatchingController::class, 'UserDestroyHeader'])->name('dispatching.user_header.UserDestroyHeader');
+
+
+// ALL DISPATCHING DETAIL TRANSACTION ROUTE  
+
+    // Dispatching detail Route
+    Route::get('/user/dispatching/detail/{id}', [DispatchingController::class, 'UserShowDetail'])->name('dispatching.user_detail.UserShowDetail');
+    // Dispatching detail add Route
+    Route::post('/user/dispatching/detail', [DispatchingController::class, 'UserAddDetail'])->name('dispatching.user_detail.UserAddDetail');
+    // get unit
+    Route::get('/user/products/{id}/unit', [DispatchingController::class, 'UserGetUnit'])->name('products.UserGetUnit');
+    Route::get('/user/products/{productId}/qty', [ProductController::class, 'UserGetProductQty']);
+    // Product detail Route
+    Route::get('/user/products/detail/{product_id}', [ProductController::class, 'UserGetProduct']);
+    // Dispatching detail delete Route
+    Route::delete('/user/dispatching/detail/{id}', [DispatchingController::class, 'UserDestroyDetail'])->name('dispatching.user_detail.UserDestroyDetail');
+    // Rute untuk mendapatkan detail Dispatching detail
+    Route::get('/user/dispatching/detail-modal/{id}', [DispatchingController::class, 'UserEditDetail'])->name('dispatching.user_detail.UserEditDetail');
+    // Rute untuk memperbarui Dispatching detail
+    Route::put('/user/dispatching/detail/{id}', [DispatchingController::class, 'UserUpdateDetail'])->name('dispatching.user_detail.UserUpdateDetail');
+    // Rute untuk mengonfirmasi all Dispatching
+    Route::put('/user/dispatching/confirm-all/{id}', [DispatchingController::class, 'UserConfirmAll'])->name('dispatching.UserConfirmAll');
+    // Rute untuk mengonfirmasi Dispatching by id
+    Route::put('/user/dispatching/detail/confirm/{id}', [DispatchingController::class, 'UserConfirmDetail'])->name('dispatching.user_detail.UserConfirmDetail');
+    // Rute untuk mencetak faktur Dispatching
+    Route::get('/user/dispatching/invoice/{id}', [DispatchingController::class, 'UserPrintInvoice'])->name('dispatching.user_invoice');
+    // Rute untuk mencetak nota pengiriman Dispatching
+    Route::get('/user/dispatching/delivery-note/{id}', [DispatchingController::class, 'UserPrintDeliveryNote'])->name('dispatching.user_deliveryNote');
+
+//ALL SETTING ROUTE
+
+    //ADMIN SETTING PAGE
+    Route::get('/user/setting', [HomeController::class, 'UserSetting'])->name('setting.user');
+    //ADMIN SETTING UPDATEPROFILE
+    Route::put('/user/setting/profile', [HomeController::class, 'updateProfile'])->name('setting.user.updateProfile');
+    //ADMIN SETTING UPDATE PASSWORD
+    Route::put('/user/setting/update-password', [HomeController::class, 'updatePassword'])->name('setting.user.updatePassword');
+    //ADMIN SETTING CHANGE IMAGE
+    Route::put('/user/setting/update-user-image', [HomeController::class, 'updateUserImage'])->name('setting.user.updateUserImage');
+
+
+    
     
     
 });
@@ -58,10 +111,8 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     //ADMIN SETTING PAGE
     Route::get('/setting', [HomeController::class, 'AdminSetting'])->name('setting.admin');
-    //ADMIN SETTING PROFILE
-    Route::get('/setting/profile', [HomeController::class, 'AdminProfile'])->name('setting.admin.profile');
     //ADMIN SETTING UPDATEPROFILE
-    Route::put('/setting/profile', [HomeController::class, 'AdminUpdateProfile'])->name('setting.admin.updateProfile');
+    Route::put('/setting/profile', [HomeController::class, 'updateProfile'])->name('setting.admin.updateProfile');
     //ADMIN SETTING UPDATE PASSWORD
     Route::put('/setting/update-password', [HomeController::class, 'updatePassword'])->name('setting.admin.updatePassword');
     //ADMIN SETTING CHANGE IMAGE
@@ -89,22 +140,16 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Product page Route
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-
     // Product add Route
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-
     // Product detail Route
     Route::get('/products/{product_id}/detail', [ProductController::class, 'getDetail'])->name('products.detail');
-
     // Product delete Route
     Route::delete('/products/{product_id}', [ProductController::class, 'destroy'])->name('products.destroy');
-
     // Product edit Route
     Route::put('/products/{product_id}', [ProductController::class, 'update'])->name('products.update');
-    
     // Product change image Route
     Route::put('/products/{id}/change-image', [ProductController::class, 'changeImage'])->name('products.change-image');
-
      // Product stock adjustment Route
     Route::put('/products/{id}/adjust-stock', [ProductController::class, 'adjustStock'])->name('products.adjustStock');
 
@@ -112,16 +157,12 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Category page Route
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
-
     // Category add Route
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
-
     // Category detail Route
     Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('categories.show');
-
     // Category edit Route
     Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
-
     // Category delete Route
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
     
@@ -129,16 +170,12 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Unit page Route
     Route::get('/units', [UnitController::class, 'index'])->name('units.index');
-
     // Unit add Route
     Route::post('/units', [UnitController::class, 'store'])->name('units.store');
-
     // Unit detail Route
     Route::get('/units/{id}', [UnitController::class, 'show'])->name('units.show');
-
     // Unit edit Route
     Route::put('/units/{id}', [UnitController::class, 'update'])->name('units.update');
-
     // Unit delete Route
     Route::delete('/units/{id}', [UnitController::class, 'destroy'])->name('units.destroy');
 
@@ -146,16 +183,12 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Supplier page Route
     Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
-
     // Supplier add Route
     Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
-
     // Supplier detail Route
     Route::get('/suppliers/{id}', [SupplierController::class, 'show'])->name('suppliers.show');
-
     // Supplier edit Route
     Route::put('/suppliers/{id}', [SupplierController::class, 'update'])->name('suppliers.update');
-
     // Supplier delete Route
     Route::delete('/suppliers/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
 
@@ -163,16 +196,12 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Supplier page Route
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
-
     // Supplier add Route
     Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
-
     // Supplier detail Route
     Route::get('/customers/{id}', [CustomerController::class, 'show'])->name('customers.show');
-
     // Supplier edit Route
     Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
-
     // Supplier delete Route
     Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 
@@ -181,16 +210,12 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Receiving Header page Route
     Route::get('/receiving/header', [ReceivingController::class, 'index'])->name('receiving.header');
-
     // Receiving Header add Route
     Route::post('/receiving/header', [ReceivingController::class, 'storeHeader'])->name('receiving.header.storeHeader');
-
     // Receiving Header edit Route
     Route::get('/receiving/header/{id}', [ReceivingController::class, 'editHeader'])->name('receiving.header.editHeader');
-
     // Receiving Header update Route
     Route::put('/receiving/header/{id}', [ReceivingController::class, 'updateHeader'])->name('receiving.header.updateHeader');
-
     // Receiving Header delete Route
     Route::delete('/receiving/header/{id}', [ReceivingController::class, 'destroyHeader'])->name('receiving.header.destroyHeader');
 
@@ -198,25 +223,19 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Receiving detail Route
     Route::get('/receiving/detail/{id}', [ReceivingController::class, 'ShowById'])->name('receiving.detail.ShowById');
-    
     // Receiving Header add Route
     Route::post('/receiving/detail', [ReceivingController::class, 'addDetail'])->name('receiving.detail.addDetail');
-
     // get unit
     Route::get('/products/{id}/unit', [ProductController::class, 'getUnit'])->name('products.getUnit');
-
     // Receiving Header delete Route
     Route::delete('/receiving/detail/{id}', [ReceivingController::class, 'destroyDetail'])->name('receiving.detail.destroy');
-
     // Rute untuk mendapatkan detail receiving detail
     Route::get('/receiving/detail-modal/{id}', [ReceivingController::class, 'showDetail'])->name('receiving.detail.show');
 
     // Rute untuk memperbarui receiving detail
     Route::put('/receiving/detail/{id}', [ReceivingController::class, 'updateDetail'])->name('receiving.detail.update');
-
     // Rute untuk mengonfirmasi all receiving
     Route::put('/receiving/confirm-all/{id}', [ReceivingController::class, 'confirmAll'])->name('receiving.confirmAll');
-
     // Rute untuk mengonfirmasi receiving by id
     Route::put('/receiving/detail/confirm/{id}', [ReceivingController::class, 'confirmDetail'])->name('receiving.detail.confirm');
 
@@ -225,16 +244,12 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Dispatching Header page Route
     Route::get('/dispatching/header', [DispatchingController::class, 'index'])->name('dispatching.header');
-
     // Dispatching Header add Route
     Route::post('/dispatching/header', [DispatchingController::class, 'storeHeader'])->name('dispatching.header.storeHeader');
-
     // Dispatching Header edit Route
     Route::get('/dispatching/header/{id}', [DispatchingController::class, 'editHeader'])->name('dispatching.header.editHeader');
-
     // Dispatching Header update Route
     Route::put('/dispatching/header/{id}', [DispatchingController::class, 'updateHeader'])->name('dispatching.header.updateHeader');
-
     // Dispatching Header delete Route
     Route::delete('/dispatching/header/{id}', [DispatchingController::class, 'destroyHeader'])->name('dispatching.header.destroyHeader');
 
@@ -243,32 +258,23 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // Dispatching detail Route
     Route::get('/dispatching/detail/{id}', [DispatchingController::class, 'ShowById'])->name('dispatching.detail.ShowById');
-    
     // Dispatching Header add Route
     Route::post('/dispatching/detail', [DispatchingController::class, 'addDetail'])->name('dispatching.detail.addDetail');
-
     // get unit
     Route::get('/products/{id}/unit', [DispatchingController::class, 'getUnit'])->name('products.getUnit');
     Route::get('/products/{productId}/qty', [ProductController::class, 'getProductQty']);
-
     // Dispatching Header delete Route
     Route::delete('/dispatching/detail/{id}', [DispatchingController::class, 'destroyDetail'])->name('dispatching.detail.destroy');
-
     // Rute untuk mendapatkan detail Dispatching detail
     Route::get('/dispatching/detail-modal/{id}', [DispatchingController::class, 'showDetail'])->name('dispatching.detail.show');
-
     // Rute untuk memperbarui Dispatching detail
     Route::put('/dispatching/detail/{id}', [DispatchingController::class, 'updateDetail'])->name('dispatching.detail.update');
-
     // Rute untuk mengonfirmasi all Dispatching
     Route::put('/dispatching/confirm-all/{id}', [DispatchingController::class, 'confirmAll'])->name('dispatching.confirmAll');
-
     // Rute untuk mengonfirmasi Dispatching by id
     Route::put('/dispatching/detail/confirm/{id}', [DispatchingController::class, 'confirmDetail'])->name('dispatching.detail.confirm');
-
     // Rute untuk mencetak faktur Dispatching
     Route::get('/dispatching/invoice/{id}', [DispatchingController::class, 'printInvoice'])->name('dispatching.invoice');
-
     // Rute untuk mencetak nota pengiriman Dispatching
     Route::get('/dispatching/delivery-note/{id}', [DispatchingController::class, 'printDeliveryNote'])->name('dispatching.deliveryNote');
 

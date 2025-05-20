@@ -1,4 +1,4 @@
-@extends('layouts.adminApp')
+@extends('layouts.userApp')
 
 @section('styles')
     <!-- Bootstrap Select CSS -->
@@ -87,13 +87,13 @@
                                     <div class="d-flex justify-content-center align-items-center">
                                         @if ($header->dispatchingDetails->where('dispatching_detail_status', 'Confirmed')->isNotEmpty())
                                             <!-- Tombol Show Detail -->
-                                            <a href="{{ route('dispatching.detail.ShowById', $header->dispatching_header_id) }}" 
+                                            <a href="{{ route('dispatching.user_detail.UserShowDetail', $header->dispatching_header_id) }}" 
                                             class="btn btn-sm btn-dark mr-2">
                                                 <i class="fas fa-search"></i>
                                             </a>
                                         @else
                                             <!-- Tombol Show -->
-                                            <a href="{{ route('dispatching.detail.ShowById', $header->dispatching_header_id) }}" 
+                                            <a href="{{ route('dispatching.user_detail.UserShowDetail', $header->dispatching_header_id) }}" 
                                             class="btn btn-sm btn-dark mr-2">
                                                 <i class="fas fa-search"></i>
                                             </a>
@@ -156,7 +156,7 @@
                     </button>
                 </div>
                 <!-- Modal Body -->
-                <form action="{{ route('dispatching.header.storeHeader') }}" method="POST">
+                <form action="{{ route('dispatching.user_header.UserStoreHeader') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
@@ -173,16 +173,11 @@
                                 <option value="">Select Designation</option>
                                 <option value="Sales Order">Sales Order</option>
                                 <option value="Transfer Out">Transfer Out</option>
-                                <option value="Return from Customer">Return to Supplier</option>
-                            
                             </select>
                             @error('dispatching_header_name')
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
-
-
-
 
                         <div class="form-group">
                             <label for="customer_id" class="font-weight-bold">Customer :</label>
@@ -295,18 +290,17 @@
                             <input type="text" class="form-control" id="editDispatchingHeaderId" name="dispatching_header_id" readonly>
                         </div>
 
-                       <div class="form-group">
+                        <div class="form-group">
                             <label for="adjust_qty_before" class="font-weight-bold">Designation :</label>
                             <select name="dispatching_header_name" id="editDispatchingHeaderName" class="custom-select @error('dispatching_header_name') is-invalid @enderror" required>
                                 <option value="">Select Designation</option>
                                 <option value="Sales Order">Sales Order</option>
-                                <option value="Transfer Out">Transfer Out</option> 
+                                <option value="Transfer Out">Transfer Out</option>
                             </select>
                             @error('dispatching_header_name')
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
                             @enderror
                         </div>
-
 
                         <div class="form-group">
                             <label for="edit_customer_id" class="font-weight-bold">Customer :</label>
@@ -403,7 +397,7 @@
 
             // Lakukan permintaan AJAX ke server
             $.ajax({
-                url: `/dispatching/header/${dispatchingId}`, // URL rute Laravel untuk mendapatkan detail dispatching header
+                url: `/user/dispatching/header/${dispatchingId}`, // URL rute Laravel untuk mendapatkan detail dispatching header
                 method: 'GET',
                 success: function(data) {
                     // Isi modal dengan data dispatching header
@@ -413,7 +407,7 @@
                     $('#edit_customer_id').val(data.customer_id).selectpicker('refresh'); // Pilih customer yang sesuai
 
                     // Set action URL untuk form edit
-                    $('#editDispatchingHeaderForm').attr('action', `/dispatching/header/${dispatchingId}`);
+                    $('#editDispatchingHeaderForm').attr('action', `/user/dispatching/header/${dispatchingId}`);
 
                     // Tampilkan modal
                     $('#editDispatchingHeaderModal').modal('show');
@@ -449,7 +443,7 @@
             $('#deleteDispatchingHeaderId').text(dispatchingName);
 
             // Set action URL untuk form delete
-            const deleteUrl = `/dispatching/header/${dispatchingId}`;
+            const deleteUrl = `/user/dispatching/header/${dispatchingId}`;
             $('#deleteDispatchingHeaderForm').attr('action', deleteUrl);
 
             // Tampilkan modal

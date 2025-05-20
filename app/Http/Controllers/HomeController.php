@@ -6,10 +6,18 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
+
 use App\Models\User;
 use App\Models\UserCompany;
 use App\Models\BankAccount;
-use Illuminate\Http\RedirectResponse;
+use App\Models\StockChangeLog;
+use App\Models\Product;
+use App\Models\Customer;
+use App\Models\DispatchingDetail;
+use App\Models\DispatchingHeader;
+use App\Models\ReceivingDetail;
+use App\Models\ReceivingHeader;
 
 class HomeController extends Controller
 {
@@ -40,8 +48,26 @@ class HomeController extends Controller
      */
     public function adminDashboard(): View
     {
-        return view('adminDashboard');
-    }
+
+        $itemSold = abs(StockChangeLog::where('stock_change_type', 'Sales Order')->sum('qty_changed'));
+        $transaction = DispatchingHeader::where('dispatching_header_status', 'Confirmed')->count();
+
+        //TOTAL INCOME FROM SALES ORDER
+        $salesOrders = StockChangeLog::where('stock_change_type', 'Sales Order')->get(['product_id', 'qty_changed']);
+
+        $totalIncome = 0;
+            foreach ($salesOrders as $order) {
+                $product = Product::where('product_id', $order->product_id)->first();
+                if ($product) {
+                    $totalIncome += abs($order->qty_changed) * $product->selling_price;
+                }
+            }
+
+        $customerCount = Customer::count();
+
+            //VIEW
+            return view('adminDashboard', compact('itemSold','transaction','totalIncome','customerCount',));
+        }
 
 
     // Halaman Setting Admin
@@ -54,16 +80,20 @@ class HomeController extends Controller
         return view('setting.admin', compact('user', 'usercompany', 'BankAccounts'));
     }
 
-    // Admin Profile
-    public function AdminProfile()
+    
+    // Halaman Setting Admin
+    public function UserSetting(): View
     {
         $user = auth()->user(); // Ambil data user yang sedang login
-        return view('profile.admin', compact('user'));
         
+    
+        return view('setting.user', compact('user'));
     }
 
+
+
     // Admin Update Profile
-    public function AdminUpdateProfile(Request $request)
+    public function updateProfile(Request $request)
     {
         $user = auth()->user();
 

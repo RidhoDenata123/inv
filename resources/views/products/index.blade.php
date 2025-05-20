@@ -792,6 +792,7 @@
                                                 <select name="stock_change_type" class="custom-select" required>
                                                 
                                                     <option value="Stock Adjustment">Stock Adjustment</option>
+                                                    <option value="Return to Supplier">Return to Supplier</option>
                                                     <option value="Write-Off">Write-Off</option>
 
                                                 </select>

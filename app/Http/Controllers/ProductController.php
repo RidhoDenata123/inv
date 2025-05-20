@@ -40,12 +40,7 @@ class ProductController extends Controller
         return view('products.index', compact('products', 'categories', 'units', 'suppliers'));
     }
 
-    /**
-     * STORE PRODUCT
-     *
-     * @param  mixed $request
-     * @return RedirectResponse
-     */
+    //ADD PRODUCT
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -79,6 +74,7 @@ class ProductController extends Controller
             return redirect()->route('products.index')->with('error', 'Failed to add product. Please check the image format or size.');
         }
     }
+
     //SHOW DETAIL
     public function getDetail($product_id)
     {
@@ -213,6 +209,46 @@ class ProductController extends Controller
 
         // Kembalikan response JSON dengan product_qty
         return response()->json(['product_qty' => $product->product_qty]);
+    }
+
+    // USER GET QTY
+    public function UserGetProductQty($productId)
+    {
+        // Cari produk berdasarkan product_id
+        $product = Product::findOrFail($productId);
+
+        // Kembalikan response JSON dengan product_qty
+        return response()->json(['product_qty' => $product->product_qty]);
+    }
+
+    //SHOW DETAIL
+    public function UserGetProduct($product_id)
+    {
+        // Cari produk berdasarkan product_id
+        $product = Product::where('product_id', $product_id)->first();
+    
+        // Jika produk tidak ditemukan, kembalikan error 404
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+    
+        // Kembalikan data produk dalam format JSON
+        return response()->json([
+            'product_id' => $product->product_id,
+            'product_name' => $product->product_name,
+            'product_category' => $product->category ? $product->category->category_id : null,
+            'category_name' => $product->category ? $product->category->category_name : 'No Category', // Untuk modal show
+            'product_description' => $product->product_description,
+            'purchase_price' => $product->purchase_price,
+            'selling_price' => $product->selling_price,
+            'product_qty' => $product->product_qty,
+            'product_unit' => $product->product_unit,
+            'unit_name' => $product->unit ? $product->unit->unit_name : 'No Unit', // Untuk modal show
+            'supplier_id' => $product->supplier_id,
+            'supplier_name' => $product->supplier ? $product->supplier->supplier_name : 'No Supplier', // Untuk modal show
+            'product_status' => $product->product_status,
+            'product_img' => $product->product_img ? asset('storage/' . $product->product_img) : null, // URL gambar
+        ]);
     }
 
 
