@@ -13,14 +13,25 @@ use Illuminate\Http\RedirectResponse;
 
 // Import Http Request
 use Illuminate\Http\Request;
+//YAJRA
+use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 {
-    /**
-     * Index
-     *
-     * @return View
-     */
+    //DATATABLE
+    public function getDatatable(Request $request)
+    {
+        $customers = Customer::orderBy('created_at', 'desc');
+        return DataTables::of($customers)
+            ->addIndexColumn()
+            ->addColumn('actions', function($row) {
+                return view('customers.partials.actions', compact('row'))->render();
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+    }
+
+    //CUSTOMER PAGE
     public function index(): View
     {
         // Get all customers
@@ -30,12 +41,7 @@ class CustomerController extends Controller
         return view('customers.index', compact('customers'));
     }
 
-    /**
-     * Store Customer
-     *
-     * @param  Request $request
-     * @return RedirectResponse
-     */
+    //ADD CUSTOMER
     public function store(Request $request): RedirectResponse
     {
 

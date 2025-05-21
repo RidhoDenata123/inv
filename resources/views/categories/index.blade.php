@@ -11,6 +11,28 @@
             justify-content: flex-end; /* Posisikan pagination di kanan */
         }
         
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #receivingHeaderTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
+        }
+        
     </style>
 
 
@@ -38,7 +60,7 @@
                         <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addCategoryModal"><i class='fas fa-plus'></i> Add Category</a>
                        
                             <div class="table-responsive">
-                            <table id="categoryTable" class="table table-bordered">
+                            <table id="categoryTable" class="table table-sm table-bordered" style="width:100%">
                             <thead>
                                 <tr>
                                     <th scope="col">No.</th>
@@ -50,68 +72,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($categories as $category)
-                                    <tr>
-                                        <td>{{ ($categories->currentPage() - 1) * $categories->perPage() + $loop->iteration }}.</td></td> <!-- Nomor otomatis -->
-                                        <td>{{ $category->category_id }}</td>
-                                        <td>{{ $category->category_name }}</td>
-                                        <td>{{ $category->category_description }}</td>
-                                       
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center align-items-center">
 
-                                                <!-- Tombol Show -->
-                                                <a href="#" 
-                                                    class="btn btn-sm btn-dark btn-show mr-2" 
-                                                    data-category_id="{{ $category->category_id }}" 
-                                                    data-toggle="modal" 
-                                                    data-target="#categoryDetailModal">
-                                                    <i class="fas fa-search"></i>
-                                                </a>
-
-                                                <!-- Tombol Edit -->
-                                                <a href="#" 
-                                                    class="btn btn-sm btn-primary btn-edit mr-2" 
-                                                    data-category_id="{{ $category->category_id }}" 
-                                                    data-toggle="modal" 
-                                                    data-target="#categoryEditlModal">
-                                                    <i class='fas fa-edit'></i>
-                                                </a>
-
-                                                <!-- Tombol Delete -->
-                                                <button type="button" 
-                                                    class="btn btn-sm btn-danger btn-delete" 
-                                                    data-category_id="{{ $category->category_id }}"
-                                                    data-toggle="modal" 
-                                                    data-target="#deleteCategoryModal">
-                                                    <i class='fas fa-trash-alt'></i>
-                                                </button>
-
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <div class="alert alert-danger">
-                                    No data available in table
-                                    </div>
-                                @endforelse
                             </tbody>
                         </table>
-                                <!-- Info Jumlah Data dan Pagination -->
-                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                    <!-- Info Jumlah Data -->
-                                    <div class="table">
-                                        <p class="mb-0">
-                                            Showing {{ $categories->firstItem() }} to {{ $categories->lastItem() }} of {{ $categories->total() }} entries
-                                        </p>
-                                    </div>
 
-                                    <!-- Laravel Pagination -->
-                                    <div>
-                                        {{ $categories->links('pagination::simple-bootstrap-4') }}
-                                    </div>
-
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -166,7 +130,7 @@
                                         <!-- Modal Footer -->
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-primary">Save Category</button>
+                                            <button type="submit" class="btn btn-success">Save Category</button>
                                         </div>
                                     </form>
                                 </div>
@@ -303,123 +267,131 @@
        
                 <!-- /.container-fluid -->
 
-                @section('scripts')
+@section('scripts')
+    <!-- Page level plugins -->
+    <!-- DataTables core -->
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
-                <!-- Page level plugins -->
-                <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
-                <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
-                
-                <!-- Datatable  -->       
-                <script>
-                    $(document).ready(function() {
-                        $('#categoryTable').DataTable({
-                            "paging": false,
-                            "lengthChange": true,
-                            "searching": true,
-                            "ordering": true,
-                            "info": false,
-                            "autoWidth": false,
-                            "responsive": true,
-                        
+    <!-- DataTables Responsive (setelah DataTables utama) -->
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
+
+
+    <!-- Datatable  -->       
+    <script>
+            $(document).ready(function() {
+                $('#categoryTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    responsive: true,
+                    ajax: '{{ route("categories.datatable") }}',
+                    columns: [
+                        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                        { data: 'category_id', name: 'category_id' },
+                        { data: 'category_name', name: 'category_name' },
+                        { data: 'category_description', name: 'category_description' },
+                        { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                    ],
+                    order: [[1, 'desc']]
+                });
+            });
+    </script>
+
+<script>
+    $(document).ready(function() {
+
+            // Tampilkan SweetAlert jika ada session flash message
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '{{ session('success') }}',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: '{{ session('error') }}',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            // Generate random category_id when the modal is shown
+            $('#addCategoryModal').on('show.bs.modal', function() {
+                const randomId = 'CAT-' + Math.floor(100000 + Math.random() * 900000); // Generate random ID
+                $('#addCategoryId').val(randomId); // Set the value of category_id input
+            });
+
+            // Handle click event on "SHOW" button
+            $(document).on('click', '.btn-show', function() {
+                        const categoryId = $(this).data('category_id'); // Ambil ID kategori dari tombol
+
+                        // Lakukan permintaan AJAX ke server
+                        $.ajax({
+                            url: `/categories/show/${categoryId}`, // URL rute Laravel untuk mendapatkan detail kategori
+                            method: 'GET',
+                            success: function(data) {
+                                // Isi modal dengan data kategori
+                                $('#detailCategoryId').val(data.category_id);
+                                $('#detailCategoryName').val(data.category_name);
+                                $('#detailCategoryDescription').val(data.category_description);
+
+                                // Tampilkan modal
+                                $('#categoryDetailModal').modal('show');
+                            },
+                            error: function(xhr) {
+                            alert('Failed to fetch category details. Please try again.');
+                            }
                         });
                     });
-                </script>
 
-                <script>
-              
-              $(document).ready(function() {
+                // Handle click event on "EDIT" button
+                $(document).on('click', '.btn-edit', function() {
+                    const categoryId = $(this).data('category_id'); // Ambil ID kategori dari tombol
 
-                        // Tampilkan SweetAlert jika ada session flash message
-                        @if (session('success'))
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: '{{ session('success') }}',
-                                confirmButtonText: 'OK'
-                            });
-                        @endif
+                    // Lakukan permintaan AJAX ke server
+                    $.ajax({
+                        url: `/categories/show/${categoryId}`, // URL rute Laravel untuk mendapatkan detail kategori
+                        method: 'GET',
+                        success: function(data) {
+                            // Isi modal dengan data kategori
+                            $('#editCategoryId').val(data.category_id);
+                            $('#editCategoryName').val(data.category_name);
+                            $('#editCategoryDescription').val(data.category_description);
 
-                        @if (session('error'))
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: '{{ session('error') }}',
-                                confirmButtonText: 'OK'
-                            });
-                        @endif
+                            // Set action URL untuk form edit
+                            $('#editCategoryForm').attr('action', `/categories/update/${categoryId}`);
 
-                        // Generate random category_id when the modal is shown
-                        $('#addCategoryModal').on('show.bs.modal', function() {
-                            const randomId = 'CAT-' + Math.floor(100000 + Math.random() * 900000); // Generate random ID
-                            $('#addCategoryId').val(randomId); // Set the value of category_id input
-                        });
+                            // Tampilkan modal
+                            $('#editCategoryModal').modal('show');
+                        },
+                        error: function(xhr) {
+                            alert('Failed to fetch category details. Please try again.');
+                        }
+                    });
+                });
 
-                        // Handle click event on "SHOW" button
-                        $('.btn-show').on('click', function() {
-                                    const categoryId = $(this).data('category_id'); // Ambil ID kategori dari tombol
+                // Handle click event on "DELETE" button
+                $(document).on('click', '.btn-delete', function() {
+                    const categoryId = $(this).data('category_id'); // Ambil ID kategori dari tombol
+                    const categoryName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama kategori dari tabel
 
-                                    // Lakukan permintaan AJAX ke server
-                                    $.ajax({
-                                        url: `/categories/${categoryId}`, // URL rute Laravel untuk mendapatkan detail kategori
-                                        method: 'GET',
-                                        success: function(data) {
-                                            // Isi modal dengan data kategori
-                                            $('#detailCategoryId').val(data.category_id);
-                                            $('#detailCategoryName').val(data.category_name);
-                                            $('#detailCategoryDescription').val(data.category_description);
+                    // Isi modal dengan data kategori
+                    $('#deleteCategoryId').text(categoryId);
+                    $('#deleteCategoryName').text(categoryName);
 
-                                            // Tampilkan modal
-                                            $('#categoryDetailModal').modal('show');
-                                        },
-                                        error: function(xhr) {
-                                        alert('Failed to fetch category details. Please try again.');
-                                        }
-                                    });
-                                });
+                    // Set action URL untuk form delete
+                    const deleteUrl = `/categories/delete/${categoryId}`;
+                    $('#deleteCategoryForm').attr('action', deleteUrl);
+                });
 
-                            // Handle click event on "EDIT" button
-                            $('.btn-edit').on('click', function() {
-                                const categoryId = $(this).data('category_id'); // Ambil ID kategori dari tombol
-
-                                // Lakukan permintaan AJAX ke server
-                                $.ajax({
-                                    url: `/categories/${categoryId}`, // URL rute Laravel untuk mendapatkan detail kategori
-                                    method: 'GET',
-                                    success: function(data) {
-                                        // Isi modal dengan data kategori
-                                        $('#editCategoryId').val(data.category_id);
-                                        $('#editCategoryName').val(data.category_name);
-                                        $('#editCategoryDescription').val(data.category_description);
-
-                                        // Set action URL untuk form edit
-                                        $('#editCategoryForm').attr('action', `/categories/${categoryId}`);
-
-                                        // Tampilkan modal
-                                        $('#editCategoryModal').modal('show');
-                                    },
-                                    error: function(xhr) {
-                                        alert('Failed to fetch category details. Please try again.');
-                                    }
-                                });
-                            });
-
-                            // Handle click event on "DELETE" button
-                            $('.btn-delete').on('click', function() {
-                                const categoryId = $(this).data('category_id'); // Ambil ID kategori dari tombol
-                                const categoryName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama kategori dari tabel
-
-                                // Isi modal dengan data kategori
-                                $('#deleteCategoryId').text(categoryId);
-                                $('#deleteCategoryName').text(categoryName);
-
-                                // Set action URL untuk form delete
-                                const deleteUrl = `/categories/${categoryId}`;
-                                $('#deleteCategoryForm').attr('action', deleteUrl);
-                            });
-
-                    }); 
-                        
-                </script>
+        }); 
+            
+    </script>
 @endsection
 
 @endsection

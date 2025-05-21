@@ -17,13 +17,26 @@ use Illuminate\Http\Request;
 //import Storage
 use Illuminate\Support\Facades\Storage;
 
+//YAJRA
+use Yajra\DataTables\Facades\DataTables;
+
 class SupplierController extends Controller
 {
-    /**
-     * index
-     *
-     * @return void
-     */
+
+    //DATATABLE
+    public function getDatatable(Request $request)
+    {
+        $suppliers = Supplier::orderBy('created_at', 'desc');
+        return DataTables::of($suppliers)
+            ->addIndexColumn()
+            ->addColumn('actions', function($row) {
+                return view('suppliers.partials.actions', compact('row'))->render();
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+    }
+
+    //SUPPLIER PAGE
     public function index() : View
     {
         //get all suppliers
@@ -33,12 +46,7 @@ class SupplierController extends Controller
         return view('suppliers.index', compact('suppliers'));
     }
 
-    /**
-     * ADD SUPPLIER
-     *
-     * @param  mixed $request
-     * @return RedirectResponse
-     */
+    //ADD SUPPLIER
     public function store(Request $request): RedirectResponse
     {
         //validate form

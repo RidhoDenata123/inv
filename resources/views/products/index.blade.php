@@ -23,7 +23,7 @@
 @section('styles')
     <!-- Bootstrap Select CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" />
-
+    
     <style>
         .bootstrap-select .dropdown-toggle {
             height: calc(1.5em + .75rem + 2px); /* Sesuaikan tinggi dengan form Bootstrap */
@@ -40,7 +40,6 @@
             font-size: 1rem; /* Ukuran font dropdown */
         }
 
-        <style>
         .pagination {
             margin: 0; /* Hilangkan margin default */
         }
@@ -48,6 +47,27 @@
             justify-content: flex-end; /* Posisikan pagination di kanan */
         }
         
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #productTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
+        }
     </style>
 
 @endsection
@@ -67,120 +87,27 @@
                         <div class="card-body">
                         <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addProductModal"><i class='fas fa-plus'></i> Add Product</a>
                        
-                    <div class="table-responsive">
-                        <table id="productTable" class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col">No.</th>
-                                    <th scope="col">Product ID</th>
-                                    <th scope="col">Product Name</th>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Purchase Price</th>
-                                    <th scope="col">Selling Price</th>
-                                    <th scope="col">Supplier</th>
-                                    <th scope="col">Qty</th>
-                                    <th scope="col">Unit</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">ACTIONS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($products as $product)
-                                    <tr>
-                                        <td>{{ ($products->currentPage() - 1) * $products->perPage() + $loop->iteration }}.</td> <!-- Nomor otomatis -->
-                                        <td>{{ $product->product_id }}</td>
-                                        <td>{{ $product->product_name }}</td>
-                                        <td>{{ $product->category ? $product->category->category_name : 'No Category' }}</td>
-                                        <td>{{ "Rp " . number_format($product->purchase_price,2,',','.') }}</td>
-                                        <td>{{ "Rp " . number_format($product->selling_price,2,',','.') }}</td>
-                                        <td>{{ $product->supplier ? $product->supplier->supplier_name : 'No Supplier' }}</td>
-                                        <td>{{ $product->product_qty }}</td>
-                                        <td>{{ $product->unit ? $product->unit->unit_name : 'No Category' }}</td>
-                                        <td>
-                                            <span class="badge 
-                                                {{ $product->product_status === 'active' ? 'badge-success' : 'badge-danger' }}">
-                                                {{ ucfirst($product->product_status) }}
-                                            </span>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center align-items-center">
-                                                <!-- Tombol Show -->
-                                                <a href="#" 
-                                                class="btn btn-sm btn-dark btn-show mr-2" 
-                                                data-product_id="{{ $product->product_id }}" 
-                                                data-toggle="modal" 
-                                                data-target="#productDetailModal">
-                                                <i class="fas fa-search"></i>
-                                                </a>
-
-
-                                                <!-- Tombol Stock Adjustment -->
-                                                <button type="button" 
-                                                        class="btn btn-sm btn-warning btn-stock-adjustment mr-2" 
-                                                        data-product_id="{{ $product->product_id }}" 
-                                                        data-toggle="modal" 
-                                                        data-target="#stockAdjustmentModal">
-                                                    <i class="fas fa-tools"></i>
-                                                </button>
-
-
-
-                                                <!-- Dropdown Edit -->
-                                                <div class="btn-group mr-2">
-                                                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <i class='fas fa-edit'></i>
-                                                    </button>
-                                                    
-                                                    <div class="dropdown-menu">
-                                                        <a href="#" 
-                                                        class="dropdown-item btn-edit" 
-                                                        data-product_id="{{ $product->product_id }}" 
-                                                        data-toggle="modal" 
-                                                        data-target="#editProductModal">
-                                                        Edit Data
-                                                        </a>
-                                                        <a href="#" 
-                                                        class="dropdown-item btn-change-image" 
-                                                        data-product_id="{{ $product->product_id }}" 
-                                                        data-toggle="modal" 
-                                                        data-target="#changeImageModal">
-                                                        Change Image
-                                                        </a>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Tombol Delete -->
-                                                <button type="button" 
-                                                        class="btn btn-sm btn-danger btn-delete" 
-                                                        data-product_id="{{ $product->product_id }}" 
-                                                        data-toggle="modal" 
-                                                        data-target="#deleteProductModal">
-                                                        <i class='fas fa-trash-alt'></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <div class="alert alert-danger">
-                                    No data available in table
-                                    </div>
-                                @endforelse
-                            </tbody>
-                        </table>
-                                    <!-- Info Jumlah Data dan Pagination -->
-                                    <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <!-- Info Jumlah Data -->
-                                        <div class="table">
-                                            <p class="mb-0">
-                                                Showing {{ $products->firstItem() }} to {{ $products->lastItem() }} of {{ $products->total() }} entries
-                                            </p>
-                                        </div>
-
-                                        <!-- Laravel Pagination -->
-                                        <div>
-                                            {{ $products->links('pagination::simple-bootstrap-4') }}
-                                        </div>
-                                    </div>
+                        <div class="table-responsive">
+                                <table id="productTable" class="table table-sm table-bordered" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">No.</th>
+                                            <th scope="col">Product ID</th>
+                                            <th scope="col">Product Name</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col">Purchase Price</th>
+                                            <th scope="col">Selling Price</th>
+                                            <th scope="col">Supplier</th>
+                                            <th scope="col">Qty</th>
+                                            <th scope="col">Unit</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">ACTIONS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -385,7 +312,7 @@
                                             <!-- Modal footer -->
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-primary">Save Product</button>
+                                                <button type="submit" class="btn btn-success">Save Product</button>
                                             </div>
                                             
                                         </form>
@@ -792,7 +719,9 @@
                                                 <select name="stock_change_type" class="custom-select" required>
                                                 
                                                     <option value="Stock Adjustment">Stock Adjustment</option>
+                                                    <option value="Transfer Out">Transfer Out</option> 
                                                     <option value="Return to Supplier">Return to Supplier</option>
+                                                    <option value="Return from Customer">Return from Customer</option>
                                                     <option value="Write-Off">Write-Off</option>
 
                                                 </select>
@@ -830,26 +759,48 @@
                 </div>
                 <!-- /.container-fluid -->
 
+
+
+@endsection
+
+
 @section('scripts')
 
-                <!-- Page level plugins -->
+
+                <!-- DataTables core -->
                 <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
                 <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+                <!-- DataTables Responsive (setelah DataTables utama) -->
+                <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+                <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
+
                 <!-- Bootstrap Select JS -->
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
-              
+                
+                
                 <!-- Datatable  -->       
                 <script>
                     $(document).ready(function() {
                         $('#productTable').DataTable({
-                            "paging": false,
-                            "lengthChange": true,
-                            "searching": true,
-                            "ordering": true,
-                            "info": false,
-                            "autoWidth": false,
-                            "responsive": true,
-                        
+                            processing: true,
+                            serverSide: true,
+                            responsive: true, // Aktifkan responsive
+                            ajax: '{{ route("products.datatable") }}',
+                            columns: [
+                                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                                { data: 'product_id', name: 'product_id' },
+                                { data: 'product_name', name: 'product_name' },
+                                { data: 'category', name: 'category.category_name' },
+                                { data: 'purchase_price', name: 'purchase_price' },
+                                { data: 'selling_price', name: 'selling_price' },
+                                { data: 'supplier', name: 'supplier.supplier_name' },
+                                { data: 'product_qty', name: 'product_qty' },
+                                { data: 'unit', name: 'unit.unit_name' },
+                                { data: 'status', name: 'product_status', orderable: false, searchable: false },
+                                { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                            ],
+                            order: [[1, 'asc']]
                         });
                     });
                 </script>
@@ -943,13 +894,13 @@
                             const randomId = 'PRD-' + Math.random().toString(36).substr(2, 8).toUpperCase();
                             $('#product_id').val(randomId); // Set the generated ID to the input field
                         });
+                        
 
                         // Handle click event on "SHOW" button
-                        $('.btn-show').on('click', function() {
+                        $(document).on('click', '.btn-show', function() {
                             const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
-
-                            // Lakukan permintaan AJAX ke server
-                            $.ajax({
+                        // Lakukan permintaan AJAX ke server
+                        $.ajax({
                             url: `/products/${productId}/detail`, // URL rute Laravel
                             method: 'GET',
                             success: function(data) {
@@ -991,7 +942,7 @@
 
                         
                         // Handle click event on "DELETE" button
-                        $('.btn-delete').on('click', function() {
+                        $(document).on('click', '.btn-delete', function() {
                             const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
                             const productName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama produk dari tabel
 
@@ -1006,7 +957,7 @@
 
 
                         // Handle click event on "EDIT" button
-                        $('.btn-edit').on('click', function() {
+                        $(document).on('click', '.btn-edit', function() {
                         const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
 
                             // Lakukan permintaan AJAX ke server untuk mendapatkan data produk
@@ -1054,7 +1005,7 @@
                         });
                         
                         // Handle click event on "CHANGE IMAGE" button
-                        $('.btn-change-image').on('click', function() {
+                        $(document).on('click', '.btn-change-image', function() {
                             const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
 
                             // Lakukan permintaan AJAX ke server untuk mendapatkan data produk
@@ -1079,37 +1030,37 @@
                             });
                         });
 
-                         // Handle click event on "Stock Adjustment" button
-        $('.btn-stock-adjustment').on('click', function() {
-            const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
+                        // Handle click event on "Stock Adjustment" button
+                        $(document).on('click', '.btn-stock-adjustment', function() {
+                            const productId = $(this).data('product_id'); // Ambil ID produk dari tombol
 
-            // Lakukan permintaan AJAX ke server untuk mendapatkan data produk
-            $.ajax({
-                url: `/products/${productId}/detail`, // URL rute Laravel untuk mendapatkan detail produk
-                method: 'GET',
-                success: function(data) {
-                    // Isi modal dengan data produk
-                    $('#adjust_product_id').val(data.product_id);
-                    $('#adjust_product_name').val(data.product_name);
-                    $('#adjust_qty_before').val(data.product_qty);
+                            // Lakukan permintaan AJAX ke server untuk mendapatkan data produk
+                            $.ajax({
+                                url: `/products/${productId}/detail`, // URL rute Laravel untuk mendapatkan detail produk
+                                method: 'GET',
+                                success: function(data) {
+                                    // Isi modal dengan data produk
+                                    $('#adjust_product_id').val(data.product_id);
+                                    $('#adjust_product_name').val(data.product_name);
+                                    $('#adjust_qty_before').val(data.product_qty);
 
-                    // Set action URL untuk form stock adjustment
-                    const adjustUrl = `/products/${productId}/adjust-stock`;
-                    $('#stockAdjustmentForm').attr('action', adjustUrl);
+                                    // Set action URL untuk form stock adjustment
+                                    const adjustUrl = `/products/${productId}/adjust-stock`;
+                                    $('#stockAdjustmentForm').attr('action', adjustUrl);
 
-                    // Tampilkan modal
-                    $('#stockAdjustmentModal').modal('show');
-                },
-                error: function(xhr) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to fetch product details. Please try again.',
-                        confirmButtonText: 'OK'
-                    });
-                }
-            });
-        });
+                                    // Tampilkan modal
+                                    $('#stockAdjustmentModal').modal('show');
+                                },
+                                error: function(xhr) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Failed to fetch product details. Please try again.',
+                                        confirmButtonText: 'OK'
+                                    });
+                                }
+                            });
+                        });
 
                         // Add the following code if you want the name of the file appear on select
                         $(".custom-file-input").on("change", function() {
@@ -1121,6 +1072,4 @@
 
 
                 </script>
-@endsection
-
 @endsection

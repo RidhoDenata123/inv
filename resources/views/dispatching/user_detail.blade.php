@@ -673,7 +673,7 @@
                         $('#edit_dispatching_detail_status').val(data.dispatching_detail_status);
 
                         // Set action URL untuk form edit
-                        $('#editDispatchingDetailForm').attr('action', `/dispatching/detail/${detailId}`);
+                        $('#editDispatchingDetailForm').attr('action', `/user/dispatching/detail/${detailId}`);
 
 
                         // Setelah data produk diisi, panggil AJAX untuk mendapatkan unit

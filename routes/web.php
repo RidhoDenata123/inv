@@ -138,6 +138,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
 // ALL PRODUCT ROUTE
 
+    Route::get('/products/datatables', [ProductController::class, 'getProductsDatatable'])->name('products.datatable');
     // Product page Route
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     // Product add Route
@@ -155,59 +156,64 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
 // ALL CATEGORY ROUTE
 
+    Route::get('/categories/datatables', [CategoryController::class, 'getDatatable'])->name('categories.datatable');
     // Category page Route
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
     // Category add Route
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
     // Category detail Route
-    Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('categories.show');
-    // Category edit Route
-    Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::get('/categories/show/{id}', [CategoryController::class, 'show'])->name('categories.show');
+    // Category edit update
+    Route::put('/categories/update/{id}', [CategoryController::class, 'update'])->name('categories.update');
     // Category delete Route
-    Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+    Route::delete('/categories/delete/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
     
 // ALL UNIT ROUTE
 
+    Route::get('/units/datatables', [UnitController::class, 'getDatatable'])->name('units.datatable');
     // Unit page Route
     Route::get('/units', [UnitController::class, 'index'])->name('units.index');
     // Unit add Route
     Route::post('/units', [UnitController::class, 'store'])->name('units.store');
     // Unit detail Route
-    Route::get('/units/{id}', [UnitController::class, 'show'])->name('units.show');
-    // Unit edit Route
-    Route::put('/units/{id}', [UnitController::class, 'update'])->name('units.update');
+    Route::get('/units/show/{id}', [UnitController::class, 'show'])->name('units.show');
+    // Unit update Route
+    Route::put('/units/update/{id}', [UnitController::class, 'update'])->name('units.update');
     // Unit delete Route
-    Route::delete('/units/{id}', [UnitController::class, 'destroy'])->name('units.destroy');
+    Route::delete('/units/delete/{id}', [UnitController::class, 'destroy'])->name('units.destroy');
 
 // ALL SUPPLIER ROUTE
 
+    Route::get('/suppliers/datatables', [SupplierController::class, 'getDatatable'])->name('suppliers.datatable');
     // Supplier page Route
     Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
     // Supplier add Route
     Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
     // Supplier detail Route
-    Route::get('/suppliers/{id}', [SupplierController::class, 'show'])->name('suppliers.show');
-    // Supplier edit Route
-    Route::put('/suppliers/{id}', [SupplierController::class, 'update'])->name('suppliers.update');
+    Route::get('/suppliers/show/{id}', [SupplierController::class, 'show'])->name('suppliers.show');
+    // Supplier update Route
+    Route::put('/suppliers/update/{id}', [SupplierController::class, 'update'])->name('suppliers.update');
     // Supplier delete Route
-    Route::delete('/suppliers/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
+    Route::delete('/suppliers/delete/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
 
 // ALL CUSTOMER ROUTE
 
+    Route::get('/customers/datatables', [CustomerController::class, 'getDatatable'])->name('customers.datatable');
     // Supplier page Route
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
     // Supplier add Route
     Route::post('/customers', [CustomerController::class, 'store'])->name('customers.store');
     // Supplier detail Route
-    Route::get('/customers/{id}', [CustomerController::class, 'show'])->name('customers.show');
-    // Supplier edit Route
-    Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
+    Route::get('/customers/show/{id}', [CustomerController::class, 'show'])->name('customers.show');
+    // Supplier update Route
+    Route::put('/customers/update/{id}', [CustomerController::class, 'update'])->name('customers.update');
     // Supplier delete Route
-    Route::delete('/customers/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+    Route::delete('/customers/delete/{id}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 
 
 // ALL RECEIVING HEADER TRANSACTION ROUTE  
 
+    Route::get('/receiving/header/datatables', [ReceivingController::class, 'GetDatatableHeader'])->name('receiving.header.datatable');
     // Receiving Header page Route
     Route::get('/receiving/header', [ReceivingController::class, 'index'])->name('receiving.header');
     // Receiving Header add Route
@@ -221,6 +227,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
 // ALL RECEIVING DETAIL TRANSACTION ROUTE  
 
+    Route::get('/receiving/detail/datatables/{receiving_header_id}', [ReceivingController::class, 'getDatatableDetail'])->name('receiving.detail.datatable');
     // Receiving detail Route
     Route::get('/receiving/detail/{id}', [ReceivingController::class, 'ShowById'])->name('receiving.detail.ShowById');
     // Receiving Header add Route
@@ -242,6 +249,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
 // ALL DISPATCHING HEADER TRANSACTION ROUTE  
 
+    Route::get('/dispatching/header/datatables', [DispatchingController::class, 'GetDatatableHeader'])->name('dispatching.header.datatable');
     // Dispatching Header page Route
     Route::get('/dispatching/header', [DispatchingController::class, 'index'])->name('dispatching.header');
     // Dispatching Header add Route
@@ -256,6 +264,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
 // ALL DISPATCHING DETAIL TRANSACTION ROUTE  
 
+    Route::get('/dispatching/detail/datatables/{dispatching_header_id}', [DispatchingController::class, 'GetDatatableDetail'])->name('dispatching.detail.datatable');
     // Dispatching detail Route
     Route::get('/dispatching/detail/{id}', [DispatchingController::class, 'ShowById'])->name('dispatching.detail.ShowById');
     // Dispatching Header add Route
@@ -297,6 +306,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     
     //Stock Report
+    Route::get('/reports/stock/datatables', [ReportController::class, 'getStockDatatable'])->name('reports.stock.datatable');
     Route::get('/reports/stock', [ReportController::class, 'stockReports'])->name('reports.stock');
     //DOMpdf generate stock report
     Route::get('/reports/stock/generate', [ReportController::class, 'generateStockReport'])->name('reports.stockGenerate');

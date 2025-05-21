@@ -10,6 +10,28 @@
             justify-content: flex-end; /* Posisikan pagination di kanan */
         }
         
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #receivingHeaderTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
+        }
+
     </style>
 
 
@@ -29,7 +51,7 @@
             <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addReceivingHeaderModal"><i class='fas fa-plus'></i> Add Receiving</a>
            
             <div class="table-responsive">
-                <table id="receivingHeaderTable" class="table table-bordered table-sm">
+                <table id="receivingHeaderTable" class="table table-bordered table-sm" style="width:100%">
                     <thead class="text-center">
                         <tr>
                             <th scope="col" rowspan="2">No.</th>
@@ -49,80 +71,9 @@
                         </tr>
                     </thead>
                     <tbody class="text-center">
-                        @forelse ($receiving_headers as $header)
-                            <tr>
-                                <td>{{ ($receiving_headers->currentPage() - 1) * $receiving_headers->perPage() + $loop->iteration }}.</td>
-                                <td>{{ $header->receiving_header_id }}</td>
-                                <td>{{ $header->receiving_header_name }}</td>
-                                <td>{{ $header->created_at ? \Carbon\Carbon::parse($header->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                <td>{{ $header->created_by ? \App\Models\User::find($header->created_by)->name : 'N/A' }}</td>
-                                <td>{{ $header->confirmed_at ? \Carbon\Carbon::parse($header->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                <td>{{ $header->confirmed_by ? \App\Models\User::find($header->confirmed_by)->name : 'N/A' }}</td>
-                                <td>                                
-                                    <span class="badge 
-                                        {{ $header->receiving_header_status === 'Confirmed' ? 'badge-success' : 'badge-warning' }}">
-                                        {{ ucfirst($header->receiving_header_status) }}
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        @if ($header->receivingDetails->where('receiving_detail_status', 'Confirmed')->isNotEmpty())
-                                            <!-- Tombol Show Detail -->
-                                            <a href="{{ route('receiving.detail.ShowById', $header->receiving_header_id) }}" 
-                                            class="btn btn-sm btn-dark mr-2">
-                                                <i class="fas fa-search"></i>
-                                            </a>
-                                        @else
-                                            <!-- Tombol Show -->
-                                            <a href="{{ route('receiving.detail.ShowById', $header->receiving_header_id) }}" 
-                                            class="btn btn-sm btn-dark mr-2">
-                                                <i class="fas fa-search"></i>
-                                            </a>
 
-                                            <!-- Tombol Edit -->
-                                            <a href="#" 
-                                            class="btn btn-sm btn-primary btn-edit mr-2" 
-                                            data-receiving_id="{{ $header->receiving_header_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#editReceivingHeaderModal">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-
-                                            <!-- Tombol Delete -->
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-danger btn-delete" 
-                                                    data-receiving_id="{{ $header->receiving_header_id }}" 
-                                                    data-toggle="modal" 
-                                                    data-target="#deleteReceivingHeaderModal">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        @endif
-                                    </div>
-                                </td>
-
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="9" class="text-center">No data available in table</td>
-                            </tr>
-                        @endforelse
                     </tbody>
                 </table>
-
-                    <!-- Info Jumlah Data dan Pagination -->
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <!-- Info Jumlah Data -->
-                        <div class="table">
-                            <p class="mb-0">
-                                Showing {{ $receiving_headers->firstItem() }} to {{ $receiving_headers->lastItem() }} of {{ $receiving_headers->total() }} entries
-                            </p>
-                        </div>
-
-                        <!-- Laravel Pagination -->
-                        <div>
-                            {{ $receiving_headers->links('pagination::simple-bootstrap-4') }}
-                        </div>
-                    </div>
 
             </div>
         </div>
@@ -309,24 +260,41 @@
 
 @section('scripts')
 
-<!-- Page level plugins -->
-<script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <!-- DataTables core -->
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <!-- DataTables Responsive (setelah DataTables utama) -->
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
+
 
 <!-- Datatable -->
 <script>
-    $(document).ready(function() {
-        $('#receivingHeaderTable').DataTable({
-            "paging": false,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": false,
-            "autoWidth": false,
-            "responsive": true,
-        });
+$(document).ready(function() {
+    $('#receivingHeaderTable').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        ajax: '{{ route("receiving.header.datatable") }}',
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            { data: 'receiving_header_id', name: 'receiving_header_id' },
+            { data: 'receiving_header_name', name: 'receiving_header_name' },
+            { data: 'created_at', name: 'created_at' },
+            { data: 'created_by', name: 'created_by' },
+            { data: 'confirmed_at', name: 'confirmed_at' },
+            { data: 'confirmed_by', name: 'confirmed_by' },
+            { data: 'receiving_header_status', name: 'receiving_header_status', orderable: false, searchable: false },
+            { data: 'actions', name: 'actions', orderable: false, searchable: false }
+        ],
+        order: [[1, 'desc']]
     });
+});
+</script>
 
+
+<script>
     $(document).ready(function() {
         // Tampilkan SweetAlert jika ada session flash message
         @if (session('success'))
@@ -349,12 +317,12 @@
 
         // Generate random receiving_header_id when the modal is shown
         $('#addReceivingHeaderModal').on('show.bs.modal', function() {
-            const randomId = 'REC-' + Math.floor(100000 + Math.random() * 900000); // Generate random ID
-            $('#addReceivingHeaderId').val(randomId); // Set the value of receiving_header_id input
+            const randomId = 'REC-' + Math.floor(100000 + Math.random() * 900000);
+            $('#addReceivingHeaderId').val(randomId);
         });
 
         // Handle click event on "EDIT" button
-        $('.btn-edit').on('click', function() {
+        $(document).on('click', '.btn-edit', function() {
             const receivingId = $(this).data('receiving_id'); // Ambil ID receiving header dari tombol
 
             // Lakukan permintaan AJAX ke server
@@ -385,7 +353,8 @@
             });
         });
 
-        $('.btn-delete').on('click', function() {
+        // Handle click event on "DELETE" button
+        $(document).on('click', '.btn-delete', function() {
             const receivingId = $(this).data('receiving_id'); // Ambil ID receiving header dari tombol
             const receivingName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama receiving header dari tabel
 

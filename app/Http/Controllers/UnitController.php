@@ -17,13 +17,25 @@ use Illuminate\Http\Request;
 //import Storage
 use Illuminate\Support\Facades\Storage;
 
+//YAJRA
+use Yajra\DataTables\Facades\DataTables;
+
 class UnitController extends Controller
 {
-    /**
-     * index
-     *
-     * @return void
-     */
+    //DATATABLE
+    public function getDatatable(Request $request)
+    {
+        $units = Unit::orderBy('created_at', 'desc');
+        return DataTables::of($units)
+            ->addIndexColumn()
+            ->addColumn('actions', function($row) {
+                return view('units.partials.actions', compact('row'))->render();
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+    }
+
+    //UNIT PAGE
     public function index() : View
     {
         //get all Units
@@ -33,12 +45,7 @@ class UnitController extends Controller
         return view('units.index', compact('units'));
     }
 
-    /**
-     * ADD UNIT
-     *
-     * @param  mixed $request
-     * @return RedirectResponse
-     */
+    //ADD UNIT
     public function store(Request $request): RedirectResponse
     {
         //validate form

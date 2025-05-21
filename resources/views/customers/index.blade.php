@@ -9,6 +9,28 @@
             justify-content: flex-end; /* Posisikan pagination di kanan */
         }
         
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #receivingHeaderTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
+        }
+        
     </style>
 
 
@@ -39,7 +61,7 @@
             <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addCustomerModal"><i class='fas fa-plus'></i> Add Customer</a>
            
             <div class="table-responsive">
-                <table id="customerTable" class="table table-bordered">
+                <table id="customerTable" class="table table-sm table-bordered" style="width:100%">
                     <thead>
                         <tr>
                             <th scope="col">No.</th>
@@ -51,68 +73,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($customers as $customer)
-                            <tr>
-                            <td>{{ ($customers->currentPage() - 1) * $customers->perPage() + $loop->iteration }}.</td> <!-- Nomor otomatis -->
-                                <td>{{ $customer->customer_id }}</td>
-                                <td>{{ $customer->customer_name }}</td>
-                                <td>{{ $customer->customer_email }}</td>
-                                <td>{{ $customer->customer_phone }}</td>
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center align-items-center">
 
-                                        <!-- Tombol Show -->
-                                        <a href="#" 
-                                            class="btn btn-sm btn-dark btn-show mr-2" 
-                                            data-customer_id="{{ $customer->customer_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#customerDetailModal">
-                                            <i class="fas fa-search"></i>
-                                        </a>
-
-                                        <!-- Tombol Edit -->
-                                        <a href="#" 
-                                            class="btn btn-sm btn-primary btn-edit mr-2" 
-                                            data-customer_id="{{ $customer->customer_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#editCustomerModal">
-                                            <i class='fas fa-edit'></i>
-                                        </a>
-
-                                        <!-- Tombol Delete -->
-                                        <button type="button" 
-                                            class="btn btn-sm btn-danger btn-delete" 
-                                            data-customer_id="{{ $customer->customer_id }}"
-                                            data-toggle="modal" 
-                                            data-target="#deleteCustomerModal">
-                                            <i class='fas fa-trash-alt'></i>
-                                        </button>
-
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <div class="alert alert-danger">
-                                No data available in table
-                            </div>
-                        @endforelse
                     </tbody>
                 </table>
-
-                    <!-- Info Jumlah Data dan Pagination -->
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <!-- Info Jumlah Data -->
-                        <div class="table">
-                            <p class="mb-0">
-                                Showing {{ $customers->firstItem() }} to {{ $customers->lastItem() }} of {{ $customers->total() }} entries
-                            </p>
-                        </div>
-
-                        <!-- Laravel Pagination -->
-                        <div>
-                            {{ $customers->links('pagination::simple-bootstrap-4') }}
-                        </div>
-                    </div>
 
             </div>
         </div>
@@ -377,24 +340,38 @@
 <!-- Scripts -->
 @section('scripts')
 
-<!-- Page level plugins -->
-<script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <!-- Page level plugins -->
+    <!-- DataTables core -->
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
-<!-- Datatable -->
-<script>
-    $(document).ready(function() {
-        $('#customerTable').DataTable({
-            "paging": false,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": false,
-            "autoWidth": false,
-            "responsive": true,
+    <!-- DataTables Responsive (setelah DataTables utama) -->
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
+
+    <!-- Datatable -->
+    <script>
+        $(document).ready(function() {
+            $('#customerTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("customers.datatable") }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'customer_id', name: 'customer_id' },
+                    { data: 'customer_name', name: 'customer_name' },
+                    { data: 'customer_email', name: 'customer_email' },
+                    { data: 'customer_phone', name: 'customer_phone' },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                ],
+                order: [[1, 'desc']]
+            });
         });
-    });
+    </script>
 
+
+<script>
     $(document).ready(function() {
         // Tampilkan SweetAlert jika ada session flash message
         @if (session('success'))
@@ -422,12 +399,12 @@
         });
 
         // Handle click event on "SHOW" button
-        $('.btn-show').on('click', function() {
+        $(document).on('click', '.btn-show', function() {
             const customerId = $(this).data('customer_id'); // Ambil ID customer dari tombol
 
             // Lakukan permintaan AJAX ke server
             $.ajax({
-                url: `/customers/${customerId}`, // URL rute Laravel untuk mendapatkan detail customer
+                url: `/customers/show/${customerId}`, // URL rute Laravel untuk mendapatkan detail customer
                 method: 'GET',
                 success: function(data) {
                     // Isi modal dengan data customer
@@ -450,12 +427,12 @@
         });
 
         // Handle click event on "EDIT" button
-        $('.btn-edit').on('click', function() {
+        $(document).on('click', '.btn-edit', function() {
             const customerId = $(this).data('customer_id'); // Ambil ID customer dari tombol
 
             // Lakukan permintaan AJAX ke server
             $.ajax({
-                url: `/customers/${customerId}`, // URL rute Laravel untuk mendapatkan detail customer
+                url: `/customers/show/${customerId}`, // URL rute Laravel untuk mendapatkan detail customer
                 method: 'GET',
                 success: function(data) {
                     // Isi modal dengan data customer
@@ -468,7 +445,7 @@
                     $('#editCustomerWebsite').val(data.customer_website);
 
                     // Set action URL untuk form edit
-                    $('#editCustomerForm').attr('action', `/customers/${customerId}`);
+                    $('#editCustomerForm').attr('action', `/customers/update/${customerId}`);
 
                     // Tampilkan modal
                     $('#editCustomerModal').modal('show');
@@ -480,7 +457,7 @@
         });
 
         // Handle click event on "DELETE" button
-        $('.btn-delete').on('click', function() {
+        $(document).on('click', '.btn-delete', function() {
             const customerId = $(this).data('customer_id'); // Ambil ID customer dari tombol
             const customerName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama customer dari tabel
 
@@ -489,7 +466,7 @@
             $('#deleteCustomerName').text(customerName);
 
             // Set action URL untuk form delete
-            const deleteUrl = `/customers/${customerId}`;
+            const deleteUrl = `/customers/delete/${customerId}`;
             $('#deleteCustomerForm').attr('action', deleteUrl);
         });
     });

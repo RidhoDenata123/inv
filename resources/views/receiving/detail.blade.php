@@ -28,6 +28,28 @@
         .table-responsive .pagination {
             justify-content: flex-end; /* Posisikan pagination di kanan */
         }
+        
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #receivingDetailTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
+        }
     </style>
 
 
@@ -75,7 +97,7 @@
            
 
             <div class="table-responsive">
-                <table id="receivingDetailTable" class="table table-bordered table-sm">
+                <table id="receivingDetailTable" class="table table-bordered table-sm" style="width:100%">
                     <thead class="text-center">
 
                     <tr>
@@ -99,112 +121,9 @@
                         </tr>
                     </thead>
                     <tbody class="text-center">
-                        @forelse ($receivingDetails as $detail)
-                            <tr>
-                                <td>{{ ($receivingDetails->currentPage() - 1) * $receivingDetails->perPage() + $loop->iteration }}.</td>
-                                <td>{{ $detail->receiving_detail_id }}</td>
-                                <td>
-                                    <a href="#" 
-                                        class="btn-show text-primary" 
-                                        data-product_id="{{ $detail->product_id }}" 
-                                        data-toggle="modal" 
-                                        data-target="#productDetailModal">
-                                        {{ $detail->product_id }}
-                                    </a>
-                                    
-                                </td>
-                                <td>{{ $detail->product_id ? $detail->product->product_name : 'No product name' }}</td>
-                                <td>{{ $detail->receiving_qty }}</td>
-                                <td>{{ $detail->product_id ? ($detail->product->unit->unit_name ?? 'No unit') : 'No unit' }}</td>
-                                <td>{{ $detail->created_at ? \Carbon\Carbon::parse($detail->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                <td>{{ $detail->created_by ? \App\Models\User::find($detail->created_by)->name : 'N/A' }}</td>
-                                <td>{{ $detail->confirmed_at ? \Carbon\Carbon::parse($detail->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                <td>{{ $detail->confirmed_by ? \App\Models\User::find($detail->confirmed_by)->name : 'N/A' }}</td>
-                                <td>
-                                    <span class="badge 
-                                        {{ $detail->receiving_detail_status === 'Confirmed' ? 'badge-success' : 'badge-warning' }}">
-                                        {{ ucfirst($detail->receiving_detail_status) }}
-                                    </span>
-                                </td>
 
-
-
-
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        @if ($detail->receiving_detail_status === 'Confirmed')
-                                            <!-- Tombol Show Detail -->
-                                            <a href="#" 
-                                            class="btn btn-sm btn-dark btn-show mr-2" 
-                                            data-product_id="{{ $detail->product_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#productDetailModal">
-                                                <i class="fas fa-search"></i>
-                                            </a>
-                                        @elseif ($detail->receiving_detail_status === 'Pending')
-
-                                            <!-- Tombol Confirm -->
-                                            <button type="button" 
-                                                class="btn btn-sm btn-success btn-confirm mr-2" 
-                                                data-receiving_detail_id="{{ $detail->receiving_detail_id }}" 
-                                                data-toggle="modal" 
-                                                data-target="#confirmDetailModal">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-
-                                            <!-- Tombol Show Detail -->
-                                            <a href="#" 
-                                            class="btn btn-sm btn-dark btn-show mr-2" 
-                                            data-product_id="{{ $detail->product_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#productDetailModal">
-                                                <i class="fas fa-search"></i>
-                                            </a>
-                                            <!-- Tombol Edit -->
-                                            <a href="#" 
-                                            class="btn btn-sm btn-primary btn-edit mr-2" 
-                                            data-receiving_detail_id="{{ $detail->receiving_detail_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#editReceivingDetailModal">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-
-                                            <!-- Tombol Delete -->
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-danger btn-delete" 
-                                                    data-receiving_detail_id="{{ $detail->receiving_detail_id }}" 
-                                                    data-toggle="modal" 
-                                                    data-target="#deleteReceivingDetailModal">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        @endif
-                                    </div>
-                                </td>
-
-
-                            </tr>
-                        @empty
-                        <tr>
-                            <td colspan="12" class="text-center">No data available in table</td>
-                        </tr>
-                        @endforelse
                     </tbody>
                 </table>
-
-                    <!-- Info Jumlah Data dan Pagination -->
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <!-- Info Jumlah Data -->
-                        <div class="table">
-                            <p class="mb-0">
-                                Showing {{ $receivingDetails->firstItem() }} to {{ $receivingDetails->lastItem() }} of {{ $receivingDetails->total() }} entries
-                            </p>
-                        </div>
-
-                        <!-- Laravel Pagination -->
-                        <div>
-                            {{ $receivingDetails->links('pagination::simple-bootstrap-4') }}
-                        </div>
-                    </div>
 
             </div>
 
@@ -495,69 +414,69 @@
         </div>
     </div>
 
-<!-- Modal for Confirm All Receiving -->
-<div class="modal fade" id="confirmReceivingModal" tabindex="-1" role="dialog" aria-labelledby="confirmReceivingModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmReceivingModalLabel">Confirm All Pending Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+    <!-- Modal for Confirm All Receiving -->
+    <div class="modal fade" id="confirmReceivingModal" tabindex="-1" role="dialog" aria-labelledby="confirmReceivingModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmReceivingModalLabel">Confirm All Pending Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form id="confirmAllForm" method="POST" action="{{ route('receiving.confirmAll', $receivingHeader->receiving_header_id) }}" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-body">
+                        <p><span class="text-primary">{{ Auth::user()->name }}</span>, Are you sure you want to confirm all pending receiving details?</p>
+                        <div class="alert alert-primary">
+                            <span class="text-primary">
+                                <i class="fas fa-exclamation-circle"></i> <strong>ATTENTION</strong>
+                            </span>
+                            <p class="text-dark">
+                                <small>This action will set the receiving as confirmed and immediately process the selected products to be added to inventory.</small>
+                            </p>
+                        </div>
+
+                        <!-- Upload Document -->
+                    <div class="form-group mb-3">
+                        <label class="font-weight-bold">Upload proof of receipt :</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input @error('receiving_document') is-invalid @enderror" name="receiving_document" id="receiving_document" accept=".pdf,.jpg,.jpeg,.png" required>
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                            <!-- error message for receiving_document -->
+                            @error('receiving_document')
+                                <div class="alert alert-danger mt-2">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+
+
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="confirm_delete" required>
+                                I agree to the Terms & Conditions.
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Check this box to continue.</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Confirm All</button>
+                    </div>
+                </form>
             </div>
-
-            <!-- Modal Body -->
-            <form id="confirmAllForm" method="POST" action="{{ route('receiving.confirmAll', $receivingHeader->receiving_header_id) }}" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <p><span class="text-primary">{{ Auth::user()->name }}</span>, Are you sure you want to confirm all pending receiving details?</p>
-                    <div class="alert alert-primary">
-                        <span class="text-primary">
-                            <i class="fas fa-exclamation-circle"></i> <strong>ATTENTION</strong>
-                        </span>
-                        <p class="text-dark">
-                            <small>This action will set the receiving as confirmed and immediately process the selected products to be added to inventory.</small>
-                        </p>
-                    </div>
-
-                    <!-- Upload Document -->
-                <div class="form-group mb-3">
-                    <label class="font-weight-bold">Upload proof of receipt :</label>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input @error('receiving_document') is-invalid @enderror" name="receiving_document" id="receiving_document" accept=".pdf,.jpg,.jpeg,.png" required>
-                        <label class="custom-file-label" for="customFile">Choose file</label>
-                        <!-- error message for receiving_document -->
-                        @error('receiving_document')
-                            <div class="alert alert-danger mt-2">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-                </div>
-
-
-
-                    <div class="form-group form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" name="confirm_delete" required>
-                            I agree to the Terms & Conditions.
-                            <div class="valid-feedback">Valid.</div>
-                            <div class="invalid-feedback">Check this box to continue.</div>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Modal Footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Confirm All</button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
 
     <!-- Modal for Confirm Receiving Detail by id -->
     <div class="modal fade" id="confirmDetailModal" tabindex="-1" role="dialog" aria-labelledby="confirmDetailModalLabel" aria-hidden="true">
@@ -613,24 +532,45 @@
 
 @section('scripts')
     <!-- Page level plugins -->
+    <!-- DataTables core -->
     <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <!-- DataTables Responsive (setelah DataTables utama) -->
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
+    
     <!-- Bootstrap Select JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
 
     <script>
-    $(document).ready(function() {
-        $('#receivingDetailTable').DataTable({
-            "paging": false,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": false,
-            "autoWidth": false,
-            "responsive": true,
+        $(document).ready(function() {
+            $('#receivingDetailTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("receiving.detail.datatable", $receivingHeader->receiving_header_id) }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'receiving_detail_id', name: 'receiving_detail_id' },
+                    { data: 'product_id', name: 'product_id' },
+                    { data: 'product_name', name: 'product.product_name' },
+                    { data: 'receiving_qty', name: 'receiving_qty' },
+                    { data: 'unit_name', name: 'product.unit.unit_name' },
+                    { data: 'created_at', name: 'created_at' },
+                    { data: 'created_by', name: 'created_by' },
+                    { data: 'confirmed_at', name: 'confirmed_at' },
+                    { data: 'confirmed_by', name: 'confirmed_by' },
+                    { data: 'receiving_detail_status', name: 'receiving_detail_status', orderable: false, searchable: false },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                ],
+                order: [[1, 'desc']]
+            });
         });
-    });
+    </script>
 
+
+    <script>
     $(document).ready(function() {
 
             // Tampilkan SweetAlert jika ada session flash message
@@ -667,7 +607,7 @@
             
 
             // Handle click event on "EDIT" button
-            $('.btn-edit').on('click', function() {
+            $(document).on('click', '.btn-edit', function() {
                 const detailId = $(this).data('receiving_detail_id'); // Ambil ID receiving detail dari tombol
 
                 if (!detailId) {
@@ -733,7 +673,7 @@
             });
 
             // Handle click event on "SHOW" button
-            $('.btn-show').on('click', function() {
+            $(document).on('click', '.btn-show', function() {    
                 const productId = $(this).data('product_id'); // Ambil ID produk
 
                 // Lakukan permintaan AJAX ke server
@@ -783,7 +723,7 @@
             });
 
             // Handle click event on "DELETE" button
-            $('.btn-delete').on('click', function() {
+            $(document).on('click', '.btn-delete', function() { 
                 const detailId = $(this).data('receiving_detail_id'); // Ambil ID receiving detail dari tombol
                 const productName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama produk dari tabel
 
@@ -809,7 +749,7 @@
             });
 
             // Handle click event on "Confirm" button per detail
-            $('.btn-confirm').on('click', function() {
+            $(document).on('click', '.btn-confirm', function() { 
                 const detailId = $(this).data('receiving_detail_id'); // Ambil ID receiving detail dari tombol
 
                 if (!detailId) {

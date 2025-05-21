@@ -17,9 +17,47 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Yajra\DataTables\Facades\DataTables;
 
 class DispatchingController extends Controller
 {
+    //DATATABLE
+    public function GetDatatableHeader(Request $request)
+    {
+        $headers = DispatchingHeader::with(['customer', 'createdByUser', 'confirmedByUser'])
+            ->orderBy('created_at', 'desc');
+
+        return DataTables::of($headers)
+            ->addIndexColumn()
+            ->addColumn('designation', function($row) {
+                return $row->dispatching_header_name;
+            })
+            ->addColumn('customer', function($row) {
+                return $row->customer ? $row->customer->customer_name : 'N/A';
+            })
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('created_by', function($row) {
+                return $row->created_by ? optional($row->createdByUser)->name : 'N/A';
+            })
+            ->addColumn('confirmed_at', function($row) {
+                return $row->confirmed_at ? \Carbon\Carbon::parse($row->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('confirmed_by', function($row) {
+                return $row->confirmed_by ? optional($row->confirmedByUser)->name : 'N/A';
+            })
+            ->addColumn('dispatching_header_status', function($row) {
+                $class = $row->dispatching_header_status === 'Confirmed' ? 'badge-success' : 'badge-warning';
+                return '<span class="badge '.$class.'">'.ucfirst($row->dispatching_header_status).'</span>';
+            })
+            ->addColumn('actions', function($row) {
+                return view('dispatching.partials.actionsHeader', compact('row'))->render();
+            })
+            ->rawColumns(['dispatching_header_status', 'actions'])
+            ->make(true);
+    }
+
     // Show all dispatching headers
     public function index(): View
     {
@@ -102,6 +140,45 @@ class DispatchingController extends Controller
         $dispatchingHeader->delete(); // Hapus Dispatching Header
 
         return redirect()->route('dispatching.header')->with('success', 'Dispatching header and details deleted successfully!');
+    }
+
+
+    //DATATABLE
+    public function GetDatatableDetail($dispatching_header_id)
+    {
+        $details = DispatchingDetail::with(['product.unit'])
+            ->where('dispatching_header_id', $dispatching_header_id)
+            ->orderBy('created_at', 'desc');
+
+        return DataTables::of($details)
+            ->addIndexColumn()
+            ->addColumn('product_name', function($row) {
+                return $row->product ? $row->product->product_name : 'No product name';
+            })
+            ->addColumn('unit_name', function($row) {
+                return $row->product && $row->product->unit ? $row->product->unit->unit_name : 'No unit';
+            })
+            ->addColumn('created_by', function($row) {
+                return $row->created_by ? optional(\App\Models\User::find($row->created_by))->name : 'N/A';
+            })
+            ->addColumn('confirmed_by', function($row) {
+                return $row->confirmed_by ? optional(\App\Models\User::find($row->confirmed_by))->name : 'N/A';
+            })
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('confirmed_at', function($row) {
+                return $row->confirmed_at ? \Carbon\Carbon::parse($row->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('dispatching_detail_status', function($row) {
+                $class = $row->dispatching_detail_status === 'Confirmed' ? 'badge-success' : 'badge-warning';
+                return '<span class="badge '.$class.'">'.ucfirst($row->dispatching_detail_status).'</span>';
+            })
+            ->addColumn('actions', function($row) {
+                return view('dispatching.partials.actionsDetail', compact('row'))->render();
+            })
+            ->rawColumns(['dispatching_detail_status', 'actions'])
+            ->make(true);
     }
 
     // Show dispatching header by ID
@@ -341,6 +418,15 @@ class DispatchingController extends Controller
         
         return view('dispatching.delivery-note', compact('dispatchingHeader', 'dispatchingDetails', 'userCompany', 'bankAccount'));
     }
+
+
+
+
+
+
+
+
+
 
 
     //USER

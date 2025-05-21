@@ -16,14 +16,26 @@ use Illuminate\Http\Request;
 
 //import Storage
 use Illuminate\Support\Facades\Storage;
+//YAJRA
+use Yajra\DataTables\Facades\DataTables;
 
 class CategoryController extends Controller
 {
-    /**
-     * index
-     *
-     * @return void
-     */
+    //DATATABLE
+    public function getDatatable(Request $request)
+    {
+        $categories = Category::orderBy('created_at', 'desc');
+        return DataTables::of($categories)
+            ->addIndexColumn()
+            ->addColumn('actions', function($row) {
+                return view('categories.partials.actions', compact('row'))->render();
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+    }
+
+
+    //CATEGORY PAGE
     public function index() : View
     {
         //get all category
@@ -33,12 +45,7 @@ class CategoryController extends Controller
         return view('categories.index', compact('categories'));
     }
 
-    /**
-     * ADD CATEGORY
-     *
-     * @param  mixed $request
-     * @return RedirectResponse
-     */
+    //ADD CATEGORY
     public function store(Request $request): RedirectResponse
     {
         //validate form

@@ -9,6 +9,28 @@
             justify-content: flex-end; /* Posisikan pagination di kanan */
         }
         
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #receivingHeaderTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
+        }
+        
     </style>
 
 
@@ -39,7 +61,7 @@
             <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addSupplierModal"><i class='fas fa-plus'></i> Add Suplier</a>
            
             <div class="table-responsive">
-                <table id="supplierTable" class="table table-bordered">
+                <table id="supplierTable" class="table table-sm table-bordered" style="width:100%">
                     <thead>
                         <tr>
                             <th scope="col">No.</th>
@@ -51,67 +73,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($suppliers as $supplier)
-                            <tr>
-                                <td>{{ ($suppliers->currentPage() - 1) * $suppliers->perPage() + $loop->iteration }}.</td> <!-- Nomor otomatis -->
-                                <td>{{ $supplier->supplier_id }}</td>
-                                <td>{{ $supplier->supplier_name }}</td>
-                                <td>{{ $supplier->supplier_email }}</td>
-                                <td>{{ $supplier->supplier_phone }}</td>
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center align-items-center">
 
-                                        <!-- Tombol Show -->
-                                        <a href="#" 
-                                            class="btn btn-sm btn-dark btn-show mr-2" 
-                                            data-supplier_id="{{ $supplier->supplier_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#supplierDetailModal">
-                                            <i class="fas fa-search"></i>
-                                        </a>
-
-                                        <!-- Tombol Edit -->
-                                        <a href="#" 
-                                            class="btn btn-sm btn-primary btn-edit mr-2" 
-                                            data-supplier_id="{{ $supplier->supplier_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#editSupplierModal">
-                                            <i class='fas fa-edit'></i>
-                                        </a>
-
-                                        <!-- Tombol Delete -->
-                                        <button type="button" 
-                                            class="btn btn-sm btn-danger btn-delete" 
-                                            data-supplier_id="{{ $supplier->supplier_id }}"
-                                            data-toggle="modal" 
-                                            data-target="#deleteSupplierModal">
-                                            <i class='fas fa-trash-alt'></i>
-                                        </button>
-
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <div class="alert alert-danger">
-                                No data available in table
-                            </div>
-                        @endforelse
                     </tbody>
                 </table>
-                    <!-- Info Jumlah Data dan Pagination -->
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <!-- Info Jumlah Data -->
-                        <div class="table">
-                            <p class="mb-0">
-                                Showing {{ $suppliers->firstItem() }} to {{ $suppliers->lastItem() }} of {{ $suppliers->total() }} entries
-                            </p>
-                        </div>
 
-                        <!-- Laravel Pagination -->
-                        <div>
-                            {{ $suppliers->links('pagination::simple-bootstrap-4') }}
-                        </div>
-                    </div>
             </div>
         </div>
     </div>
@@ -381,24 +346,38 @@
 <!-- Scripts -->
 @section('scripts')
 
-<!-- Page level plugins -->
-<script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <!-- Page level plugins -->
+    <!-- DataTables core -->
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <!-- DataTables Responsive (setelah DataTables utama) -->
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
+
 
 <!-- Datatable -->
 <script>
     $(document).ready(function() {
         $('#supplierTable').DataTable({
-            "paging": false,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": false,
-            "autoWidth": false,
-            "responsive": true,
+            processing: true,
+            serverSide: true,
+            responsive: true,
+            ajax: '{{ route("suppliers.datatable") }}',
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'supplier_id', name: 'supplier_id' },
+                { data: 'supplier_name', name: 'supplier_name' },
+                { data: 'supplier_email', name: 'supplier_email' },
+                { data: 'supplier_phone', name: 'supplier_phone' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false }
+            ],
+            order: [[1, 'desc']]
         });
     });
+</script>
 
+<script>
     $(document).ready(function() {
         // Tampilkan SweetAlert jika ada session flash message
         @if (session('success'))
@@ -426,12 +405,12 @@
         });
 
         // Handle click event on "SHOW" button
-        $('.btn-show').on('click', function() {
+        $(document).on('click', '.btn-show', function() {
             const supplierId = $(this).data('supplier_id'); // Ambil ID supplier dari tombol
 
             // Lakukan permintaan AJAX ke server
             $.ajax({
-                url: `/suppliers/${supplierId}`, // URL rute Laravel untuk mendapatkan detail supplier
+                url: `/suppliers/show/${supplierId}`, // URL rute Laravel untuk mendapatkan detail supplier
                 method: 'GET',
                 success: function(data) {
                     // Isi modal dengan data supplier
@@ -453,12 +432,12 @@
         });
 
         // Handle click event on "EDIT" button
-        $('.btn-edit').on('click', function() {
+        $(document).on('click', '.btn-edit', function() {
             const supplierId = $(this).data('supplier_id'); // Ambil ID supplier dari tombol
 
             // Lakukan permintaan AJAX ke server
             $.ajax({
-                url: `/suppliers/${supplierId}`, // URL rute Laravel untuk mendapatkan detail supplier
+                url: `/suppliers/show/${supplierId}`, // URL rute Laravel untuk mendapatkan detail supplier
                 method: 'GET',
                 success: function(data) {
                     // Isi modal dengan data supplier
@@ -471,7 +450,7 @@
                     $('#editSupplierWebsite').val(data.supplier_website);
 
                     // Set action URL untuk form edit
-                    $('#editSupplierForm').attr('action', `/suppliers/${supplierId}`);
+                    $('#editSupplierForm').attr('action', `/suppliers/update/${supplierId}`);
 
                     // Tampilkan modal
                     $('#editSupplierModal').modal('show');
@@ -483,7 +462,7 @@
         });
 
         // Handle click event on "DELETE" button
-        $('.btn-delete').on('click', function() {
+        $(document).on('click', '.btn-delete', function() {
             const supplierId = $(this).data('supplier_id'); // Ambil ID supplier dari tombol
             const supplierName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama supplier dari tabel
 
@@ -492,7 +471,7 @@
             $('#deleteSupplierName').text(supplierName);
 
             // Set action URL untuk form delete
-            const deleteUrl = `/suppliers/${supplierId}`;
+            const deleteUrl = `/suppliers/delete/${supplierId}`;
             $('#deleteSupplierForm').attr('action', deleteUrl);
         });
     });

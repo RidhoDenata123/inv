@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\Facades\DataTables;
 
 class ReportController extends Controller
 {
@@ -113,6 +114,38 @@ class ReportController extends Controller
         // Kirim data ke view
         return view('reports.archive', compact('stockReports', 'stockMovementReports', 'stockMinimumReports', 'receivingReports', 'dispatchingReports', 'adjustmentReports'));
     }
+
+
+    //STOCK REPORT DATATABLE
+    public function getStockDatatable(Request $request)
+    {
+        $stockReports = Report::where('report_type', 'stock')->orderBy('created_at', 'desc');
+        return DataTables::of($stockReports)
+            ->addIndexColumn()
+            ->addColumn('document', function($row) {
+                if ($row->report_document) {
+                    return '<a href="'.asset('storage/' . $row->report_document).'" target="_blank">View Document</a>';
+                }
+                return 'No Document';
+            })
+            ->addColumn('actions', function($row) {
+                return view('reports.partials.actions', compact('row'))->render();
+            })
+            ->rawColumns(['document', 'actions'])
+            ->make(true);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     //STOCK REPORTS PAGE
     public function stockReports()

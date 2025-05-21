@@ -31,9 +31,42 @@ use Carbon\Carbon;
 // Mendapatkan waktu saat ini dengan zona waktu Jakarta
 $timeInJakarta = Carbon::now('Asia/Jakarta');
 
+//YAJRA
+use Yajra\DataTables\Facades\DataTables;
+
 class ReceivingController extends Controller
 {
+    //DATATABLE
+    public function GetDatatableHeader(Request $request)
+    {
+        $headers = ReceivingHeader::with(['createdByUser', 'confirmedByUser'])->orderBy('created_at', 'desc');
 
+        return DataTables::of($headers)
+            ->addIndexColumn()
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('created_by', function($row) {
+                return $row->created_by ? optional($row->createdByUser)->name : 'N/A';
+            })
+            ->addColumn('confirmed_at', function($row) {
+                return $row->confirmed_at ? \Carbon\Carbon::parse($row->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('confirmed_by', function($row) {
+                return $row->confirmed_by ? optional($row->confirmedByUser)->name : 'N/A';
+            })
+            ->addColumn('receiving_header_status', function($row) {
+                $class = $row->receiving_header_status === 'Confirmed' ? 'badge-success' : 'badge-warning';
+                return '<span class="badge '.$class.'">'.ucfirst($row->receiving_header_status).'</span>';
+            })
+            ->addColumn('actions', function($row) {
+                 return view('receiving.partials.actionsHeader', compact('row'))->render();
+            })
+            ->rawColumns(['receiving_header_status', 'actions'])
+            ->make(true);
+    }
+
+    
     //show all receiving headers
     public function index() : View
     {
@@ -132,6 +165,44 @@ class ReceivingController extends Controller
     }
 
 //DETAIL CONTROLLERS
+
+    //DATATABLE
+    public function getDatatableDetail($receiving_header_id)
+    {
+        $details = ReceivingDetail::with(['product.unit'])
+            ->where('receiving_header_id', $receiving_header_id)
+            ->orderBy('created_at', 'desc');
+
+        return DataTables::of($details)
+            ->addIndexColumn()
+            ->addColumn('product_name', function($row) {
+                return $row->product ? $row->product->product_name : 'No product name';
+            })
+            ->addColumn('unit_name', function($row) {
+                return $row->product && $row->product->unit ? $row->product->unit->unit_name : 'No unit';
+            })
+            ->addColumn('created_by', function($row) {
+                return $row->created_by ? optional(\App\Models\User::find($row->created_by))->name : 'N/A';
+            })
+            ->addColumn('confirmed_by', function($row) {
+                return $row->confirmed_by ? optional(\App\Models\User::find($row->confirmed_by))->name : 'N/A';
+            })
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('confirmed_at', function($row) {
+                return $row->confirmed_at ? \Carbon\Carbon::parse($row->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('receiving_detail_status', function($row) {
+                $class = $row->receiving_detail_status === 'Confirmed' ? 'badge-success' : 'badge-warning';
+                return '<span class="badge '.$class.'">'.ucfirst($row->receiving_detail_status).'</span>';
+            })
+            ->addColumn('actions', function($row) {
+                return view('receiving.partials.actionsDetail', compact('row'))->render();
+            })
+            ->rawColumns(['receiving_detail_status', 'actions'])
+            ->make(true);
+    }
 
     //show receiving headers by id
     public function ShowById($id)

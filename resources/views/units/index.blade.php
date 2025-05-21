@@ -10,6 +10,28 @@
             justify-content: flex-end; /* Posisikan pagination di kanan */
         }
         
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #receivingHeaderTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
+        }
+        
     </style>
 
 
@@ -40,7 +62,7 @@
             <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addUnitModal"><i class='fas fa-plus'></i> Add Unit</a>
            
             <div class="table-responsive">
-                <table id="unitTable" class="table table-bordered">
+                <table id="unitTable" class="table table-sm table-bordered" style="width:100%">
                     <thead>
                         <tr>
                             <th scope="col">No.</th>
@@ -51,66 +73,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($units as $unit)
-                            <tr>
-                                <td>{{ ($units->currentPage() - 1) * $units->perPage() + $loop->iteration }}.</td> <!-- Nomor otomatis -->
-                                <td>{{ $unit->unit_id }}</td>
-                                <td>{{ $unit->unit_name }}</td>
-                                <td>{{ $unit->unit_description }}</td>
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center align-items-center">
 
-                                        <!-- Tombol Show -->
-                                        <a href="#" 
-                                            class="btn btn-sm btn-dark btn-show mr-2" 
-                                            data-unit_id="{{ $unit->unit_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#unitDetailModal">
-                                            <i class="fas fa-search"></i>
-                                        </a>
-
-                                        <!-- Tombol Edit -->
-                                        <a href="#" 
-                                            class="btn btn-sm btn-primary btn-edit mr-2" 
-                                            data-unit_id="{{ $unit->unit_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#unitEditModal">
-                                            <i class='fas fa-edit'></i>
-                                        </a>
-
-                                        <!-- Tombol Delete -->
-                                        <button type="button" 
-                                            class="btn btn-sm btn-danger btn-delete" 
-                                            data-unit_id="{{ $unit->unit_id }}"
-                                            data-toggle="modal" 
-                                            data-target="#deleteUnitModal">
-                                            <i class='fas fa-trash-alt'></i>
-                                        </button>
-
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <div class="alert alert-danger">
-                                No data available in table
-                            </div>
-                        @endforelse
                     </tbody>
                 </table>
-                   <!-- Info Jumlah Data dan Pagination -->
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <!-- Info Jumlah Data -->
-                        <div class="table">
-                            <p class="mb-0">
-                                Showing {{ $units->firstItem() }} to {{ $units->lastItem() }} of {{ $units->total() }} entries
-                            </p>
-                        </div>
 
-                        <!-- Laravel Pagination -->
-                        <div>
-                            {{ $units->links('pagination::simple-bootstrap-4') }}
-                        </div>
-                    </div>
             </div>
         </div>
     </div>
@@ -159,7 +125,7 @@
                     <!-- Modal Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Unit</button>
+                        <button type="submit" class="btn btn-success">Save Unit</button>
                     </div>
                 </form>
             </div>
@@ -287,23 +253,36 @@
 @section('scripts')
 
     <!-- Page level plugins -->
+    <!-- DataTables core -->
     <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
+    <!-- DataTables Responsive (setelah DataTables utama) -->
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
+
+
     <!-- Datatable -->
     <script>
-            $(document).ready(function() {
-                $('#unitTable').DataTable({
-                    "paging": false, // Nonaktifkan pagination bawaan DataTables
-                    "lengthChange": true,
-                    "searching": true,
-                    "ordering": true,
-                    "info": false,
-                    "autoWidth": false,
-                    "responsive": true,
-                });
+        $(document).ready(function() {
+            $('#unitTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("units.datatable") }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'unit_id', name: 'unit_id' },
+                    { data: 'unit_name', name: 'unit_name' },
+                    { data: 'unit_description', name: 'unit_description' },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                ],
+                order: [[1, 'desc']]
             });
+        });
+    </script>
 
+    <script>
         $(document).ready(function() {
             // Tampilkan SweetAlert jika ada session flash message
             @if (session('success'))
@@ -331,12 +310,12 @@
             });
 
             // Handle click event on "SHOW" button
-            $('.btn-show').on('click', function() {
+            $(document).on('click', '.btn-show', function() {
                 const unitId = $(this).data('unit_id'); // Ambil ID unit dari tombol
 
                 // Lakukan permintaan AJAX ke server
                 $.ajax({
-                    url: `/units/${unitId}`, // URL rute Laravel untuk mendapatkan detail unit
+                    url: `/units/show/${unitId}`, // URL rute Laravel untuk mendapatkan detail unit
                     method: 'GET',
                     success: function(data) {
                         // Isi modal dengan data unit
@@ -354,7 +333,7 @@
             });
 
             // Handle click event on "EDIT" button
-            $('.btn-edit').on('click', function() {
+            $(document).on('click', '.btn-edit', function() {
                 const unitId = $(this).data('unit_id'); // Ambil ID unit dari tombol
 
                 // Lakukan permintaan AJAX ke server
@@ -368,7 +347,7 @@
                         $('#editUnitDescription').val(data.unit_description);
 
                         // Set action URL untuk form edit
-                        $('#editUnitForm').attr('action', `/units/${unitId}`);
+                        $('#editUnitForm').attr('action', `/units/update/${unitId}`);
 
                         // Tampilkan modal
                         $('#editUnitModal').modal('show');
@@ -380,7 +359,7 @@
             });
 
             // Handle click event on "DELETE" button
-            $('.btn-delete').on('click', function() {
+            $(document).on('click', '.btn-delete', function() {
                 const unitId = $(this).data('unit_id'); // Ambil ID unit dari tombol
                 const unitName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama unit dari tabel
 
@@ -389,7 +368,7 @@
                 $('#deleteUnitName').text(unitName);
 
                 // Set action URL untuk form delete
-                const deleteUrl = `/units/${unitId}`;
+                const deleteUrl = `/units/delete/${unitId}`;
                 $('#deleteUnitForm').attr('action', deleteUrl);
             });
         });

@@ -2,12 +2,44 @@
   
 @section('content')
 
-@if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+    @if (session('status'))
+        <div class="alert alert-success" role="alert">
+            {{ session('status') }}
+        </div>
+    @endif
 
+
+    @section('styles')
+    <!-- Bootstrap Select CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css" />
+
+    <style>
+        .bootstrap-select .dropdown-toggle {
+            height: calc(1.5em + .75rem + 2px); /* Sesuaikan tinggi dengan form Bootstrap */
+            padding: .375rem .75rem; /* Padding default form */
+            font-size: 1rem; /* Ukuran font default */
+            line-height: 1.5; /* Line height default */
+            color: #858796; /* Warna teks default */
+            background-color: #fff; /* Warna latar belakang */
+            border: 1px solid #ced4da; /* Warna border */
+            border-radius: .25rem; /* Radius border */
+        }
+
+        .bootstrap-select .dropdown-menu {
+            font-size: 1rem; /* Ukuran font dropdown */
+        }
+
+        <style>
+        .pagination {
+            margin: 0; /* Hilangkan margin default */
+        }
+        .table-responsive .pagination {
+            justify-content: flex-end; /* Posisikan pagination di kanan */
+        }
+        
+    </style>
+
+@endsection
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
@@ -25,16 +57,16 @@
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-primary shadow h-100 py-2">
                             <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            items sold</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $itemSold }}</div>
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                items sold</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $itemSold }}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                                        </div>
                                     </div>
-                                    <div class="col-auto">
-                                        <i class="fas fa-boxes fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>

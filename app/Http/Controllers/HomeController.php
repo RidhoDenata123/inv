@@ -38,18 +38,9 @@ class HomeController extends Controller
      */
     public function userDashboard(): View
     {
-        return view('userDashboard');
-    } 
-  
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function adminDashboard(): View
-    {
-
+         //ITEM SOLD COUNT
         $itemSold = abs(StockChangeLog::where('stock_change_type', 'Sales Order')->sum('qty_changed'));
+        //TRANSACTION COUNT
         $transaction = DispatchingHeader::where('dispatching_header_status', 'Confirmed')->count();
 
         //TOTAL INCOME FROM SALES ORDER
@@ -62,11 +53,70 @@ class HomeController extends Controller
                     $totalIncome += abs($order->qty_changed) * $product->selling_price;
                 }
             }
-
+        //CUSTOMER COUNT
         $customerCount = Customer::count();
 
-            //VIEW
-            return view('adminDashboard', compact('itemSold','transaction','totalIncome','customerCount',));
+        // Data stok rendah
+        $lowStockProducts = Product::where('product_qty', '<', 5)->get();
+        $lowStockCount = $lowStockProducts->count();
+
+        // Data dispatching pending
+        $pendingDispatchings = DispatchingHeader::where('dispatching_header_status', 'Pending')->get();
+        $pendingDispatchingCount = $pendingDispatchings->count();
+
+        // Total alert
+        $totalAlertCount = $lowStockCount + $pendingDispatchingCount;
+
+
+            //VIEW DAHBOARD
+            return view('userDashboard', compact('itemSold','transaction','totalIncome','customerCount',
+            'lowStockProducts', 'lowStockCount',
+            'pendingDispatchings', 'pendingDispatchingCount', 
+            'totalAlertCount',));
+        }
+  
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function adminDashboard(): View
+    {
+        //ITEM SOLD COUNT
+        $itemSold = abs(StockChangeLog::where('stock_change_type', 'Sales Order')->sum('qty_changed'));
+        //TRANSACTION COUNT
+        $transaction = DispatchingHeader::where('dispatching_header_status', 'Confirmed')->count();
+
+        //TOTAL INCOME FROM SALES ORDER
+        $salesOrders = StockChangeLog::where('stock_change_type', 'Sales Order')->get(['product_id', 'qty_changed']);
+
+        $totalIncome = 0;
+            foreach ($salesOrders as $order) {
+                $product = Product::where('product_id', $order->product_id)->first();
+                if ($product) {
+                    $totalIncome += abs($order->qty_changed) * $product->selling_price;
+                }
+            }
+        //CUSTOMER COUNT
+        $customerCount = Customer::count();
+
+        // Data stok rendah
+        $lowStockProducts = Product::where('product_qty', '<', 5)->get();
+        $lowStockCount = $lowStockProducts->count();
+
+        // Data dispatching pending
+        $pendingDispatchings = DispatchingHeader::where('dispatching_header_status', 'Pending')->get();
+        $pendingDispatchingCount = $pendingDispatchings->count();
+
+        // Total alert
+        $totalAlertCount = $lowStockCount + $pendingDispatchingCount;
+
+
+            //VIEW DAHBOARD
+            return view('adminDashboard', compact('itemSold','transaction','totalIncome','customerCount',
+            'lowStockProducts', 'lowStockCount',
+            'pendingDispatchings', 'pendingDispatchingCount', 
+            'totalAlertCount',));
         }
 
 

@@ -49,4 +49,14 @@ class ReceivingHeader extends Model
         {
             return $this->hasMany(ReceivingDetail::class, 'receiving_header_id', 'receiving_header_id');
         }
+
+        public function createdByUser()
+        {
+            return $this->belongsTo(\App\Models\User::class, 'created_by', 'id');
+        }
+
+        public function confirmedByUser()
+        {
+            return $this->belongsTo(\App\Models\User::class, 'confirmed_by', 'id');
+        }
 }

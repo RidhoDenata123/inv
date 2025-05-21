@@ -20,14 +20,47 @@ use Illuminate\Http\Request;
 
 //import Storage
 use Illuminate\Support\Facades\Storage;
+//YAJRA
+use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
 {
-    /**
-     * index
-     *
-     * @return void
-     */
+    //DATATABLE
+    public function getProductsDatatable(Request $request)
+    {
+         $products = Product::with(['category', 'unit', 'supplier'])
+        ->orderBy('created_at', 'desc'); // Urutkan berdasarkan data terbaru
+        
+        return DataTables::of($products)
+            ->addIndexColumn()
+            ->addColumn('category', function($row) {
+                return $row->category ? $row->category->category_name : 'No Category';
+            })
+            ->addColumn('supplier', function($row) {
+                return $row->supplier ? $row->supplier->supplier_name : 'No Supplier';
+            })
+            ->addColumn('unit', function($row) {
+                return $row->unit ? $row->unit->unit_name : 'No Unit';
+            })
+            ->addColumn('purchase_price', function($row) {
+                return 'Rp ' . number_format($row->purchase_price, 2, ',', '.');
+            })
+            ->addColumn('selling_price', function($row) {
+                return 'Rp ' . number_format($row->selling_price, 2, ',', '.');
+            })
+            ->addColumn('status', function($row) {
+                $class = $row->product_status === 'active' ? 'badge-success' : 'badge-danger';
+                return '<span class="badge '.$class.'">'.ucfirst($row->product_status).'</span>';
+            })
+            ->addColumn('actions', function($row) {
+                // Sesuaikan tombol aksi sesuai kebutuhan Anda
+                return view('products.partials.actions', compact('row'))->render();
+            })
+            ->rawColumns(['status', 'actions'])
+            ->make(true);
+    }
+
+    //PRODUCT PAGE
     public function index() : View
     {
         $products = Product::with('category', 'unit', 'supplier')
@@ -39,6 +72,7 @@ class ProductController extends Controller
 
         return view('products.index', compact('products', 'categories', 'units', 'suppliers'));
     }
+
 
     //ADD PRODUCT
     public function store(Request $request): RedirectResponse

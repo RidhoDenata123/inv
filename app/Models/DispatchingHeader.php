@@ -50,5 +50,20 @@ class DispatchingHeader extends Model
         {
             return $this->hasMany(DispatchingDetail::class, 'dispatching_header_id', 'dispatching_header_id');
         }
+
+        public function customer()
+        {
+            return $this->belongsTo(\App\Models\Customer::class, 'customer_id', 'customer_id');
+        }
+
+        public function createdByUser()
+        {
+            return $this->belongsTo(\App\Models\User::class, 'created_by', 'id');
+        }
+
+        public function confirmedByUser()
+        {
+            return $this->belongsTo(\App\Models\User::class, 'confirmed_by', 'id');
+        }
     
 }

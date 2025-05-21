@@ -10,6 +10,28 @@
             justify-content: flex-end; /* Posisikan pagination di kanan */
         }
         
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #receivingHeaderTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
+        }
+        
     </style>
 
 
@@ -81,56 +103,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($stockReports as $stock)
-                                        <tr>
-                                            <td>{{ ($stockReports->currentPage() - 1) * $stockReports->perPage() + $loop->iteration }}.</td>
-                                            <td>{{ $stock->report_title }}</td>
-                                            <td>{{ $stock->report_description }}</td>
-                                            <td>{{ $stock->created_at ? \Carbon\Carbon::parse($stock->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                            <td>{{ $stock->generated_by }}</td>
-                                            <td>
-                                                @if ($stock->report_document)
-                                                    <a href="{{ asset('storage/' . $stock->report_document) }}" target="_blank">View Document</a>
-                                                @else
-                                                    No Document
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <!-- Edit Button -->
-                                                <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $stock->report_id  }}" data-toggle="modal" data-target="#editReportModal">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <!-- Delete Button -->
-                                                <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $stock->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="7" class="text-center">No reports available</td>
-                                        </tr>
-                                    @endforelse
+
                                 </tbody>
+
                             </table>
                         </div>
-
-
-                        <!-- Info Jumlah Data dan Pagination -->
-                        <div class="d-flex justify-content-between align-items-center mt-2">
-                            <!-- Info Jumlah Data -->
-                            <div class="table">
-                                <p class="mb-0">
-                                    Showing {{ $stockReports->firstItem() }} to {{ $stockReports->lastItem() }} of {{ $stockReports->total() }} entries
-                                </p>
-                            </div>
-
-                            <!-- Laravel Pagination -->
-                            <div>
-                                {{ $stockReports->links('pagination::simple-bootstrap-4') }}
-                            </div>
-                        </div>
-
                     </div>
 
                     <!-- movement Tab -->
@@ -612,19 +589,35 @@
 @section('scripts')
 
     <!-- Page level plugins -->
+    <!-- DataTables core -->
     <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <!-- DataTables Responsive (setelah DataTables utama) -->
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
 
     <script>
         $(document).ready(function() {
             $('#stockTable').DataTable({
-                "paging": false, // Nonaktifkan pagination bawaan DataTables
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": false,
-                "autoWidth": false,
-                "responsive": true,
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("reports.stock.datatable") }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'report_title', name: 'report_title' },
+                    { data: 'report_description', name: 'report_description' },
+                    { data: 'created_at', name: 'created_at',
+                        render: function(data) {
+                            return data ? moment(data).format('dddd, DD MMMM YYYY HH:mm') : 'N/A';
+                        }
+                    },
+                    { data: 'generated_by', name: 'generated_by' },
+                    { data: 'document', name: 'document', orderable: false, searchable: false },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                ],
+                order: [[1, 'desc']]
             });
         });
     </script>
