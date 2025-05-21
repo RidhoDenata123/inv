@@ -1,3 +1,5 @@
+    
+    
     <!-- Edit Button -->
     <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $row->report_id  }}" data-toggle="modal" data-target="#editReportModal">
         <i class="fas fa-edit"></i>

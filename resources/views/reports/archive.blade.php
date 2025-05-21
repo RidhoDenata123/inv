@@ -39,13 +39,13 @@
 
 @section('content')
     <div class="container-fluid">
-        <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-archive"></i> Archive</h1>
+        <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-archive"></i> ARCHIVE</h1>
 
 
 
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Report Archive</h6>
+                <h6 class="m-0 font-weight-bold text-primary">REPORT ARCHIVE</h6>
             </div>
             <div class="card-body">
 
@@ -126,56 +126,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($stockMovementReports as $movement)
-                                            <tr>
-                                                <td>{{ ($stockMovementReports->currentPage() - 1) * $stockMovementReports->perPage() + $loop->iteration }}.</td>
-                                                <td>{{ $movement->report_title }}</td>
-                                                <td>{{ $movement->report_description }}</td>
-                                                <td>{{ $movement->created_at ? \Carbon\Carbon::parse($movement->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                                <td>{{ $movement->generated_by }}</td>
-                                                <td>
-                                                    @if ($movement->report_document)
-                                                        <a href="{{ asset('storage/' . $movement->report_document) }}" target="_blank">View Document</a>
-                                                    @else
-                                                        No Document
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <!-- Edit Button -->
-                                                    <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $movement->report_id  }}" data-toggle="modal" data-target="#editReportModal">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <!-- Delete Button -->
-                                                    <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $movement->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="7" class="text-center">No Stock Movement Reports Available</td>
-                                            </tr>
-                                        @endforelse
+
                                     </tbody>
+
                                 </table>
                       
-
-                            <!-- Info Jumlah Data dan Pagination -->
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <!-- Info Jumlah Data -->
-                                <div class="table">
-                                    <p class="mb-0">
-                                        Showing {{ $stockMovementReports->firstItem() }} to {{ $stockMovementReports->lastItem() }} of {{ $stockMovementReports->total() }} entries
-                                    </p>
-                                </div>
-
-                                <!-- Laravel Pagination -->
-                                <div>
-                                    {{ $stockMovementReports->links('pagination::simple-bootstrap-4') }}
-                                </div>
-                            </div>
-
-            
                         </div>
                     </div>
 
@@ -196,56 +151,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($stockMinimumReports as $minimum)
-                                            <tr>
-                                                <td>{{ ($stockMinimumReports->currentPage() - 1) * $stockMinimumReports->perPage() + $loop->iteration }}.</td>
-                                                <td>{{ $minimum->report_title }}</td>
-                                                <td>{{ $minimum->report_description }}</td>
-                                                <td>{{ $minimum->created_at ? \Carbon\Carbon::parse($minimum->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                                <td>{{ $minimum->generated_by }}</td>
-                                                <td>
-                                                    @if ($minimum->report_document)
-                                                        <a href="{{ asset('storage/' . $minimum->report_document) }}" target="_blank">View Document</a>
-                                                    @else
-                                                        No Document
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <!-- Edit Button -->
-                                                    <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $minimum->report_id  }}" data-toggle="modal" data-target="#editReportModal">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <!-- Delete Button -->
-                                                    <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $minimum->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="7" class="text-center">No Stock Minimum Reports Available</td>
-                                            </tr>
-                                        @endforelse
+
                                     </tbody>
                                 </table>
-                           
-
-                            <!-- Info Jumlah Data dan Pagination -->
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <!-- Info Jumlah Data -->
-                                <div class="table">
-                                    <p class="mb-0">
-                                        Showing {{ $stockMinimumReports->firstItem() }} to {{ $stockMinimumReports->lastItem() }} of {{ $stockMinimumReports->total() }} entries
-                                    </p>
-                                </div>
-
-                                <!-- Laravel Pagination -->
-                                <div>
-                                    {{ $stockMinimumReports->links('pagination::simple-bootstrap-4') }}
-                                </div>
-                            </div>
-
-            
+                        
                         </div>
                     </div>
 
@@ -266,56 +175,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($receivingReports as $receiving)
-                                            <tr>
-                                                <td>{{ ($receivingReports->currentPage() - 1) * $receivingReports->perPage() + $loop->iteration }}.</td>
-                                                <td>{{ $receiving->report_title }}</td>
-                                                <td>{{ $receiving->report_description }}</td>
-                                                <td>{{ $receiving->created_at ? \Carbon\Carbon::parse($receiving->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                                <td>{{ $receiving->generated_by }}</td>
-                                                <td>
-                                                    @if ($receiving->report_document)
-                                                        <a href="{{ asset('storage/' . $receiving->report_document) }}" target="_blank">View Document</a>
-                                                    @else
-                                                        No Document
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <!-- Edit Button -->
-                                                    <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $receiving->report_id  }}" data-toggle="modal" data-target="#editReportModal">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <!-- Delete Button -->
-                                                    <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $receiving->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="7" class="text-center">No Receiving Reports Available</td>
-                                            </tr>
-                                        @endforelse
+
                                     </tbody>
                                 </table>
                            
-
-                            <!-- Info Jumlah Data dan Pagination -->
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <!-- Info Jumlah Data -->
-                                <div class="table">
-                                    <p class="mb-0">
-                                        Showing {{ $receivingReports->firstItem() }} to {{ $receivingReports->lastItem() }} of {{ $receivingReports->total() }} entries
-                                    </p>
-                                </div>
-
-                                <!-- Laravel Pagination -->
-                                <div>
-                                    {{ $receivingReports->links('pagination::simple-bootstrap-4') }}
-                                </div>
-                            </div>
-
-            
                         </div>
                     </div>
 
@@ -336,56 +199,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($dispatchingReports as $dispatching)
-                                            <tr>
-                                                <td>{{ ($dispatchingReports->currentPage() - 1) * $dispatchingReports->perPage() + $loop->iteration }}.</td>
-                                                <td>{{ $dispatching->report_title }}</td>
-                                                <td>{{ $dispatching->report_description }}</td>
-                                                <td>{{ $dispatching->created_at ? \Carbon\Carbon::parse($dispatching->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                                <td>{{ $dispatching->generated_by }}</td>
-                                                <td>
-                                                    @if ($dispatching->report_document)
-                                                        <a href="{{ asset('storage/' . $dispatching->report_document) }}" target="_blank">View Document</a>
-                                                    @else
-                                                        No Document
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <!-- Edit Button -->
-                                                    <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $dispatching->report_id  }}" data-toggle="modal" data-target="#editReportModal">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <!-- Delete Button -->
-                                                    <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $dispatching->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="7" class="text-center">No Dispatching Reports Available</td>
-                                            </tr>
-                                        @endforelse
+
                                     </tbody>
                                 </table>
-                           
-
-                            <!-- Info Jumlah Data dan Pagination -->
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <!-- Info Jumlah Data -->
-                                <div class="table">
-                                    <p class="mb-0">
-                                        Showing {{ $dispatchingReports->firstItem() }} to {{ $dispatchingReports->lastItem() }} of {{ $dispatchingReports->total() }} entries
-                                    </p>
-                                </div>
-
-                                <!-- Laravel Pagination -->
-                                <div>
-                                    {{ $dispatchingReports->links('pagination::simple-bootstrap-4') }}
-                                </div>
-                            </div>
-
-            
                         </div>
                     </div>
                
@@ -406,56 +222,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse ($adjustmentReports as $adjustment)
-                                            <tr>
-                                                <td>{{ ($adjustmentReports->currentPage() - 1) * $adjustmentReports->perPage() + $loop->iteration }}.</td>
-                                                <td>{{ $adjustment->report_title }}</td>
-                                                <td>{{ $adjustment->report_description }}</td>
-                                                <td>{{ $adjustment->created_at ? \Carbon\Carbon::parse($adjustment->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                                <td>{{ $adjustment->generated_by }}</td>
-                                                <td>
-                                                    @if ($adjustment->report_document)
-                                                        <a href="{{ asset('storage/' . $adjustment->report_document) }}" target="_blank">View Document</a>
-                                                    @else
-                                                        No Document
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <!-- Edit Button -->
-                                                    <button class="btn btn-sm btn-primary btn-edit" data-id="{{ $adjustment->report_id  }}" data-toggle="modal" data-target="#editReportModal">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <!-- Delete Button -->
-                                                    <button class="btn btn-sm btn-danger btn-delete" data-id="{{ $adjustment->report_id  }}" data-toggle="modal" data-target="#deleteReportModal">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="7" class="text-center">No Stock Adjustment Reports Available</td>
-                                            </tr>
-                                        @endforelse
+
                                     </tbody>
                                 </table>
-                           
-
-                            <!-- Info Jumlah Data dan Pagination -->
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <!-- Info Jumlah Data -->
-                                <div class="table">
-                                    <p class="mb-0">
-                                        Showing {{ $adjustmentReports->firstItem() }} to {{ $adjustmentReports->lastItem() }} of {{ $adjustmentReports->total() }} entries
-                                    </p>
-                                </div>
-
-                                <!-- Laravel Pagination -->
-                                <div>
-                                    {{ $adjustmentReports->links('pagination::simple-bootstrap-4') }}
-                                </div>
-                            </div>
-
-            
                         </div>
                     </div>
             
@@ -589,6 +358,7 @@
 @section('scripts')
 
     <!-- Page level plugins -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <!-- DataTables core -->
     <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
@@ -597,6 +367,7 @@
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
 
+    <!-- Datatable -->
     <script>
         $(document).ready(function() {
             $('#stockTable').DataTable({
@@ -625,13 +396,24 @@
     <script>
         $(document).ready(function() {
             $('#movementTable').DataTable({
-                "paging": false, // Nonaktifkan pagination bawaan DataTables
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": false,
-                "autoWidth": false,
-                "responsive": true,
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("reports.movement.datatable") }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'report_title', name: 'report_title' },
+                    { data: 'report_description', name: 'report_description' },
+                    { data: 'created_at', name: 'created_at',
+                        render: function(data) {
+                            return data ? moment(data).format('dddd, DD MMMM YYYY HH:mm') : 'N/A';
+                        }
+                    },
+                    { data: 'generated_by', name: 'generated_by' },
+                    { data: 'document', name: 'document', orderable: false, searchable: false },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                ],
+                order: [[1, 'desc']]
             });
         });
     </script>
@@ -639,13 +421,24 @@
     <script>
         $(document).ready(function() {
             $('#minimumTable').DataTable({
-                "paging": false, // Nonaktifkan pagination bawaan DataTables
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": false,
-                "autoWidth": false,
-                "responsive": true,
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("reports.minimum.datatable") }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'report_title', name: 'report_title' },
+                    { data: 'report_description', name: 'report_description' },
+                    { data: 'created_at', name: 'created_at',
+                        render: function(data) {
+                            return data ? moment(data).format('dddd, DD MMMM YYYY HH:mm') : 'N/A';
+                        }
+                    },
+                    { data: 'generated_by', name: 'generated_by' },
+                    { data: 'document', name: 'document', orderable: false, searchable: false },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                ],
+                order: [[1, 'desc']]
             });
         });
     </script>
@@ -653,27 +446,49 @@
     <script>
         $(document).ready(function() {
             $('#receivingTable').DataTable({
-                "paging": false, // Nonaktifkan pagination bawaan DataTables
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": false,
-                "autoWidth": false,
-                "responsive": true,
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("reports.receiving.datatable") }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'report_title', name: 'report_title' },
+                    { data: 'report_description', name: 'report_description' },
+                    { data: 'created_at', name: 'created_at',
+                        render: function(data) {
+                            return data ? moment(data).format('dddd, DD MMMM YYYY HH:mm') : 'N/A';
+                        }
+                    },
+                    { data: 'generated_by', name: 'generated_by' },
+                    { data: 'document', name: 'document', orderable: false, searchable: false },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                ],
+                order: [[1, 'desc']]
             });
         });
     </script>
-    
+
     <script>
         $(document).ready(function() {
             $('#dispatchingTable').DataTable({
-                "paging": false, // Nonaktifkan pagination bawaan DataTables
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": false,
-                "autoWidth": false,
-                "responsive": true,
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("reports.dispatching.datatable") }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'report_title', name: 'report_title' },
+                    { data: 'report_description', name: 'report_description' },
+                    { data: 'created_at', name: 'created_at',
+                        render: function(data) {
+                            return data ? moment(data).format('dddd, DD MMMM YYYY HH:mm') : 'N/A';
+                        }
+                    },
+                    { data: 'generated_by', name: 'generated_by' },
+                    { data: 'document', name: 'document', orderable: false, searchable: false },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                ],
+                order: [[1, 'desc']]
             });
         });
     </script>
@@ -681,18 +496,32 @@
     <script>
         $(document).ready(function() {
             $('#adjustmentTable').DataTable({
-                "paging": false, // Nonaktifkan pagination bawaan DataTables
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": false,
-                "autoWidth": false,
-                "responsive": true,
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("reports.adjustment.datatable") }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'report_title', name: 'report_title' },
+                    { data: 'report_description', name: 'report_description' },
+                    { data: 'created_at', name: 'created_at',
+                        render: function(data) {
+                            return data ? moment(data).format('dddd, DD MMMM YYYY HH:mm') : 'N/A';
+                        }
+                    },
+                    { data: 'generated_by', name: 'generated_by' },
+                    { data: 'document', name: 'document', orderable: false, searchable: false },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                ],
+                order: [[1, 'desc']]
             });
         });
     </script>
 
-    <!-- Datatable -->
+
+
+
+ 
     <script>
         $(document).ready(function() {
 
@@ -716,7 +545,7 @@
             @endif
 
             // Handle click event on "EDIT" button
-            $('.btn-edit').on('click', function() {
+            $(document).on('click', '.btn-edit', function() {
                 const reportId = $(this).data('id'); // Ambil ID report dari tombol
 
                 // Lakukan permintaan AJAX ke server
@@ -741,7 +570,7 @@
             });
 
             // Handle click event on "DELETE" button
-            $('.btn-delete').on('click', function() {
+            $(document).on('click', '.btn-delete', function() {
                 const reportId = $(this).data('id'); // Ambil ID report dari tombol
                 const reportTitle = $(this).closest('tr').find('td:nth-child(2)').text(); // Ambil judul report dari tabel
 

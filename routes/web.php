@@ -291,9 +291,21 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
 //ALL REPORT ROUTE
 
-    //Report Archive
+    //REPORT ARCHIVE
     Route::get('/archive', [ReportController::class, 'archive'])->name('reports.archive');
-    
+    //STOCK ARCHIVE DATATABLE
+    Route::get('/reports/stock/datatables', [ReportController::class, 'getStockDatatable'])->name('reports.stock.datatable');
+    //STOCK MOVEMENT ARCHIVE DATATABLE
+    Route::get('/reports/movement/datatables', [ReportController::class, 'getMovementDatatable'])->name('reports.movement.datatable');
+    //MINIMUM STOCK ARCHIVE DATATABLE
+    Route::get('/reports/minimum/datatables', [ReportController::class, 'getMinimumDatatable'])->name('reports.minimum.datatable');
+    //RECEIVING ARCHIVE DATATABLE
+    Route::get('/reports/receiving/datatables', [ReportController::class, 'getReceivingDatatable'])->name('reports.receiving.datatable');
+    //DISPATCHING ARCHIVE DATATABLE
+    Route::get('/reports/dispatching/datatables', [ReportController::class, 'getDispatchingDatatable'])->name('reports.dispatching.datatable');
+    //STOCK ADJUSTMENT ARCHIVE DATATABLE
+    Route::get('/reports/adjustment/datatables', [ReportController::class, 'getAdjustmentDatatable'])->name('reports.adjustment.datatable');
+
 
     // Report add Route
     Route::post('/reports/stock', [ReportController::class, 'store'])->name('reports.store');
@@ -304,9 +316,8 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Report delete Route
     Route::delete('/reports/delete/{id}', [ReportController::class, 'destroy'])->name('reports.destroy');
 
-    
+
     //Stock Report
-    Route::get('/reports/stock/datatables', [ReportController::class, 'getStockDatatable'])->name('reports.stock.datatable');
     Route::get('/reports/stock', [ReportController::class, 'stockReports'])->name('reports.stock');
     //DOMpdf generate stock report
     Route::get('/reports/stock/generate', [ReportController::class, 'generateStockReport'])->name('reports.stockGenerate');

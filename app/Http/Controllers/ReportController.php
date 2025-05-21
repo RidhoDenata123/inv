@@ -116,7 +116,7 @@ class ReportController extends Controller
     }
 
 
-    //STOCK REPORT DATATABLE
+    //STOCK ARCHIVE DATATABLE
     public function getStockDatatable(Request $request)
     {
         $stockReports = Report::where('report_type', 'stock')->orderBy('created_at', 'desc');
@@ -135,7 +135,100 @@ class ReportController extends Controller
             ->make(true);
     }
 
+    //STOCK MOVEMENT ARCHIVE DATATABLE
+    public function getMovementDatatable(Request $request)
+    {
+        $movementReports = Report::where('report_type', 'stock_movement')->orderBy('created_at', 'desc');
+        return DataTables::of($movementReports)
+            ->addIndexColumn()
+            ->addColumn('document', function($row) {
+                if ($row->report_document) {
+                    return '<a href="'.asset('storage/' . $row->report_document).'" target="_blank">View Document</a>';
+                }
+                return 'No Document';
+            })
+            ->addColumn('actions', function($row) {
+                return view('reports.partials.actions', compact('row'))->render();
+            })
+            ->rawColumns(['document', 'actions'])
+            ->make(true);
+    }
 
+    //MINIMUM STOCK ARCHIVE DATATABLE
+    public function getMinimumDatatable(Request $request)
+    {
+        $minimumReports = Report::where('report_type', 'minimum_stock')->orderBy('created_at', 'desc');
+        return DataTables::of($minimumReports)
+            ->addIndexColumn()
+            ->addColumn('document', function($row) {
+                if ($row->report_document) {
+                    return '<a href="'.asset('storage/' . $row->report_document).'" target="_blank">View Document</a>';
+                }
+                return 'No Document';
+            })
+            ->addColumn('actions', function($row) {
+                return view('reports.partials.actions', compact('row'))->render();
+            })
+            ->rawColumns(['document', 'actions'])
+            ->make(true);
+    }
+
+    //RECEIVING ARCHIVE DATATABLE
+    public function getReceivingDatatable(Request $request)
+    {
+        $receivingReports = Report::where('report_type', 'receiving')->orderBy('created_at', 'desc');
+        return DataTables::of($receivingReports)
+            ->addIndexColumn()
+            ->addColumn('document', function($row) {
+                if ($row->report_document) {
+                    return '<a href="'.asset('storage/' . $row->report_document).'" target="_blank">View Document</a>';
+                }
+                return 'No Document';
+            })
+            ->addColumn('actions', function($row) {
+                return view('reports.partials.actions', compact('row'))->render();
+            })
+            ->rawColumns(['document', 'actions'])
+            ->make(true);
+    }
+
+    //DISPATCHING ARCHIVE DATATABLE
+    public function getDispatchingDatatable(Request $request)
+    {
+        $dispatchingReports = Report::where('report_type', 'dispatching')->orderBy('created_at', 'desc');
+        return DataTables::of($dispatchingReports)
+            ->addIndexColumn()
+            ->addColumn('document', function($row) {
+                if ($row->report_document) {
+                    return '<a href="'.asset('storage/' . $row->report_document).'" target="_blank">View Document</a>';
+                }
+                return 'No Document';
+            })
+            ->addColumn('actions', function($row) {
+                return view('reports.partials.actions', compact('row'))->render();
+            })
+            ->rawColumns(['document', 'actions'])
+            ->make(true);
+    }
+
+    //STOCK ADJUSTMENT ARCHIVE DATATABLE
+    public function getAdjustmentDatatable(Request $request)
+    {
+        $adjustmentReports = Report::where('report_type', 'stock_adjustment')->orderBy('created_at', 'desc');
+        return DataTables::of($adjustmentReports)
+            ->addIndexColumn()
+            ->addColumn('document', function($row) {
+                if ($row->report_document) {
+                    return '<a href="'.asset('storage/' . $row->report_document).'" target="_blank">View Document</a>';
+                }
+                return 'No Document';
+            })
+            ->addColumn('actions', function($row) {
+                return view('reports.partials.actions', compact('row'))->render();
+            })
+            ->rawColumns(['document', 'actions'])
+            ->make(true);
+    }
 
 
 
