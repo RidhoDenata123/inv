@@ -19,12 +19,34 @@
         .bootstrap-select .dropdown-menu {
             font-size: 1rem; /* Ukuran font dropdown */
         }
-        
+
         .pagination {
             margin: 0; /* Hilangkan margin default */
         }
         .table-responsive .pagination {
             justify-content: flex-end; /* Posisikan pagination di kanan */
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #productTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
         }
     </style>
 

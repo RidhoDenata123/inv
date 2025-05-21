@@ -10,6 +10,28 @@
             justify-content: flex-end; /* Posisikan pagination di kanan */
         }
         
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #receivingHeaderTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
+        }
+        
     </style>
 
 
@@ -17,13 +39,13 @@
 
 @section('content')
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice"></i> Dispatching Reports</h1>
+    <h1 class="h3 mb-4 text-gray-800"><i class="fas fa-file-invoice"></i> DISPATCHING REPORT</h1>
 
 
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Dispatching Reports</h6>
+            <h6 class="m-0 font-weight-bold text-primary">DISPATCHING TABLE</h6>
         </div>
         <div class="card-body">
 
@@ -38,7 +60,7 @@
             </form>
 
                     <div class="table-responsive">
-                        <table class="table table-sm table-bordered" width="100%" cellspacing="0">
+                        <table class="table table-sm table-bordered" id="dispatchingTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -54,41 +76,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($dispatchingLogs as $log)
-                                    <tr>
-                                        <td>{{ ($dispatchingLogs->currentPage() - 1) * $dispatchingLogs->perPage() + $loop->iteration }}.</td>
-                                        <td>{{ $log->changed_at ? \Carbon\Carbon::parse($log->changed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                        <td>{{ $log->product->product_id ?? 'N/A' }}</td>
-                                        <td>{{ $log->product->product_name ?? 'N/A' }}</td>
-                                        <td>{{ $log->stock_change_type }}</td>
-                                        <td>{{ $log->qty_before }}</td>
-                                        <td>{{ $log->qty_changed }}</td>
-                                        <td>{{ $log->qty_after }}</td>
-                                        <td>{{ $log->changedBy->name ?? 'System' }}</td>
-                                        <td>{{ $log->change_note }}</td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="10" class="text-center">No dispatching transactions available</td>
-                                    </tr>
-                                @endforelse
+
                             </tbody>
                         </table>
-                                    <!-- Info Jumlah Data dan Pagination -->
-                                    <div class="d-flex justify-content-between align-items-center mt-2">
-                                        <!-- Info Jumlah Data -->
-                                        <div class="table">
-                                            <p class="mb-0">
-                                                Showing {{ $dispatchingLogs->firstItem() }} to {{ $dispatchingLogs->lastItem() }} of {{ $dispatchingLogs->total() }} entries
-                                            </p>
-                                        </div>
-
-                                        <!-- Laravel Pagination -->
-                                        <div>
-                                            {{ $dispatchingLogs->links('pagination::simple-bootstrap-4') }}
-                                        </div>
-                                    </div>
-                  
                     </div>
 
           
@@ -104,21 +94,43 @@
 @section('scripts')
 
     <!-- Page level plugins -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <!-- DataTables core -->
     <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <!-- DataTables Responsive (setelah DataTables utama) -->
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
 
     <!-- Datatable -->
     <script>
         $(document).ready(function() {
-            $('#productTable').DataTable({
-                "paging": false, // Nonaktifkan pagination bawaan DataTables
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": false,
-                "autoWidth": false,
-                "responsive": true,
+            $('#dispatchingTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("reports.dispatching.datatable") }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'changed_at', name: 'changed_at' },
+                    { data: 'product_id', name: 'product_id' },
+                    { data: 'product_name', name: 'product_name' },
+                    { data: 'stock_change_type', name: 'stock_change_type' },
+                    { data: 'qty_before', name: 'qty_before' },
+                    { data: 'qty_changed', name: 'qty_changed' },
+                    { data: 'qty_after', name: 'qty_after' },
+                    { data: 'changed_by', name: 'changed_by' },
+                    { data: 'change_note', name: 'change_note' }
+                ],
+                order: [[1, 'desc']]
             });
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function() {
 
             // Tampilkan SweetAlert jika ada session flash message
             @if (session('success'))

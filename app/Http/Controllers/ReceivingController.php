@@ -39,7 +39,7 @@ class ReceivingController extends Controller
     //DATATABLE
     public function GetDatatableHeader(Request $request)
     {
-        $headers = ReceivingHeader::with(['createdByUser', 'confirmedByUser'])->orderBy('created_at', 'desc');
+        $headers = ReceivingHeader::with(['createdByUser', 'confirmedByUser']);
 
         return DataTables::of($headers)
             ->addIndexColumn()
@@ -60,7 +60,22 @@ class ReceivingController extends Controller
                 return '<span class="badge '.$class.'">'.ucfirst($row->receiving_header_status).'</span>';
             })
             ->addColumn('actions', function($row) {
-                 return view('receiving.partials.actionsHeader', compact('row'))->render();
+                return view('receiving.partials.actionsHeader', compact('row'))->render();
+            })
+            // Tambahkan orderColumn berikut:
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('receiving_headers.created_at', $order);
+            })
+            ->orderColumn('created_by', function ($query, $order) {
+                $query->leftJoin('users as u', 'receiving_headers.created_by', '=', 'u.id')
+                    ->orderBy('u.name', $order);
+            })
+            ->orderColumn('confirmed_at', function ($query, $order) {
+                $query->orderBy('receiving_headers.confirmed_at', $order);
+            })
+            ->orderColumn('confirmed_by', function ($query, $order) {
+                $query->leftJoin('users as u2', 'receiving_headers.confirmed_by', '=', 'u2.id')
+                    ->orderBy('u2.name', $order);
             })
             ->rawColumns(['receiving_header_status', 'actions'])
             ->make(true);
@@ -170,8 +185,7 @@ class ReceivingController extends Controller
     public function getDatatableDetail($receiving_header_id)
     {
         $details = ReceivingDetail::with(['product.unit'])
-            ->where('receiving_header_id', $receiving_header_id)
-            ->orderBy('created_at', 'desc');
+            ->where('receiving_header_id', $receiving_header_id);
 
         return DataTables::of($details)
             ->addIndexColumn()
@@ -199,6 +213,30 @@ class ReceivingController extends Controller
             })
             ->addColumn('actions', function($row) {
                 return view('receiving.partials.actionsDetail', compact('row'))->render();
+            })
+            // Tambahkan orderColumn berikut:
+            ->orderColumn('product_name', function ($query, $order) {
+                $query->leftJoin('products as p', 'receiving_details.product_id', '=', 'p.product_id')
+                    ->orderBy('p.product_name', $order);
+            })
+            ->orderColumn('unit_name', function ($query, $order) {
+                $query->leftJoin('products as p2', 'receiving_details.product_id', '=', 'p2.product_id')
+                    ->leftJoin('units as u', 'p2.unit_id', '=', 'u.unit_id')
+                    ->orderBy('u.unit_name', $order);
+            })
+            ->orderColumn('created_by', function ($query, $order) {
+                $query->leftJoin('users as u2', 'receiving_details.created_by', '=', 'u2.id')
+                    ->orderBy('u2.name', $order);
+            })
+            ->orderColumn('confirmed_by', function ($query, $order) {
+                $query->leftJoin('users as u3', 'receiving_details.confirmed_by', '=', 'u3.id')
+                    ->orderBy('u3.name', $order);
+            })
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('receiving_details.created_at', $order);
+            })
+            ->orderColumn('confirmed_at', function ($query, $order) {
+                $query->orderBy('receiving_details.confirmed_at', $order);
             })
             ->rawColumns(['receiving_detail_status', 'actions'])
             ->make(true);

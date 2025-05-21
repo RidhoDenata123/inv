@@ -374,7 +374,7 @@
                 processing: true,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route("reports.stock.datatable") }}',
+                ajax: '{{ route("archive.stock.datatable") }}',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'report_title', name: 'report_title' },
@@ -388,7 +388,7 @@
                     { data: 'document', name: 'document', orderable: false, searchable: false },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
-                order: [[1, 'desc']]
+                order: [[3, 'desc']]
             });
         });
     </script>
@@ -399,7 +399,7 @@
                 processing: true,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route("reports.movement.datatable") }}',
+                ajax: '{{ route("archive.movement.datatable") }}',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'report_title', name: 'report_title' },
@@ -413,7 +413,7 @@
                     { data: 'document', name: 'document', orderable: false, searchable: false },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
-                order: [[1, 'desc']]
+                order: [[3, 'desc']]
             });
         });
     </script>
@@ -424,7 +424,7 @@
                 processing: true,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route("reports.minimum.datatable") }}',
+                ajax: '{{ route("archive.minimum.datatable") }}',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'report_title', name: 'report_title' },
@@ -438,7 +438,7 @@
                     { data: 'document', name: 'document', orderable: false, searchable: false },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
-                order: [[1, 'desc']]
+                order: [[3, 'desc']]
             });
         });
     </script>
@@ -449,7 +449,7 @@
                 processing: true,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route("reports.receiving.datatable") }}',
+                ajax: '{{ route("archive.receiving.datatable") }}',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'report_title', name: 'report_title' },
@@ -463,7 +463,7 @@
                     { data: 'document', name: 'document', orderable: false, searchable: false },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
-                order: [[1, 'desc']]
+                order: [[3, 'desc']]
             });
         });
     </script>
@@ -474,7 +474,7 @@
                 processing: true,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route("reports.dispatching.datatable") }}',
+                ajax: '{{ route("archive.dispatching.datatable") }}',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'report_title', name: 'report_title' },
@@ -488,7 +488,7 @@
                     { data: 'document', name: 'document', orderable: false, searchable: false },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
-                order: [[1, 'desc']]
+                order: [[3, 'desc']]
             });
         });
     </script>
@@ -499,7 +499,7 @@
                 processing: true,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route("reports.adjustment.datatable") }}',
+                ajax: '{{ route("archive.adjustment.datatable") }}',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
                     { data: 'report_title', name: 'report_title' },
@@ -513,7 +513,7 @@
                     { data: 'document', name: 'document', orderable: false, searchable: false },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
-                order: [[1, 'desc']]
+                order: [[3, 'desc']]
             });
         });
     </script>

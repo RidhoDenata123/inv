@@ -21,42 +21,64 @@ use Yajra\DataTables\Facades\DataTables;
 
 class DispatchingController extends Controller
 {
-    //DATATABLE
+    //HEADER DATATABLE
     public function GetDatatableHeader(Request $request)
-    {
-        $headers = DispatchingHeader::with(['customer', 'createdByUser', 'confirmedByUser'])
-            ->orderBy('created_at', 'desc');
+{
+    $headers = DispatchingHeader::with(['customer', 'createdByUser', 'confirmedByUser']);
+    // Hapus ->orderBy('created_at', 'desc'); di sini, biarkan DataTables yang handle order
 
-        return DataTables::of($headers)
-            ->addIndexColumn()
-            ->addColumn('designation', function($row) {
-                return $row->dispatching_header_name;
-            })
-            ->addColumn('customer', function($row) {
-                return $row->customer ? $row->customer->customer_name : 'N/A';
-            })
-            ->addColumn('created_at', function($row) {
-                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
-            })
-            ->addColumn('created_by', function($row) {
-                return $row->created_by ? optional($row->createdByUser)->name : 'N/A';
-            })
-            ->addColumn('confirmed_at', function($row) {
-                return $row->confirmed_at ? \Carbon\Carbon::parse($row->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
-            })
-            ->addColumn('confirmed_by', function($row) {
-                return $row->confirmed_by ? optional($row->confirmedByUser)->name : 'N/A';
-            })
-            ->addColumn('dispatching_header_status', function($row) {
-                $class = $row->dispatching_header_status === 'Confirmed' ? 'badge-success' : 'badge-warning';
-                return '<span class="badge '.$class.'">'.ucfirst($row->dispatching_header_status).'</span>';
-            })
-            ->addColumn('actions', function($row) {
-                return view('dispatching.partials.actionsHeader', compact('row'))->render();
-            })
-            ->rawColumns(['dispatching_header_status', 'actions'])
-            ->make(true);
-    }
+    return DataTables::of($headers)
+        ->addIndexColumn()
+        ->addColumn('designation', function($row) {
+            return $row->dispatching_header_name;
+        })
+        ->addColumn('customer', function($row) {
+            return $row->customer ? $row->customer->customer_name : 'N/A';
+        })
+        ->addColumn('created_at', function($row) {
+            return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+        })
+        ->addColumn('created_by', function($row) {
+            return $row->created_by ? optional($row->createdByUser)->name : 'N/A';
+        })
+        ->addColumn('confirmed_at', function($row) {
+            return $row->confirmed_at ? \Carbon\Carbon::parse($row->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+        })
+        ->addColumn('confirmed_by', function($row) {
+            return $row->confirmed_by ? optional($row->confirmedByUser)->name : 'N/A';
+        })
+        ->addColumn('dispatching_header_status', function($row) {
+            $class = $row->dispatching_header_status === 'Confirmed' ? 'badge-success' : 'badge-warning';
+            return '<span class="badge '.$class.'">'.ucfirst($row->dispatching_header_status).'</span>';
+        })
+        ->addColumn('actions', function($row) {
+            return view('dispatching.partials.actionsHeader', compact('row'))->render();
+        })
+        // Tambahkan orderColumn berikut:
+        ->orderColumn('designation', function ($query, $order) {
+            $query->orderBy('dispatching_headers.dispatching_header_name', $order);
+        })
+        ->orderColumn('customer', function ($query, $order) {
+            $query->leftJoin('customers as c', 'dispatching_headers.customer_id', '=', 'c.customer_id')
+                  ->orderBy('c.customer_name', $order);
+        })
+        ->orderColumn('created_at', function ($query, $order) {
+            $query->orderBy('dispatching_headers.created_at', $order);
+        })
+        ->orderColumn('created_by', function ($query, $order) {
+            $query->leftJoin('users as u', 'dispatching_headers.created_by', '=', 'u.id')
+                  ->orderBy('u.name', $order);
+        })
+        ->orderColumn('confirmed_at', function ($query, $order) {
+            $query->orderBy('dispatching_headers.confirmed_at', $order);
+        })
+        ->orderColumn('confirmed_by', function ($query, $order) {
+            $query->leftJoin('users as u2', 'dispatching_headers.confirmed_by', '=', 'u2.id')
+                  ->orderBy('u2.name', $order);
+        })
+        ->rawColumns(['dispatching_header_status', 'actions'])
+        ->make(true);
+}
 
     // Show all dispatching headers
     public function index(): View
@@ -143,12 +165,12 @@ class DispatchingController extends Controller
     }
 
 
-    //DATATABLE
+    //DETAIL DATATABLE
     public function GetDatatableDetail($dispatching_header_id)
     {
         $details = DispatchingDetail::with(['product.unit'])
-            ->where('dispatching_header_id', $dispatching_header_id)
-            ->orderBy('created_at', 'desc');
+            ->where('dispatching_header_id', $dispatching_header_id);
+            // Hapus ->orderBy('created_at', 'desc'); biarkan DataTables yang handle order
 
         return DataTables::of($details)
             ->addIndexColumn()
@@ -176,6 +198,30 @@ class DispatchingController extends Controller
             })
             ->addColumn('actions', function($row) {
                 return view('dispatching.partials.actionsDetail', compact('row'))->render();
+            })
+            // Tambahkan orderColumn berikut:
+            ->orderColumn('product_name', function ($query, $order) {
+                $query->leftJoin('products as p', 'dispatching_details.product_id', '=', 'p.product_id')
+                    ->orderBy('p.product_name', $order);
+            })
+            ->orderColumn('unit_name', function ($query, $order) {
+                $query->leftJoin('products as p2', 'dispatching_details.product_id', '=', 'p2.product_id')
+                    ->leftJoin('units as u', 'p2.unit_id', '=', 'u.unit_id')
+                    ->orderBy('u.unit_name', $order);
+            })
+            ->orderColumn('created_by', function ($query, $order) {
+                $query->leftJoin('users as u2', 'dispatching_details.created_by', '=', 'u2.id')
+                    ->orderBy('u2.name', $order);
+            })
+            ->orderColumn('confirmed_by', function ($query, $order) {
+                $query->leftJoin('users as u3', 'dispatching_details.confirmed_by', '=', 'u3.id')
+                    ->orderBy('u3.name', $order);
+            })
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('dispatching_details.created_at', $order);
+            })
+            ->orderColumn('confirmed_at', function ($query, $order) {
+                $query->orderBy('dispatching_details.confirmed_at', $order);
             })
             ->rawColumns(['dispatching_detail_status', 'actions'])
             ->make(true);
@@ -432,6 +478,68 @@ class DispatchingController extends Controller
     //USER
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+    //USER HEADER DATATABLE
+    public function getUserDispatchingHeaderDatatable(Request $request)
+    {
+        $headers = \App\Models\DispatchingHeader::with(['customer', 'createdByUser', 'confirmedByUser']);
+
+        return \DataTables::of($headers)
+            ->addIndexColumn()
+            ->addColumn('dispatching_header_id', function($row) {
+                return $row->dispatching_header_id;
+            })
+            ->addColumn('designation', function($row) {
+                return $row->dispatching_header_name;
+            })
+            ->addColumn('customer', function($row) {
+                return $row->customer ? $row->customer->customer_name : 'N/A';
+            })
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('created_by', function($row) {
+                return $row->created_by ? optional($row->createdByUser)->name : 'N/A';
+            })
+            ->addColumn('confirmed_at', function($row) {
+                return $row->confirmed_at ? \Carbon\Carbon::parse($row->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('confirmed_by', function($row) {
+                return $row->confirmed_by ? optional($row->confirmedByUser)->name : 'N/A';
+            })
+            ->addColumn('dispatching_header_status', function($row) {
+                $class = $row->dispatching_header_status === 'Confirmed' ? 'badge-success' : 'badge-warning';
+                return '<span class="badge '.$class.'">'.ucfirst($row->dispatching_header_status).'</span>';
+            })
+            ->addColumn('actions', function($row) {
+                return view('dispatching.partials.actionsUserHeader', compact('row'))->render();
+            })
+            // Tambahkan orderColumn jika ingin sorting kolom relasi
+            ->orderColumn('designation', function ($query, $order) {
+                $query->orderBy('dispatching_headers.dispatching_header_name', $order);
+            })
+            ->orderColumn('customer', function ($query, $order) {
+                $query->leftJoin('customers as c', 'dispatching_headers.customer_id', '=', 'c.customer_id')
+                    ->orderBy('c.customer_name', $order);
+            })
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('dispatching_headers.created_at', $order);
+            })
+            ->orderColumn('created_by', function ($query, $order) {
+                $query->leftJoin('users as u', 'dispatching_headers.created_by', '=', 'u.id')
+                    ->orderBy('u.name', $order);
+            })
+            ->orderColumn('confirmed_at', function ($query, $order) {
+                $query->orderBy('dispatching_headers.confirmed_at', $order);
+            })
+            ->orderColumn('confirmed_by', function ($query, $order) {
+                $query->leftJoin('users as u2', 'dispatching_headers.confirmed_by', '=', 'u2.id')
+                    ->orderBy('u2.name', $order);
+            })
+            ->rawColumns(['dispatching_header_status', 'actions'])
+            ->make(true);
+    }
+
      // Show all dispatching headers
     public function UserDispatching(): View
     {
@@ -514,6 +622,55 @@ class DispatchingController extends Controller
         $dispatchingHeader->delete(); // Hapus Dispatching Header
 
         return redirect()->route('dispatching.user_header')->with('success', 'Dispatching header and details deleted successfully!');
+    }
+
+
+
+
+    // USER DETAIL DATATABLE
+    public function getUserDispatchingDetailDatatable($header_id)
+    {
+        $details = \App\Models\DispatchingDetail::with(['product.unit'])
+            ->where('dispatching_header_id', $header_id);
+
+        return \DataTables::of($details)
+            ->addIndexColumn()
+            ->addColumn('dispatching_detail_id', function($row) {
+                return $row->dispatching_detail_id;
+            })
+            ->addColumn('product_id', function($row) {
+                return $row->product_id;
+            })
+            ->addColumn('product_name', function($row) {
+                return $row->product ? $row->product->product_name : 'No product name';
+            })
+            ->addColumn('dispatching_qty', function($row) {
+                return $row->dispatching_qty;
+            })
+            ->addColumn('unit_name', function($row) {
+                return $row->product && $row->product->unit ? $row->product->unit->unit_name : 'No unit';
+            })
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('created_by', function($row) {
+                return $row->created_by ? optional(\App\Models\User::find($row->created_by))->name : 'N/A';
+            })
+            ->addColumn('confirmed_at', function($row) {
+                return $row->confirmed_at ? \Carbon\Carbon::parse($row->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('confirmed_by', function($row) {
+                return $row->confirmed_by ? optional(\App\Models\User::find($row->confirmed_by))->name : 'N/A';
+            })
+            ->addColumn('dispatching_detail_status', function($row) {
+                $class = $row->dispatching_detail_status === 'Confirmed' ? 'badge-success' : 'badge-warning';
+                return '<span class="badge '.$class.'">'.ucfirst($row->dispatching_detail_status).'</span>';
+            })
+            ->addColumn('actions', function($row) {
+                return view('dispatching.partials.actionsUserDetail', compact('row'))->render();
+            })
+            ->rawColumns(['dispatching_detail_status', 'actions'])
+            ->make(true);
     }
 
     // Show dispatching header by ID

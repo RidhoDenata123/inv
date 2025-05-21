@@ -26,6 +26,28 @@
         .table-responsive .pagination {
             justify-content: flex-end; /* Posisikan pagination di kanan */
         }
+        
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #productTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
+        }
     </style>
 
     
@@ -46,7 +68,7 @@
             <a href="#" class="btn btn-md btn-success mb-3" data-toggle="modal" data-target="#addDispatchingHeaderModal"><i class='fas fa-plus'></i> Add Dispatching</a>
            
             <div class="table-responsive">
-                <table id="dispatchingHeaderTable" class="table table-bordered table-sm">
+                <table id="dispatchingHeaderTable" class="table table-bordered table-sm" style="width:100%">
                     <thead class="text-center">
                         <tr>
                             <th scope="col" rowspan="2">No.</th>
@@ -66,80 +88,10 @@
                         </tr>
                     </thead>
                     <tbody class="text-center">
-                        @forelse ($dispatching_headers as $header)
-                            <tr>
-                                <td>{{ ($dispatching_headers->currentPage() - 1) * $dispatching_headers->perPage() + $loop->iteration }}.</td>
-                                <td>{{ $header->dispatching_header_id }}</td>
-                                <td>{{ $header->dispatching_header_name }}</td>
-                                <td>{{ $header->customer_id ? \App\Models\Customer::find($header->customer_id)->customer_name : 'N/A' }}</td>
-                                <td>{{ $header->created_at ? \Carbon\Carbon::parse($header->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                <td>{{ $header->created_by ? \App\Models\User::find($header->created_by)->name : 'N/A' }}</td>
-                                <td>{{ $header->confirmed_at ? \Carbon\Carbon::parse($header->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                <td>{{ $header->confirmed_by ? \App\Models\User::find($header->confirmed_by)->name : 'N/A' }}</td>
-                                <td>                                
-                                    <span class="badge 
-                                        {{ $header->dispatching_header_status === 'Confirmed' ? 'badge-success' : 'badge-warning' }}">
-                                        {{ ucfirst($header->dispatching_header_status) }}
-                                    </span>
-                                </td>
 
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        @if ($header->dispatchingDetails->where('dispatching_detail_status', 'Confirmed')->isNotEmpty())
-                                            <!-- Tombol Show Detail -->
-                                            <a href="{{ route('dispatching.user_detail.UserShowDetail', $header->dispatching_header_id) }}" 
-                                            class="btn btn-sm btn-dark mr-2">
-                                                <i class="fas fa-search"></i>
-                                            </a>
-                                        @else
-                                            <!-- Tombol Show -->
-                                            <a href="{{ route('dispatching.user_detail.UserShowDetail', $header->dispatching_header_id) }}" 
-                                            class="btn btn-sm btn-dark mr-2">
-                                                <i class="fas fa-search"></i>
-                                            </a>
-
-                                            <!-- Tombol Edit -->
-                                            <a href="#" 
-                                            class="btn btn-sm btn-primary btn-edit mr-2" 
-                                            data-dispatching_id="{{ $header->dispatching_header_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#editDispatchingHeaderModal">
-                                                <i class="fas fa-edit"></i> 
-                                            </a>
-
-                                            <!-- Tombol Delete -->
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-danger btn-delete" 
-                                                    data-dispatching_id="{{ $header->dispatching_header_id }}" 
-                                                    data-toggle="modal" 
-                                                    data-target="#deleteDispatchingHeaderModal">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="10" class="text-center">No data available in table</td>
-                            </tr>
-                        @endforelse
                     </tbody>
                 </table>
-                    <!-- Info Jumlah Data dan Pagination -->
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <!-- Info Jumlah Data -->
-                        <div class="table">
-                            <p class="mb-0">
-                                Showing {{ $dispatching_headers->firstItem() }} to {{ $dispatching_headers->lastItem() }} of {{ $dispatching_headers->total() }} entries
-                            </p>
-                        </div>
 
-                        <!-- Laravel Pagination -->
-                        <div>
-                            {{ $dispatching_headers->links('pagination::simple-bootstrap-4') }}
-                        </div>
-                    </div>
             </div>
         </div>
     </div>
@@ -338,119 +290,138 @@
 
 @section('scripts')
 
-<!-- Page level plugins -->
-<script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <!-- Page level plugins -->
+    <!-- DataTables core -->
+    <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <!-- DataTables Responsive (setelah DataTables utama) -->
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
+
     <!-- Bootstrap Select JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
 
-<!-- Datatable -->
-<script>
-    $(document).ready(function() {
-        $('#dispatchingHeaderTable').DataTable({
-            "paging": false,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": false,
-            "autoWidth": false,
-            "responsive": true,
-        });
-    });
-
-    $(document).ready(function() {
-        // Tampilkan SweetAlert jika ada session flash message
-        @if (session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: '{{ session('success') }}',
-                confirmButtonText: 'OK'
-            });
-        @endif
-
-        @if (session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: '{{ session('error') }}',
-                confirmButtonText: 'OK'
-            });
-        @endif
-
-        // Inisialisasi Bootstrap Select
-        $('.selectpicker').selectpicker({
-            liveSearch: true,
-            style: 'btn-light',
-            size: 5
-        });
-
-        // Generate random dispatching_header_id when the modal is shown
-        $('#addDispatchingHeaderModal').on('show.bs.modal', function() {
-            const randomId = 'DISP-' + Math.floor(100000 + Math.random() * 900000); // Generate random ID
-            $('#addDispatchingHeaderId').val(randomId); // Set the value of dispatching_header_id input
-        });
-
-        // Handle click event on "EDIT" button
-        $('.btn-edit').on('click', function() {
-            const dispatchingId = $(this).data('dispatching_id'); // Ambil ID dispatching header dari tombol
-
-            // Lakukan permintaan AJAX ke server
-            $.ajax({
-                url: `/user/dispatching/header/${dispatchingId}`, // URL rute Laravel untuk mendapatkan detail dispatching header
-                method: 'GET',
-                success: function(data) {
-                    // Isi modal dengan data dispatching header
-                    $('#editDispatchingHeaderId').val(data.dispatching_header_id);
-                    $('#editDispatchingHeaderName').val(data.dispatching_header_name);
-                    $('#editDispatchingHeaderDescription').val(data.dispatching_header_description);
-                    $('#edit_customer_id').val(data.customer_id).selectpicker('refresh'); // Pilih customer yang sesuai
-
-                    // Set action URL untuk form edit
-                    $('#editDispatchingHeaderForm').attr('action', `/user/dispatching/header/${dispatchingId}`);
-
-                    // Tampilkan modal
-                    $('#editDispatchingHeaderModal').modal('show');
-                },
-                error: function(xhr) {
-                    // Tampilkan pesan error jika gagal
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Failed to fetch dispatching header details. Please try again.',
-                        confirmButtonText: 'OK'
-                    });
-                }
+    <!-- Datatable -->
+    <script>
+        $(document).ready(function() {
+            $('#dispatchingHeaderTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("user.dispatching.header.datatable") }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'dispatching_header_id', name: 'dispatching_header_id' },
+                    { data: 'designation', name: 'dispatching_header_name' },
+                    { data: 'customer', name: 'customer.customer_name' },
+                    { data: 'created_at', name: 'created_at' },
+                    { data: 'created_by', name: 'created_by' },
+                    { data: 'confirmed_at', name: 'confirmed_at' },
+                    { data: 'confirmed_by', name: 'confirmed_by' },
+                    { data: 'dispatching_header_status', name: 'dispatching_header_status', orderable: false, searchable: false },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                ],
+                order: [[4, 'desc']]
             });
         });
+    </script>
 
-        // Handle click event on "DELETE" button
-        $('.btn-delete').on('click', function() {
-            const dispatchingId = $(this).data('dispatching_id'); // Ambil ID dispatching header dari tombol
-            const dispatchingName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama dispatching header dari tabel
 
-            if (!dispatchingId) {
+    <script>
+        $(document).ready(function() {
+            // Tampilkan SweetAlert jika ada session flash message
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '{{ session('success') }}',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            @if (session('error'))
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Dispatching header ID is undefined. Please try again.',
+                    text: '{{ session('error') }}',
                     confirmButtonText: 'OK'
                 });
-                return;
-            }
+            @endif
 
-            // Isi modal dengan data dispatching header
-            $('#deleteDispatchingHeaderId').text(dispatchingName);
+            // Inisialisasi Bootstrap Select
+            $('.selectpicker').selectpicker({
+                liveSearch: true,
+                style: 'btn-light',
+                size: 5
+            });
 
-            // Set action URL untuk form delete
-            const deleteUrl = `/user/dispatching/header/${dispatchingId}`;
-            $('#deleteDispatchingHeaderForm').attr('action', deleteUrl);
+            // Generate random dispatching_header_id when the modal is shown
+            $('#addDispatchingHeaderModal').on('show.bs.modal', function() {
+                const randomId = 'DISP-' + Math.floor(100000 + Math.random() * 900000); // Generate random ID
+                $('#addDispatchingHeaderId').val(randomId); // Set the value of dispatching_header_id input
+            });
 
-            // Tampilkan modal
-            $('#deleteDispatchingHeaderModal').modal('show');
+            // Handle click event on "EDIT" button
+            $(document).on('click', '.btn-edit', function() {
+                const dispatchingId = $(this).data('dispatching_id'); // Ambil ID dispatching header dari tombol
+
+                // Lakukan permintaan AJAX ke server
+                $.ajax({
+                    url: `/user/dispatching/header/${dispatchingId}`, // URL rute Laravel untuk mendapatkan detail dispatching header
+                    method: 'GET',
+                    success: function(data) {
+                        // Isi modal dengan data dispatching header
+                        $('#editDispatchingHeaderId').val(data.dispatching_header_id);
+                        $('#editDispatchingHeaderName').val(data.dispatching_header_name);
+                        $('#editDispatchingHeaderDescription').val(data.dispatching_header_description);
+                        $('#edit_customer_id').val(data.customer_id).selectpicker('refresh'); // Pilih customer yang sesuai
+
+                        // Set action URL untuk form edit
+                        $('#editDispatchingHeaderForm').attr('action', `/user/dispatching/header/${dispatchingId}`);
+
+                        // Tampilkan modal
+                        $('#editDispatchingHeaderModal').modal('show');
+                    },
+                    error: function(xhr) {
+                        // Tampilkan pesan error jika gagal
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Failed to fetch dispatching header details. Please try again.',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+
+            // Handle click event on "DELETE" button
+            $(document).on('click', '.btn-delete', function() {
+                const dispatchingId = $(this).data('dispatching_id'); // Ambil ID dispatching header dari tombol
+                const dispatchingName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama dispatching header dari tabel
+
+                if (!dispatchingId) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Dispatching header ID is undefined. Please try again.',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+
+                // Isi modal dengan data dispatching header
+                $('#deleteDispatchingHeaderId').text(dispatchingName);
+
+                // Set action URL untuk form delete
+                const deleteUrl = `/user/dispatching/header/${dispatchingId}`;
+                $('#deleteDispatchingHeaderForm').attr('action', deleteUrl);
+
+                // Tampilkan modal
+                $('#deleteDispatchingHeaderModal').modal('show');
+            });
         });
-    });
-</script>
+    </script>
 @endsection
 
 @endsection

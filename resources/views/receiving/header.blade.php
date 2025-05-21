@@ -109,7 +109,7 @@
                                 <option value="Restock">Restock</option>
                                 <option value="Opening Balance">Opening Balance</option>
                                 <option value="Transfer In">Transfer In</option>
-                                <option value="Return from Customer">Return from Customer</option>
+                                
                             
                             </select>
                             @error('receiving_header_name')

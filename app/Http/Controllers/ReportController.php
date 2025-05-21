@@ -99,8 +99,11 @@ class ReportController extends Controller
         $report->delete();
     
         return redirect()->route('reports.archive')->with('success', 'Report deleted successfully.');
+    
     }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     //ARCHIVE
     public function archive()
     {
@@ -119,7 +122,9 @@ class ReportController extends Controller
     //STOCK ARCHIVE DATATABLE
     public function getStockDatatable(Request $request)
     {
-        $stockReports = Report::where('report_type', 'stock')->orderBy('created_at', 'desc');
+        $stockReports = Report::where('report_type', 'stock');
+        // Hapus ->orderBy('created_at', 'desc');
+
         return DataTables::of($stockReports)
             ->addIndexColumn()
             ->addColumn('document', function($row) {
@@ -131,6 +136,19 @@ class ReportController extends Controller
             ->addColumn('actions', function($row) {
                 return view('reports.partials.actions', compact('row'))->render();
             })
+            // Tambahkan orderColumn berikut:
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('reports.created_at', $order);
+            })
+            ->orderColumn('report_title', function ($query, $order) {
+                $query->orderBy('reports.report_title', $order);
+            })
+            ->orderColumn('report_description', function ($query, $order) {
+                $query->orderBy('reports.report_description', $order);
+            })
+            ->orderColumn('generated_by', function ($query, $order) {
+                $query->orderBy('reports.generated_by', $order);
+            })
             ->rawColumns(['document', 'actions'])
             ->make(true);
     }
@@ -138,7 +156,9 @@ class ReportController extends Controller
     //STOCK MOVEMENT ARCHIVE DATATABLE
     public function getMovementDatatable(Request $request)
     {
-        $movementReports = Report::where('report_type', 'stock_movement')->orderBy('created_at', 'desc');
+        $movementReports = Report::where('report_type', 'stock_movement');
+        // Hapus ->orderBy('created_at', 'desc');
+
         return DataTables::of($movementReports)
             ->addIndexColumn()
             ->addColumn('document', function($row) {
@@ -149,6 +169,19 @@ class ReportController extends Controller
             })
             ->addColumn('actions', function($row) {
                 return view('reports.partials.actions', compact('row'))->render();
+            })
+            // Tambahkan orderColumn berikut:
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('reports.created_at', $order);
+            })
+            ->orderColumn('report_title', function ($query, $order) {
+                $query->orderBy('reports.report_title', $order);
+            })
+            ->orderColumn('report_description', function ($query, $order) {
+                $query->orderBy('reports.report_description', $order);
+            })
+            ->orderColumn('generated_by', function ($query, $order) {
+                $query->orderBy('reports.generated_by', $order);
             })
             ->rawColumns(['document', 'actions'])
             ->make(true);
@@ -177,6 +210,7 @@ class ReportController extends Controller
     public function getReceivingDatatable(Request $request)
     {
         $receivingReports = Report::where('report_type', 'receiving')->orderBy('created_at', 'desc');
+
         return DataTables::of($receivingReports)
             ->addIndexColumn()
             ->addColumn('document', function($row) {
@@ -230,15 +264,60 @@ class ReportController extends Controller
             ->make(true);
     }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    //STOCK REPORTS DATATABLE
+    public function getStockProductDatatable(Request $request)
+    {
+        $products = Product::with(['category', 'supplier', 'unit']);
 
-
-
-
-
-
-
-
+        return DataTables::of($products)
+            ->addIndexColumn()
+            ->addColumn('category', function($row) {
+                return $row->category ? $row->category->category_name : 'No Category';
+            })
+            ->addColumn('purchase_price', function($row) {
+                return 'Rp ' . number_format($row->purchase_price, 2, ',', '.');
+            })
+            ->addColumn('selling_price', function($row) {
+                return 'Rp ' . number_format($row->selling_price, 2, ',', '.');
+            })
+            ->addColumn('supplier', function($row) {
+                return $row->supplier ? $row->supplier->supplier_name : 'No Supplier';
+            })
+            ->addColumn('unit', function($row) {
+                return $row->unit ? $row->unit->unit_name : 'No Unit';
+            })
+            // Tambahkan orderColumn berikut:
+            ->orderColumn('category', function ($query, $order) {
+                $query->leftJoin('categories as c', 'products.product_category', '=', 'c.category_id')
+                    ->orderBy('c.category_name', $order);
+            })
+            ->orderColumn('supplier', function ($query, $order) {
+                $query->leftJoin('suppliers as s', 'products.product_supplier', '=', 's.supplier_id')
+                    ->orderBy('s.supplier_name', $order);
+            })
+            ->orderColumn('unit', function ($query, $order) {
+                $query->leftJoin('units as u', 'products.product_unit', '=', 'u.unit_id')
+                    ->orderBy('u.unit_name', $order);
+            })
+            ->orderColumn('purchase_price', function ($query, $order) {
+                $query->orderBy('products.purchase_price', $order);
+            })
+            ->orderColumn('selling_price', function ($query, $order) {
+                $query->orderBy('products.selling_price', $order);
+            })
+            ->orderColumn('product_id', function ($query, $order) {
+                $query->orderBy('products.product_id', $order);
+            })
+            ->orderColumn('product_name', function ($query, $order) {
+                $query->orderBy('products.product_name', $order);
+            })
+            ->orderColumn('product_qty', function ($query, $order) {
+                $query->orderBy('products.product_qty', $order);
+            })
+            ->make(true);
+    }
 
     //STOCK REPORTS PAGE
     public function stockReports()
@@ -282,7 +361,68 @@ class ReportController extends Controller
         // Redirect kembali ke halaman laporan dengan pesan sukses
         return redirect()->route('reports.archive')->with('success', 'Stock report generated successfully.');
     }
-    
+
+    //STOCK MOVEMENT REPORTS DATATABLE
+    public function getStockMovementDatatable(Request $request)
+    {
+        $query = \App\Models\StockChangeLog::with(['changedBy', 'product'])
+            ->when($request->start_date, function($q) use ($request) {
+                $q->whereDate('changed_at', '>=', $request->start_date);
+            })
+            ->when($request->end_date, function($q) use ($request) {
+                $q->whereDate('changed_at', '<=', $request->end_date);
+            });
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('changed_at', function($row) {
+                return $row->changed_at ? \Carbon\Carbon::parse($row->changed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('changed_by', function($row) {
+                return $row->changedBy->name ?? 'System';
+            })
+            ->addColumn('product_id', function($row) {
+                return $row->product->product_id ?? 'N/A';
+            })
+            ->addColumn('product_name', function($row) {
+                return $row->product->product_name ?? 'N/A';
+            })
+            // Tambahkan ini untuk enable sorting kolom relasi:
+            ->orderColumn('changed_at', function ($query, $order) {
+                $query->orderBy('changed_at', $order);
+            })
+            ->orderColumn('changed_by', function ($query, $order) {
+            // Join ke users, atau gunakan subquery jika perlu
+                $query->leftJoin('users as u', 'stock_change_logs.changed_by', '=', 'u.id')
+                ->orderBy('u.name', $order);
+            })
+            ->orderColumn('product_id', function ($query, $order) {
+                $query->leftJoin('products as p', 'stock_change_logs.product_id', '=', 'p.product_id')
+                ->orderBy('p.product_id', $order);
+            })
+            ->orderColumn('product_name', function ($query, $order) {
+                $query->leftJoin('products as p2', 'stock_change_logs.product_id', '=', 'p2.product_id')
+                ->orderBy('p2.product_name', $order);
+            })
+
+            ->addColumn('row_class', function($row) {
+                $type = $row->stock_change_type;
+                if (in_array($type, ['Sales Order', 'Transfer Out'])) {
+                    return 'table-success';
+                } elseif (in_array($type, ['Restock', 'Opening Balance', 'Transfer In'])) {
+                    return 'table-primary';
+                } elseif ($type === 'Stock Adjustment') {
+                    return 'table-warning';
+                } elseif ($type === 'Write-Off') {
+                    return 'table-danger';
+                } elseif (in_array($type, ['Return to Supplier', 'Return from Customer'])) {
+                    return 'table-secondary';
+                }
+                return '';
+            })
+            ->rawColumns([])
+            ->make(true);
+    }
 
     //Stock Movement Report
     public function stockMovementReports(Request $request)
@@ -357,6 +497,56 @@ class ReportController extends Controller
     }
 
 
+
+
+    //STOCK MINIMUM REPORT DATATABLE
+    public function getMinimumStockProductDatatable(Request $request)
+    {
+        $products = Product::with(['category', 'supplier', 'unit'])
+            ->where('product_qty', '<', 5); // Minimum stock 5
+
+        return \DataTables::of($products)
+            ->addIndexColumn()
+            ->addColumn('category', function($row) {
+                return $row->category ? $row->category->category_name : 'No Category';
+            })
+            ->addColumn('purchase_price', function($row) {
+                return 'Rp ' . number_format($row->purchase_price, 2, ',', '.');
+            })
+            ->addColumn('selling_price', function($row) {
+                return 'Rp ' . number_format($row->selling_price, 2, ',', '.');
+            })
+            ->addColumn('supplier', function($row) {
+                return $row->supplier ? $row->supplier->supplier_name : 'No Supplier';
+            })
+            ->addColumn('unit', function($row) {
+                return $row->unit ? $row->unit->unit_name : 'No Unit';
+            })
+            // Tambahkan orderColumn jika ingin sorting kolom relasi
+            ->orderColumn('category', function ($query, $order) {
+                $query->leftJoin('categories as c', 'products.product_category', '=', 'c.category_id')
+                    ->orderBy('c.category_name', $order);
+            })
+            ->orderColumn('supplier', function ($query, $order) {
+                $query->leftJoin('suppliers as s', 'products.product_supplier', '=', 's.supplier_id')
+                    ->orderBy('s.supplier_name', $order);
+            })
+            ->orderColumn('unit', function ($query, $order) {
+                $query->leftJoin('units as u', 'products.product_unit', '=', 'u.unit_id')
+                    ->orderBy('u.unit_name', $order);
+            })
+            ->orderColumn('product_id', function ($query, $order) {
+                $query->orderBy('products.product_id', $order);
+            })
+            ->orderColumn('product_name', function ($query, $order) {
+                $query->orderBy('products.product_name', $order);
+            })
+            ->orderColumn('product_qty', function ($query, $order) {
+                $query->orderBy('products.product_qty', $order);
+            })
+            ->make(true);
+    }
+
     //Stock Minimum Report
     public function minimumStockReport()
     {
@@ -396,6 +586,45 @@ class ReportController extends Controller
         return redirect()->route('reports.archive')->with('success', 'Minimum Stock Report generated successfully.');
     }
 
+
+    //RECEIVING REPORT DATATABLE
+    public function getReceivingReportDatatable(Request $request)
+    {
+        $logs = \App\Models\StockChangeLog::with(['product', 'changedBy'])
+            ->whereIn('stock_change_type', ['Restock', 'Opening Balance', 'Transfer In', 'Return from Customer']);
+
+        return \DataTables::of($logs)
+            ->addIndexColumn()
+            ->addColumn('changed_at', function($row) {
+                return $row->changed_at ? \Carbon\Carbon::parse($row->changed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('product_id', function($row) {
+                return $row->product->product_id ?? 'N/A';
+            })
+            ->addColumn('product_name', function($row) {
+                return $row->product->product_name ?? 'N/A';
+            })
+            ->addColumn('changed_by', function($row) {
+                return $row->changedBy->name ?? 'System';
+            })
+            // Tambahkan orderColumn berikut:
+            ->orderColumn('changed_at', function ($query, $order) {
+                $query->orderBy('stock_change_logs.changed_at', $order);
+            })
+            ->orderColumn('product_id', function ($query, $order) {
+                $query->leftJoin('products as p', 'stock_change_logs.product_id', '=', 'p.product_id')
+                    ->orderBy('p.product_id', $order);
+            })
+            ->orderColumn('product_name', function ($query, $order) {
+                $query->leftJoin('products as p2', 'stock_change_logs.product_id', '=', 'p2.product_id')
+                    ->orderBy('p2.product_name', $order);
+            })
+            ->orderColumn('changed_by', function ($query, $order) {
+                $query->leftJoin('users as u', 'stock_change_logs.changed_by', '=', 'u.id')
+                    ->orderBy('u.name', $order);
+            })
+            ->make(true);
+    }
 
     //Receiving Report
     public function receivingReport()
@@ -441,6 +670,46 @@ class ReportController extends Controller
     }
 
 
+    //DISPATCHING REPORT DATATABLE
+    public function getDispatchingReportDatatable(Request $request)
+    {
+        $logs = \App\Models\StockChangeLog::with(['product', 'changedBy'])
+            ->whereIn('stock_change_type', ['Sales Order', 'Transfer Out', 'Write-Off', 'Return to Supplier']);
+          
+
+        return \DataTables::of($logs)
+            ->addIndexColumn()
+            ->addColumn('changed_at', function($row) {
+                return $row->changed_at ? \Carbon\Carbon::parse($row->changed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('product_id', function($row) {
+                return $row->product->product_id ?? 'N/A';
+            })
+            ->addColumn('product_name', function($row) {
+                return $row->product->product_name ?? 'N/A';
+            })
+            ->addColumn('changed_by', function($row) {
+                return $row->changedBy->name ?? 'System';
+            })
+            // Tambahkan orderColumn berikut:
+            ->orderColumn('changed_at', function ($query, $order) {
+                $query->orderBy('stock_change_logs.changed_at', $order);
+            })
+            ->orderColumn('product_id', function ($query, $order) {
+                $query->leftJoin('products as p', 'stock_change_logs.product_id', '=', 'p.product_id')
+                    ->orderBy('p.product_id', $order);
+            })
+            ->orderColumn('product_name', function ($query, $order) {
+                $query->leftJoin('products as p2', 'stock_change_logs.product_id', '=', 'p2.product_id')
+                    ->orderBy('p2.product_name', $order);
+            })
+            ->orderColumn('changed_by', function ($query, $order) {
+                $query->leftJoin('users as u', 'stock_change_logs.changed_by', '=', 'u.id')
+                    ->orderBy('u.name', $order);
+            })
+            ->make(true);
+    }
+
     //Dispatching Report
     public function dispatchingReport()
     {
@@ -484,6 +753,49 @@ class ReportController extends Controller
         return redirect()->route('reports.archive')->with('success', 'Dispatching Report generated successfully.');
     }
 
+
+
+
+
+    //STOCK ADJUSTMENT REPORT DATATABLE
+    public function getStockAdjustmentDatatable(Request $request)
+    {
+        $logs = \App\Models\StockChangeLog::with(['product', 'changedBy'])
+            ->whereIn('stock_change_type', ['Stock Adjustment', 'Write-Off']);
+
+
+        return \DataTables::of($logs)
+            ->addIndexColumn()
+            ->addColumn('changed_at', function($row) {
+                return $row->changed_at ? \Carbon\Carbon::parse($row->changed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A';
+            })
+            ->addColumn('product_id', function($row) {
+                return $row->product->product_id ?? 'N/A';
+            })
+            ->addColumn('product_name', function($row) {
+                return $row->product->product_name ?? 'N/A';
+            })
+            ->addColumn('changed_by', function($row) {
+                return $row->changedBy->name ?? 'System';
+            })
+            // Tambahkan orderColumn berikut:
+            ->orderColumn('changed_at', function ($query, $order) {
+                $query->orderBy('stock_change_logs.changed_at', $order);
+            })
+            ->orderColumn('product_id', function ($query, $order) {
+                $query->leftJoin('products as p', 'stock_change_logs.product_id', '=', 'p.product_id')
+                    ->orderBy('p.product_id', $order);
+            })
+            ->orderColumn('product_name', function ($query, $order) {
+                $query->leftJoin('products as p2', 'stock_change_logs.product_id', '=', 'p2.product_id')
+                    ->orderBy('p2.product_name', $order);
+            })
+            ->orderColumn('changed_by', function ($query, $order) {
+                $query->leftJoin('users as u', 'stock_change_logs.changed_by', '=', 'u.id')
+                    ->orderBy('u.name', $order);
+            })
+            ->make(true);
+    }
 
     //Stock adjustment Report
     public function stockAdjustmentReport()

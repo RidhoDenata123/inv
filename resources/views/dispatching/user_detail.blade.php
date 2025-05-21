@@ -19,12 +19,34 @@
         .bootstrap-select .dropdown-menu {
             font-size: 1rem; /* Ukuran font dropdown */
         }
-        
+
         .pagination {
             margin: 0; /* Hilangkan margin default */
         }
         .table-responsive .pagination {
             justify-content: flex-end; /* Posisikan pagination di kanan */
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            min-height: .01%;
+        }
+        #productTable {
+            width: 100% !important;
+            table-layout: auto;
+            word-break: break-word;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            position: relative;
+        }
+        .table-responsive .dropdown-menu {
+            position: absolute !important;
+            will-change: transform;
         }
     </style>
 
@@ -95,7 +117,7 @@
 
 
             <div class="table-responsive">
-                <table id="dispatchingDetailTable" class="table table-bordered table-sm">
+                <table id="dispatchingDetailTable" class="table table-bordered table-sm" style="width:100%">
                     <thead class="text-center">
                         <tr>
                             <th scope="col" rowspan="2">No.</th>
@@ -118,105 +140,10 @@
                         </tr>
                     </thead>
                     <tbody class="text-center">
-                        @forelse ($dispatchingDetails as $detail)
-                            <tr>
-                            <td>{{ ($dispatchingDetails->currentPage() - 1) * $dispatchingDetails->perPage() + $loop->iteration }}.</td>
-                                <td>{{ $detail->dispatching_detail_id }}</td>
-                                <td>
-                                    <a href="#" 
-                                        class="btn-show text-primary" 
-                                        data-product_id="{{ $detail->product_id }}" 
-                                        data-toggle="modal" 
-                                        data-target="#productDetailModal">
-                                        {{ $detail->product_id }}
-                                    </a>
-                                </td>
-                                <td>{{ $detail->product_id ? $detail->product->product_name : 'No product name' }}</td>
-                                <td>{{ $detail->dispatching_qty }}</td>
-                                <td>{{ $detail->product_id ? $detail->product->unit->unit_name : 'No unit' }}</td>
-                                <td>{{ $detail->created_at ? \Carbon\Carbon::parse($detail->created_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                <td>{{ $detail->created_by ? \App\Models\User::find($detail->created_by)->name : 'N/A' }}</td>
-                                <td>{{ $detail->confirmed_at ? \Carbon\Carbon::parse($detail->confirmed_at)->timezone('Asia/Jakarta')->format('l, d F Y H:i') : 'N/A' }}</td>
-                                <td>{{ $detail->confirmed_by ? \App\Models\User::find($detail->confirmed_by)->name : 'N/A' }}</td>
-                                <td>
-                                    <span class="badge 
-                                        {{ $detail->dispatching_detail_status === 'Confirmed' ? 'badge-success' : 'badge-warning' }}">
-                                        {{ ucfirst($detail->dispatching_detail_status) }}
-                                    </span>
-                                </td>
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        @if ($detail->dispatching_detail_status === 'Confirmed')
-                                            <!-- Tombol Show Detail -->
-                                            <a href="#" 
-                                            class="btn btn-sm btn-dark btn-show mr-2" 
-                                            data-product_id="{{ $detail->product_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#productDetailModal">
-                                                <i class="fas fa-search"></i>
-                                            </a>
-                                        @elseif ($detail->dispatching_detail_status === 'Pending')
-                                            <!-- Tombol Confirm -->
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-success btn-confirm mr-2" 
-                                                    data-dispatching_detail_id="{{ $detail->dispatching_detail_id }}" 
-                                                    data-toggle="modal" 
-                                                    data-target="#confirmDetailModal">
-                                                <i class="fas fa-check"></i>
-                                            </button>
 
-                                            <!-- Tombol Show Detail -->
-                                            <a href="#" 
-                                            class="btn btn-sm btn-dark btn-show mr-2" 
-                                            data-product_id="{{ $detail->product_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#productDetailModal">
-                                                <i class="fas fa-search"></i>
-                                            </a>
-
-                                            <!-- Tombol Edit -->
-                                            <a href="#" 
-                                            class="btn btn-sm btn-primary btn-edit mr-2" 
-                                            data-dispatching_detail_id="{{ $detail->dispatching_detail_id }}" 
-                                            data-toggle="modal" 
-                                            data-target="#editDispatchingDetailModal">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-
-                                            <!-- Tombol Delete -->
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-danger btn-delete" 
-                                                    data-dispatching_detail_id="{{ $detail->dispatching_detail_id }}" 
-                                                    data-toggle="modal" 
-                                                    data-target="#deleteDispatchingDetailModal">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </button>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="12" class="text-center">No data available in table</td>
-                            </tr>
-                        @endforelse
                     </tbody>
                 </table>
 
-                    <!-- Info Jumlah Data dan Pagination -->
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <!-- Info Jumlah Data -->
-                        <div class="table">
-                            <p class="mb-0">
-                                Showing {{ $dispatchingDetails->firstItem() }} to {{ $dispatchingDetails->lastItem() }} of {{ $dispatchingDetails->total() }} entries
-                            </p>
-                        </div>
-
-                        <!-- Laravel Pagination -->
-                        <div>
-                            {{ $dispatchingDetails->links('pagination::simple-bootstrap-4') }}
-                        </div>
-                    </div>
             </div>
 
             <hr>
@@ -594,26 +521,48 @@
     </div>
 </div>
 
+
+
 @section('scripts')
     <!-- Page level plugins -->
+    <!-- DataTables core -->
     <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <!-- DataTables Responsive (setelah DataTables utama) -->
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script>
     <!-- Bootstrap Select JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js"></script>
 
     <script>
         $(document).ready(function() {
             $('#dispatchingDetailTable').DataTable({
-                "paging": false,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": false,
-                "autoWidth": false,
-                "responsive": true,
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: '{{ route("user.dispatching.detail.datatable", $dispatchingHeader->dispatching_header_id) }}',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'dispatching_detail_id', name: 'dispatching_detail_id' },
+                    { data: 'product_id', name: 'product_id' },
+                    { data: 'product_name', name: 'product.product_name' },
+                    { data: 'dispatching_qty', name: 'dispatching_qty' },
+                    { data: 'unit_name', name: 'product.unit.unit_name' },
+                    { data: 'created_at', name: 'created_at' },
+                    { data: 'created_by', name: 'created_by' },
+                    { data: 'confirmed_at', name: 'confirmed_at' },
+                    { data: 'confirmed_by', name: 'confirmed_by' },
+                    { data: 'dispatching_detail_status', name: 'dispatching_detail_status', orderable: false, searchable: false },
+                    { data: 'actions', name: 'actions', orderable: false, searchable: false }
+                ],
+                order: [[6, 'desc']]
             });
         });
+    </script>
 
+
+    <script>
         $(document).ready(function() {
             // Tampilkan SweetAlert jika ada session flash message
             @if (session('success'))
@@ -648,7 +597,8 @@
             });
 
             // Handle click event on "EDIT" button
-            $('.btn-edit').on('click', function() {
+
+            $(document).on('click', '.btn-edit', function() {
                 const detailId = $(this).data('dispatching_detail_id'); // Ambil ID dispatching detail dari tombol
 
                 if (!detailId) {
@@ -716,7 +666,7 @@
             });
 
             // Handle click event on "SHOW" button
-            $('.btn-show').on('click', function() {
+            $(document).on('click', '.btn-show', function() {
                 const productId = $(this).data('product_id'); // Ambil ID produk
 
                 // Lakukan permintaan AJAX ke server
@@ -766,7 +716,7 @@
             });
 
             // Handle click event on "DELETE" button
-            $('.btn-delete').on('click', function() {
+            $(document).on('click', '.btn-delete', function() {
                 const detailId = $(this).data('dispatching_detail_id'); // Ambil ID dispatching detail dari tombol
                 const productName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama produk dari tabel
 
@@ -792,7 +742,7 @@
             });
 
             // Handle click event on "Confirm" button per detail
-            $('.btn-confirm').on('click', function() {
+            $(document).on('click', '.btn-confirm', function() {
                 const detailId = $(this).data('dispatching_detail_id'); // Ambil ID dispatching detail dari tombol
                 const productName = $(this).closest('tr').find('td:nth-child(3)').text(); // Ambil nama produk dari tabel
 

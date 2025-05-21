@@ -11,7 +11,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ReceivingController;
 use App\Http\Controllers\DispatchingController;
 use App\Http\Controllers\ReportController;
-
+use App\Http\Controllers\UserController;
 
 
 Route::get('/', function () {
@@ -42,6 +42,7 @@ Route::middleware(['auth', 'user-access:user'])->group(function () {
 
 // ALL DISPATCHING HEADER TRANSACTION ROUTE  
 
+    Route::get('/user/dispatching/header/datatables', [DispatchingController::class, 'getUserDispatchingHeaderDatatable'])->name('user.dispatching.header.datatable');
     // Dispatching Header page Route
     Route::get('/user/dispatching/header', [DispatchingController::class, 'UserDispatching'])->name('dispatching.user_header');
     // Dispatching Header add Route
@@ -55,7 +56,8 @@ Route::middleware(['auth', 'user-access:user'])->group(function () {
 
 
 // ALL DISPATCHING DETAIL TRANSACTION ROUTE  
-
+    
+    Route::get('/user/dispatching/detail/datatables/{header_id}', [DispatchingController::class, 'getUserDispatchingDetailDatatable'])->name('user.dispatching.detail.datatable');
     // Dispatching detail Route
     Route::get('/user/dispatching/detail/{id}', [DispatchingController::class, 'UserShowDetail'])->name('dispatching.user_detail.UserShowDetail');
     // Dispatching detail add Route
@@ -130,11 +132,19 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     //ADMIN SETTING DELETE BANK ACCOUNT
     Route::delete('/setting/delete-bank/{id}', [HomeController::class, 'deleteBankAccount'])->name('setting.admin.deleteBankAccount');
 
-    // Profile page Route
-    Route::get('/admin/profile', [HomeController::class, 'AdminProfile'])->name('admin.profile.index');
-    // Profile update Route
-    Route::put('/admin/profile', [HomeController::class, 'AdminUpdateProfile'])->name('admin.profile.update');
+// ALL USERS PAGE ROUTE
 
+    // USER PAGE
+    Route::get('/users/datatable', [\App\Http\Controllers\UserController::class, 'getDatatable'])->name('users.datatable');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    // ADD USER
+    Route::post('/users/store', [UserController::class, 'store'])->name('users.store');
+    // SHOW USER
+    Route::get('/users/show/{id}', [UserController::class, 'show'])->name('users.show');
+    // UPDATE USER
+    Route::put('/users/update/{id}', [UserController::class, 'update'])->name('users.update');
+    // DELETE USER
+    Route::delete('/users/delete/{id}', [UserController::class, 'destroy'])->name('users.delete');
 
 // ALL PRODUCT ROUTE
 
@@ -294,17 +304,17 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     //REPORT ARCHIVE
     Route::get('/archive', [ReportController::class, 'archive'])->name('reports.archive');
     //STOCK ARCHIVE DATATABLE
-    Route::get('/reports/stock/datatables', [ReportController::class, 'getStockDatatable'])->name('reports.stock.datatable');
+    Route::get('/archive/stock/datatables', [ReportController::class, 'getStockDatatable'])->name('archive.stock.datatable');
     //STOCK MOVEMENT ARCHIVE DATATABLE
-    Route::get('/reports/movement/datatables', [ReportController::class, 'getMovementDatatable'])->name('reports.movement.datatable');
+    Route::get('/archive/movement/datatables', [ReportController::class, 'getMovementDatatable'])->name('archive.movement.datatable');
     //MINIMUM STOCK ARCHIVE DATATABLE
-    Route::get('/reports/minimum/datatables', [ReportController::class, 'getMinimumDatatable'])->name('reports.minimum.datatable');
+    Route::get('/archive/minimum/datatables', [ReportController::class, 'getMinimumDatatable'])->name('archive.minimum.datatable');
     //RECEIVING ARCHIVE DATATABLE
-    Route::get('/reports/receiving/datatables', [ReportController::class, 'getReceivingDatatable'])->name('reports.receiving.datatable');
+    Route::get('/archive/receiving/datatables', [ReportController::class, 'getReceivingDatatable'])->name('archive.receiving.datatable');
     //DISPATCHING ARCHIVE DATATABLE
-    Route::get('/reports/dispatching/datatables', [ReportController::class, 'getDispatchingDatatable'])->name('reports.dispatching.datatable');
+    Route::get('/archive/dispatching/datatables', [ReportController::class, 'getDispatchingDatatable'])->name('archive.dispatching.datatable');
     //STOCK ADJUSTMENT ARCHIVE DATATABLE
-    Route::get('/reports/adjustment/datatables', [ReportController::class, 'getAdjustmentDatatable'])->name('reports.adjustment.datatable');
+    Route::get('/archive/adjustment/datatables', [ReportController::class, 'getAdjustmentDatatable'])->name('archive.adjustment.datatable');
 
 
     // Report add Route
@@ -318,31 +328,42 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
 
     //Stock Report
+    Route::get('/reports/stock/products/datatables', [ReportController::class, 'getStockProductDatatable'])->name('reports.stock.products.datatable');
     Route::get('/reports/stock', [ReportController::class, 'stockReports'])->name('reports.stock');
     //DOMpdf generate stock report
     Route::get('/reports/stock/generate', [ReportController::class, 'generateStockReport'])->name('reports.stockGenerate');
 
+
     //Stock Movement Report Route
+    Route::get('/reports/stock-movement/datatables', [ReportController::class, 'getStockMovementDatatable'])->name('reports.stockMovement.datatable');
     Route::get('/reports/stock-movement', [ReportController::class, 'stockMovementReports'])->name('reports.stockMovement');
     //DOMpdf generate stock movement report
     Route::post('/reports/stock-movement/generate', [ReportController::class, 'generateStockMovementReport'])->name('reports.stockMovement.generate');
     
+
     //Stock minimum Report Route
+    Route::get('/reports/minimum-stock/products/datatables', [ReportController::class, 'getMinimumStockProductDatatable'])->name('reports.minimumStock.products.datatable');
     Route::get('/reports/minimum-stock', [ReportController::class, 'minimumStockReport'])->name('reports.minimumStock');
     //DOMpdf generate stock minimum report
     Route::post('/reports/minimum-stock/generate', [ReportController::class, 'generateMinimumStockReport'])->name('reports.minimumStock.generate');
 
+
     //Receiving Report Route
+    Route::get('/reports/receiving/datatables', [ReportController::class, 'getReceivingReportDatatable'])->name('reports.receiving.datatable');
     Route::get('/reports/receiving', [ReportController::class, 'receivingReport'])->name('reports.receiving');
     //DOMpdf generate Receiving report
     Route::post('/reports/receiving/generate', [ReportController::class, 'generateReceivingReport'])->name('reports.receiving.generate');
 
+
     //Dispatching Report Route
+    Route::get('/reports/dispatching/datatables', [ReportController::class, 'getDispatchingReportDatatable'])->name('reports.dispatching.datatable');
     Route::get('/reports/dispatching', [ReportController::class, 'dispatchingReport'])->name('reports.dispatching');
     //DOMpdf generate Dispatching report
     Route::post('/reports/dispatching/generate', [ReportController::class, 'generateDispatchingReport'])->name('reports.dispatching.generate');
 
+
     //Stock adjustment Report Route
+    Route::get('/reports/stock-adjustment/datatables', [ReportController::class, 'getStockAdjustmentDatatable'])->name('reports.stockAdjustment.datatable');
     Route::get('/reports/stock-adjustment', [ReportController::class, 'stockAdjustmentReport'])->name('reports.stockAdjustment');
     //DOMpdf generate stock adjustment report
     Route::post('/reports/stock-adjustment/generate', [ReportController::class, 'generateStockAdjustmentReport'])->name('reports.stockAdjustment.generate');

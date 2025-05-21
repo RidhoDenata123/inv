@@ -28,8 +28,9 @@ class ProductController extends Controller
     //DATATABLE
     public function getProductsDatatable(Request $request)
     {
-         $products = Product::with(['category', 'unit', 'supplier'])
-        ->orderBy('created_at', 'desc'); // Urutkan berdasarkan data terbaru
+         $products = Product::with(['category', 'supplier', 'unit'])
+    ->select('products.*') // <--- Penting!
+    ->leftJoin('categories', 'products.product_category', '=', 'categories.category_id');
         
         return DataTables::of($products)
             ->addIndexColumn()

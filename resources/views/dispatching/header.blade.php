@@ -329,7 +329,7 @@
                     { data: 'dispatching_header_status', name: 'dispatching_header_status', orderable: false, searchable: false },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
-                order: [[1, 'desc']]
+                order: [[4, 'desc']]
             });
         });
     </script>
