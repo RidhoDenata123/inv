@@ -40,6 +40,11 @@ Route::middleware(['auth', 'user-access:user'])->group(function () {
     // Profile update Route
     Route::put('/user/profile', [HomeController::class, 'updateProfile'])->name('user.profile.update');
 
+    //user product
+    Route::get('/user/products', [\App\Http\Controllers\ProductController::class, 'userIndex'])->name('products.UserIndex');
+    Route::get('/user/products/datatable', [\App\Http\Controllers\ProductController::class, 'userDatatable'])->name('products.UserDatatable');
+    Route::get('/user/products/show/{product_id}', [ProductController::class, 'getDetail'])->name('products.show');
+
 // ALL DISPATCHING HEADER TRANSACTION ROUTE  
 
     Route::get('/user/dispatching/header/datatables', [DispatchingController::class, 'getUserDispatchingHeaderDatatable'])->name('user.dispatching.header.datatable');

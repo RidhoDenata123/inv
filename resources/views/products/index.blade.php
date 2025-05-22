@@ -100,6 +100,7 @@
                                             <th scope="col">Supplier</th>
                                             <th scope="col">Qty</th>
                                             <th scope="col">Unit</th>
+                                            <th scope="col">Created At</th> <!-- Tambahkan ini -->
                                             <th scope="col">Status</th>
                                             <th scope="col">ACTIONS</th>
                                         </tr>
@@ -797,10 +798,11 @@
                                 { data: 'supplier', name: 'supplier.supplier_name' },
                                 { data: 'product_qty', name: 'product_qty' },
                                 { data: 'unit', name: 'unit.unit_name' },
+                                { data: 'created_at', name: 'created_at' }, // Tambahkan ini
                                 { data: 'status', name: 'product_status', orderable: false, searchable: false },
                                 { data: 'actions', name: 'actions', orderable: false, searchable: false }
                             ],
-                            order: [[1, 'asc']]
+                            order: [[9, 'desc']]
                         });
                     });
                 </script>

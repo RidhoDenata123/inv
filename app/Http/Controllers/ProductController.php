@@ -49,14 +49,22 @@ class ProductController extends Controller
             ->addColumn('selling_price', function($row) {
                 return 'Rp ' . number_format($row->selling_price, 2, ',', '.');
             })
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->format('d-m-Y H:i') : '';
+            })
             ->addColumn('status', function($row) {
                 $class = $row->product_status === 'active' ? 'badge-success' : 'badge-danger';
                 return '<span class="badge '.$class.'">'.ucfirst($row->product_status).'</span>';
             })
             ->addColumn('actions', function($row) {
-                // Sesuaikan tombol aksi sesuai kebutuhan Anda
+            // Sesuaikan tombol aksi sesuai kebutuhan Anda
                 return view('products.partials.actions', compact('row'))->render();
             })
+             // Tambahkan orderColumn untuk created_at:
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('products.created_at', $order);
+            })
+            
             ->rawColumns(['status', 'actions'])
             ->make(true);
     }
@@ -333,6 +341,64 @@ class ProductController extends Controller
         // Redirect kembali dengan pesan sukses
         return redirect()->back()->with('success', 'Stock adjusted successfully!');
     }
+    
+
+
+    public function userIndex()
+    {
+        $products = Product::with('category', 'unit', 'supplier')
+        ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at secara descending
+        ->paginate(10);
+        $categories = Category::all();
+        $units = Unit::all();
+        $suppliers = Supplier::all();
+
+        return view('products.UserIndex', compact('products', 'categories', 'units', 'suppliers'));
+    }
+
+    public function userDatatable(Request $request)
+    {
+        $products = Product::with(['category', 'supplier', 'unit'])
+        ->select('products.*') // <--- Penting!
+        ->leftJoin('categories', 'products.product_category', '=', 'categories.category_id');
+        
+        return DataTables::of($products)
+            ->addIndexColumn()
+            ->addColumn('category', function($row) {
+                return $row->category ? $row->category->category_name : 'No Category';
+            })
+            ->addColumn('supplier', function($row) {
+                return $row->supplier ? $row->supplier->supplier_name : 'No Supplier';
+            })
+            ->addColumn('unit', function($row) {
+                return $row->unit ? $row->unit->unit_name : 'No Unit';
+            })
+            ->addColumn('purchase_price', function($row) {
+                return 'Rp ' . number_format($row->purchase_price, 2, ',', '.');
+            })
+            ->addColumn('selling_price', function($row) {
+                return 'Rp ' . number_format($row->selling_price, 2, ',', '.');
+            })
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->format('d-m-Y H:i') : '';
+            })
+            ->addColumn('status', function($row) {
+                $class = $row->product_status === 'active' ? 'badge-success' : 'badge-danger';
+                return '<span class="badge '.$class.'">'.ucfirst($row->product_status).'</span>';
+            })
+            ->addColumn('actions', function($row) {
+            // Sesuaikan tombol aksi sesuai kebutuhan Anda
+                return view('products.partials.actionsUser', compact('row'))->render();
+            })
+             // Tambahkan orderColumn untuk created_at:
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('products.created_at', $order);
+            })
+            
+            ->rawColumns(['status', 'actions'])
+            ->make(true);
+    }
+
 
 
 }

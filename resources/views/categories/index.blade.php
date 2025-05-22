@@ -67,6 +67,7 @@
                                     <th scope="col">Category ID</th>
                                     <th scope="col">Category Name</th>
                                     <th scope="col">Category Description</th>
+                                    <th scope="col">Created At</th> <!-- Tambahkan ini -->
                                     
                                     <th scope="col">ACTIONS</th>
                                 </tr>
@@ -291,9 +292,10 @@
                         { data: 'category_id', name: 'category_id' },
                         { data: 'category_name', name: 'category_name' },
                         { data: 'category_description', name: 'category_description' },
+                        { data: 'created_at', name: 'created_at' }, // Tambahkan ini
                         { data: 'actions', name: 'actions', orderable: false, searchable: false }
                     ],
-                    order: [[1, 'desc']]
+                    order: [[4, 'desc']]
                 });
             });
     </script>

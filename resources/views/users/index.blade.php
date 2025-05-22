@@ -79,8 +79,9 @@
                             <th>No</th>
                             <th>Username</th>
                             <th>Email</th>
-                            <th>No.Telepon</th>   
+                            <th>Phone</th>   
                             <th>Type</th>
+                            <th>Created At</th> <!-- Tambahkan ini -->
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -177,7 +178,21 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>Apakah Anda yakin ingin menghapus akun <strong id="deleteUserNama"></strong>?</p>
+
+                        <p><span class="text-primary"> {{ Auth::user()->name }}</span>, are you sure you want to delete "<strong><span id="deleteUserNama"></span></strong>" ?</p>
+                        <div class="alert alert-danger">
+                            <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> <strong>WARNING</strong></span>
+                            <p class="text-danger"><small>This action cannot be undone, the selected user data will be permanently deleted!</small></p>
+                        </div>
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="remember" required> I agree to the Terms & Conditions.
+                                <div class="valid-feedback">Valid.</div>
+                                <div class="invalid-feedback">Check this box to continue.</div>
+                            </label>
+                        </div>
+
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -229,7 +244,7 @@
                         <div class="form-group">
                             <label class="font-weight-bold">Password :</label>
                             <input type="password" class="form-control" id="editUserPassword" name="password">
-                            <p class="text-info"><small><span class="text-info"><i class="fas fa-info-circle"></i> <strong>INFO :</strong></span> Leave it blank if you don't want to change</small></p>
+                            <p class="text-info"><small><span class="text-info"><i class="fas fa-info-circle"></i> <strong>INFO :</strong></span> Leave it blank if you don't want to change.</small></p>
                         </div>
                         <input type="hidden" name="type" value="0">
                     </div>
@@ -272,9 +287,10 @@
                     { data: 'email', name: 'email' },
                     { data: 'phone', name: 'phone' },
                     { data: 'type', name: 'type' },
+                    { data: 'created_at', name: 'created_at' }, // Tambahkan ini
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
-                order: [[1, 'asc']]
+                order: [[4, 'asc']]
             });
         });
     </script>

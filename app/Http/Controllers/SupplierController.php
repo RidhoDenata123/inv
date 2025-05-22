@@ -26,11 +26,19 @@ class SupplierController extends Controller
     //DATATABLE
     public function getDatatable(Request $request)
     {
-        $suppliers = Supplier::orderBy('created_at', 'desc');
-        return DataTables::of($suppliers)
+        $suppliers = \App\Models\Supplier::query();
+
+        return \DataTables::of($suppliers)
             ->addIndexColumn()
             ->addColumn('actions', function($row) {
                 return view('suppliers.partials.actions', compact('row'))->render();
+            })
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? $row->created_at->format('d-m-Y H:i') : '';
+            })
+            // Tambahkan orderColumn untuk created_at:
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('created_at', $order);
             })
             ->rawColumns(['actions'])
             ->make(true);

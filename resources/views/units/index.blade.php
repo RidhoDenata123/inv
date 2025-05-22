@@ -69,6 +69,7 @@
                             <th scope="col">Unit ID</th>
                             <th scope="col">Unit Name</th>
                             <th scope="col">Unit Description</th>
+                            <th scope="col">Created At</th> <!-- Tambahkan ini -->
                             <th scope="col">ACTIONS</th>
                         </tr>
                     </thead>
@@ -275,6 +276,7 @@
                     { data: 'unit_id', name: 'unit_id' },
                     { data: 'unit_name', name: 'unit_name' },
                     { data: 'unit_description', name: 'unit_description' },
+                    { data: 'created_at', name: 'created_at' }, // Tambahkan ini
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
                 order: [[1, 'desc']]

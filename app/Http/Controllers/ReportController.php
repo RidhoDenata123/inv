@@ -288,6 +288,11 @@ class ReportController extends Controller
             ->addColumn('unit', function($row) {
                 return $row->unit ? $row->unit->unit_name : 'No Unit';
             })
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? \Carbon\Carbon::parse($row->created_at)->format('d-m-Y H:i') : '';
+            })
+
+
             // Tambahkan orderColumn berikut:
             ->orderColumn('category', function ($query, $order) {
                 $query->leftJoin('categories as c', 'products.product_category', '=', 'c.category_id')
@@ -315,6 +320,9 @@ class ReportController extends Controller
             })
             ->orderColumn('product_qty', function ($query, $order) {
                 $query->orderBy('products.product_qty', $order);
+            })
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('products.created_at', $order);
             })
             ->make(true);
     }
@@ -840,6 +848,8 @@ class ReportController extends Controller
         return redirect()->route('reports.archive')->with('success', 'Stock Adjustment Report generated successfully.');
     }
 
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 }

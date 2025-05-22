@@ -25,11 +25,19 @@ class UnitController extends Controller
     //DATATABLE
     public function getDatatable(Request $request)
     {
-        $units = Unit::orderBy('created_at', 'desc');
-        return DataTables::of($units)
+        $units = \App\Models\Unit::query();
+
+        return \DataTables::of($units)
             ->addIndexColumn()
             ->addColumn('actions', function($row) {
                 return view('units.partials.actions', compact('row'))->render();
+            })
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? $row->created_at->format('d-m-Y H:i') : '';
+            })
+            // Tambahkan orderColumn untuk created_at:
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('created_at', $order);
             })
             ->rawColumns(['actions'])
             ->make(true);

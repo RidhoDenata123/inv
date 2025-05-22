@@ -26,6 +26,20 @@
     Interface
 </div>
 
+<!-- Nav Item - Data Master Collapse Menu -->
+<li class="nav-item">
+    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#masterCollapsePages"
+        aria-expanded="true" aria-controls="MasterData">
+        <i class="fas fa-fw fa-coins"></i>
+        <span>Master Data</span>
+    </a>
+    <div id="masterCollapsePages" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Master Data :</h6>
+            <a class="collapse-item" href="{{ route('products.UserIndex') }}">Product</a>
+        </div>
+    </div>
+</li>
 
 <!-- Nav Item - Transaction Collapse Menu -->
 <li class="nav-item">

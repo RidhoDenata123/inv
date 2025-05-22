@@ -69,7 +69,7 @@
                                     <th scope="col">Supplier</th>
                                     <th scope="col">Qty</th>
                                     <th scope="col">Unit</th>
-                               
+                                    <th scope="col">Created At</th> <!-- Tambahkan ini -->
                                  
                                 </tr>
                             </thead>
@@ -119,9 +119,10 @@
                     { data: 'selling_price', name: 'selling_price' },
                     { data: 'supplier', name: 'supplier.supplier_name' },
                     { data: 'product_qty', name: 'product_qty' },
-                    { data: 'unit', name: 'unit.unit_name' }
+                    { data: 'unit', name: 'unit.unit_name' },
+                    { data: 'created_at', name: 'created_at' } // Tambahkan ini
                 ],
-                order: [[1, 'desc']]
+                order: [[9, 'desc']]
             });
 
             // Tampilkan SweetAlert jika ada session flash message

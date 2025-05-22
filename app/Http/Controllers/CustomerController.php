@@ -21,11 +21,19 @@ class CustomerController extends Controller
     //DATATABLE
     public function getDatatable(Request $request)
     {
-        $customers = Customer::orderBy('created_at', 'desc');
-        return DataTables::of($customers)
+        $customers = \App\Models\Customer::query();
+
+        return \DataTables::of($customers)
             ->addIndexColumn()
             ->addColumn('actions', function($row) {
                 return view('customers.partials.actions', compact('row'))->render();
+            })
+            ->addColumn('created_at', function($row) {
+                return $row->created_at ? $row->created_at->format('d-m-Y H:i') : '';
+            })
+            // Tambahkan orderColumn untuk created_at:
+            ->orderColumn('created_at', function ($query, $order) {
+                $query->orderBy('created_at', $order);
             })
             ->rawColumns(['actions'])
             ->make(true);

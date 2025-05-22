@@ -69,6 +69,7 @@
                             <th scope="col">Customer Name</th>
                             <th scope="col">Customer Email</th>
                             <th scope="col">Customer Phone</th>
+                            <th scope="col">Created At</th> <!-- Tambahkan ini -->
                             <th scope="col">ACTIONS</th>
                         </tr>
                     </thead>
@@ -363,9 +364,10 @@
                     { data: 'customer_name', name: 'customer_name' },
                     { data: 'customer_email', name: 'customer_email' },
                     { data: 'customer_phone', name: 'customer_phone' },
+                    { data: 'created_at', name: 'created_at' }, // Tambahkan ini
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
-                order: [[1, 'desc']]
+                order: [[5, 'asc']]
             });
         });
     </script>
