@@ -482,7 +482,10 @@ class DispatchingController extends Controller
     //USER HEADER DATATABLE
     public function getUserDispatchingHeaderDatatable(Request $request)
     {
-        $headers = \App\Models\DispatchingHeader::with(['customer', 'createdByUser', 'confirmedByUser']);
+        $userId = auth()->id(); // Ambil ID user yang sedang login
+
+        $headers = \App\Models\DispatchingHeader::with(['customer', 'createdByUser', 'confirmedByUser'])
+            ->where('created_by', $userId);
 
         return \DataTables::of($headers)
             ->addIndexColumn()
