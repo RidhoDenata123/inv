@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stock_change_logs', function (Blueprint $table) {
-            $table->string('stock_change_log_id')->primary();
-            $table->string('stock_change_type');
-            $table->string('product_id');
-            $table->string('reference_id')->nullable();
+            $table->string('stock_change_log_id', 30)->primary();    // max 30 karakter, cukup untuk kode log
+            $table->string('stock_change_type', 30);                 // max 30 karakter (misal: Restock, Adjustment, dll)
+            $table->string('product_id', 30);                        // max 30 karakter, relasi ke produk
+            $table->string('reference_id', 30)->nullable();          // max 30 karakter, nullable
             $table->integer('qty_before')->default(0);
             $table->integer('qty_changed')->default(0);
             $table->integer('qty_after')->default(0);
-            $table->string('changed_at')->nullable();
-            $table->string('changed_by')->nullable();
-            $table->string('change_note')->nullable();
+            $table->timestamp('changed_at')->nullable();             // gunakan timestamp, nullable
+            $table->string('changed_by', 20)->nullable();            // max 20 karakter (ID user), nullable
+            $table->string('change_note', 100)->nullable();          // max 100 karakter, nullable
             $table->timestamps();
         });
     }

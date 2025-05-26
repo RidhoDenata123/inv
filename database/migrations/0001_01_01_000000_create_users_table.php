@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+            $table->string('name', 100); // max 100 karakter
+            $table->string('email', 100)->unique(); // max 100 karakter
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('phone');
-            $table->string('password');
-            $table->string('company_id');
-            $table->string('user_img')->nullable();
+            $table->string('phone', 20); // max 20 karakter
+            $table->string('password', 255); // hash password
+            $table->string('company_id', 12); // max 50 karakter
+            $table->string('user_img', 255)->nullable(); // path/file name
             $table->rememberToken();
             $table->timestamps();
         });

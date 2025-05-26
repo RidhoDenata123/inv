@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->string('customer_id')->primary(); // Ubah tipe data menjadi string dan jadikan primary key
-            $table->string('customer_name');
-            $table->string('customer_description')->nullable();
-            $table->string('customer_address');
-            $table->string('customer_phone');
-            $table->string('customer_email')->unique();
-            $table->string('customer_website')->nullable();
+            $table->string('customer_id', 30)->primary();           // max 30 karakter, cukup untuk kode customer
+            $table->string('customer_name', 100);                   // max 100 karakter
+            $table->string('customer_description', 100)->nullable();// max 100 karakter, nullable
+            $table->string('customer_address', 100);                // max 100 karakter
+            $table->string('customer_phone', 20);                   // max 20 karakter
+            $table->string('customer_email', 100)->unique();        // max 100 karakter
+            $table->string('customer_website', 100)->nullable();    // max 100 karakter, nullable
             $table->timestamps();
         });
     }

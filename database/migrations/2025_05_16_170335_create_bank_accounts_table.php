@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bank_accounts', function (Blueprint $table) {
-            $table->string('account_id')->primary();
-            $table->string('account_name');
-            $table->string('bank_name');
+            $table->string('account_id', 30)->primary();    // max 30 karakter, cukup untuk kode/nomor unik akun
+            $table->string('account_name', 100);            // max 100 karakter, nama pemilik akun
+            $table->string('bank_name', 100);               // max 100 karakter, nama bank
             $table->timestamps();
         });
     }

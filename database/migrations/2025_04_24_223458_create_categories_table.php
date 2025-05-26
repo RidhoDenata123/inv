@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->string('category_id')->primary(); // Ubah tipe data menjadi string dan jadikan primary key
-            $table->string('category_name');
-            $table->string('category_description')->nullable();
+            $table->string('category_id', 30)->primary(); // max 30 karakter, cukup untuk kode kategori
+            $table->string('category_name', 100);         // max 100 karakter
+            $table->string('category_description', 100)->nullable(); // max 100 karakter, nullable
             $table->timestamps();
         });
     }

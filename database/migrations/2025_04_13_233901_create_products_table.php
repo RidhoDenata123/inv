@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->string('product_id')->primary(); // Ubah tipe data menjadi string dan jadikan primary key
-            $table->string('product_name');
-            $table->string('product_category');
-            $table->text('product_description');
+            $table->string('product_id', 30)->primary(); // max 30 karakter, sesuaikan kebutuhan kode produk
+            $table->string('product_name', 100);         // max 100 karakter
+            $table->string('product_category', 30);      // max 30 karakter (ID kategori)
+            $table->text('product_description')->nullable();
             $table->integer('product_qty')->default(0);
             $table->bigInteger('purchase_price');
             $table->bigInteger('selling_price');
-            $table->string('product_unit');
-            $table->string('product_img');
-            $table->string('supplier_id');
-            $table->string('product_status');
+            $table->string('product_unit', 20);          // max 20 karakter (ID/unit)
+            $table->string('product_img', 255)->nullable(); // path/file name, nullable
+            $table->string('supplier_id', 30);           // max 30 karakter (ID supplier)
+            $table->string('product_status', 20);        // max 20 karakter (misal: active/inactive)
             $table->timestamps();
         });
     }
