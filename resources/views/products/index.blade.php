@@ -147,7 +147,7 @@
                                                     <div class="col">                    
                                                         <div class="form-group mb-3">
                                                             <label class="font-weight-bold">Product name :</label>
-                                                            <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="product_name" name="product_name" value="{{ old('product_name') }}" placeholder="Enter product name" require>
+                                                            <input type="text" class="form-control @error('product_name') is-invalid @enderror" id="product_name" name="product_name" value="{{ old('product_name') }}" placeholder="Enter product name" required>
 
                                                                 <!-- error message for product_name -->
                                                                 @error('product_name')
@@ -160,7 +160,7 @@
                                                     <div class="col">
 
                                                     <div class="form-group mb-3">
-                                                        <label class="font-weight-bold">Product Category:</label>
+                                                        <label class="font-weight-bold">Product Category :</label>
                                                         <select class="form-control selectpicker @error('product_category') is-invalid @enderror" 
                                                                 id="product_category" 
                                                                 name="product_category" 
@@ -184,7 +184,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group mb-3">
-                                                    <label class="font-weight-bold">Product Description</label>
+                                                    <label class="font-weight-bold">Product Description :</label>
                                                     <textarea class="form-control @error('product_description') is-invalid @enderror" name="product_description" rows="3" placeholder="Enter product description">{{ old('product_description') }}</textarea>
                                                 
                                                     <!-- error message for product_description -->
@@ -203,7 +203,7 @@
                                                     <div class="col">                    
                                                         <div class="form-group mb-3">
                                                             <label class="font-weight-bold">Purchase Price :</label>
-                                                            <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" placeholder="Enter purchase price" require>
+                                                            <input type="number" class="form-control @error('purchase_price') is-invalid @enderror" id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" placeholder="Enter purchase price" required>
 
                                                                 <!-- error message for purchase_price -->
                                                                 @error('purchase_price')
@@ -216,7 +216,7 @@
                                                     <div class="col">
                                                             <div class="form-group mb-3">
                                                                     <label class="font-weight-bold">Selling Price :</label>
-                                                                    <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" name="selling_price" value="{{ old('selling_price') }}" placeholder="Enter selling price" require>
+                                                                    <input type="number" class="form-control @error('selling_price') is-invalid @enderror" id="selling_price" name="selling_price" value="{{ old('selling_price') }}" placeholder="Enter selling price" required>
 
                                                                         <!-- error message for selling_price -->
                                                                         @error('selling_price')
@@ -230,7 +230,7 @@
                                                 <div class="row">
                                                     <div class="col">                    
                                                         <div class="form-group mb-3">
-                                                            <label class="font-weight-bold">Product Unit:</label>
+                                                            <label class="font-weight-bold">Product Unit :</label>
                                                             <select class="form-control selectpicker @error('product_unit') is-invalid @enderror" 
                                                                     id="product_unit" 
                                                                     name="product_unit" 
@@ -253,7 +253,7 @@
                                                     </div>
                                                     <div class="col">
                                                         <div class="form-group mb-3">
-                                                            <label class="font-weight-bold">Supplier:</label>
+                                                            <label class="font-weight-bold">Supplier :</label>
                                                             <select class="form-control selectpicker @error('supplier_id') is-invalid @enderror" 
                                                                     id="supplier_id" 
                                                                     name="supplier_id" 

@@ -564,7 +564,7 @@
                     { data: 'receiving_detail_status', name: 'receiving_detail_status', orderable: false, searchable: false },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false }
                 ],
-                order: [[1, 'desc']]
+                order: [[6, 'desc']]
             });
         });
     </script>

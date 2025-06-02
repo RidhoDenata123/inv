@@ -227,7 +227,7 @@
                                 <option value="Restock">Restock</option>
                                 <option value="Opening Balance">Opening Balance</option>
                                 <option value="Transfer In">Transfer In</option>
-                                <option value="Return from Customer">Return from Customer</option>
+
                             </select>
                             @error('receiving_header_name')
                                 <div class="alert alert-danger mt-2">{{ $message }}</div>
@@ -288,7 +288,7 @@ $(document).ready(function() {
             { data: 'receiving_header_status', name: 'receiving_header_status', orderable: false, searchable: false },
             { data: 'actions', name: 'actions', orderable: false, searchable: false }
         ],
-        order: [[1, 'desc']]
+        order: [[3, 'desc']]
     });
 });
 </script>

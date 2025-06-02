@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('password', 255); // hash password
             $table->string('company_id', 12); // max 50 karakter
             $table->string('user_img', 255)->nullable(); // path/file name
+            $table->tinyInteger('type')->default(0); // Users: 0=>User, 1=>Admin, 2=>Manager 
             $table->rememberToken();
             $table->timestamps();
         });

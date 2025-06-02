@@ -38,26 +38,13 @@
     <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <a class="navbar-brand" href="#">QuickStart</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-        <li class="nav-item"><a class="nav-link" href="#hero">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
-        <li class="nav-item"><a class="nav-link" href="#footer">Contact</a></li>
-        </ul>
-    </div>
-    </nav>
+
 
     <!-- Hero Section -->
     <section id="hero" class="hero">
     <div class="container">
-        <h1 class="display-4">Welcome to QuickStart</h1>
-        <p class="lead">A simple and clean Bootstrap 4 landing page.</p>
+        <h1 class="display-4">Welcome to E-Inventory 2</h1>
+        <p class="lead">Simple web based Inventory management system.</p>
         <a href="{{ Auth::check() ? route('dashboard') : route('login') }}" class="btn btn-light btn-lg mt-3">Get Started</a>
     </div>
     </section>
@@ -66,8 +53,8 @@
     <section id="about" class="section bg-light">
     <div class="container">
         <div class="text-center">
-        <h2>About Us</h2>
-        <p>We provide fast and responsive landing page solutions using Bootstrap 4.</p>
+        <h2>About E-Inventory 2</h2>
+        <p>E-Inventory 2 is a modern solution for easy, fast, and efficient inventory management. This system is designed to help your business manage stock, incoming/outgoing transactions, and real-time reporting.</p>
         </div>
     </div>
     </section>
@@ -79,16 +66,16 @@
         <h2>Our Services</h2>
         <div class="row mt-4">
             <div class="col-md-4">
-            <h4>Design</h4>
-            <p>Clean and modern UI/UX for your website.</p>
+            <h4>Stock Management</h4>
+            <p>Automatic and accurate recording of stock, including history of stock changes.</p>
             </div>
             <div class="col-md-4">
-            <h4>Development</h4>
-            <p>Fast and responsive front-end development.</p>
+            <h4>Easy Transaction</h4>
+            <p>Integrated and easy-to-use product receiving and dispatching process.</p>
             </div>
             <div class="col-md-4">
-            <h4>Support</h4>
-            <p>Ongoing support and updates for your site.</p>
+            <h4>Real-Time Report</h4>
+            <p>Monitor stock reports, transactions, and inventory activities directly and in detail.</p>
             </div>
         </div>
         </div>
@@ -96,11 +83,7 @@
     </section>
 
     <!-- Footer -->
-    <footer id="footer" class="footer">
-    <div class="container">
-        <p>&copy; 2025 QuickStart. All rights reserved.</p>
-    </div>
-    </footer>
+
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

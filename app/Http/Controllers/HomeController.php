@@ -67,11 +67,22 @@ class HomeController extends Controller
         // Total alert
         $totalAlertCount = $lowStockCount + $pendingDispatchingCount;
 
+        //MyAreaChart
+        $receivingCount = \App\Models\ReceivingDetail::count();
+        $dispatchingCount = \App\Models\DispatchingDetail::count();
+
+        //MyPieChart
+        $stockChangeSummary = StockChangeLog::select('stock_change_type')
+        ->selectRaw('COUNT(*) as total')
+        ->groupBy('stock_change_type')
+        ->pluck('total', 'stock_change_type')
+        ->toArray();
+
 
             //VIEW DAHBOARD
             return view('userDashboard', compact('itemSold','transaction','totalIncome','customerCount',
             'lowStockProducts', 'lowStockCount',
-            'pendingDispatchings', 'pendingDispatchingCount', 
+            'pendingDispatchings', 'pendingDispatchingCount', 'receivingCount',  'dispatchingCount', 'stockChangeSummary',
             'totalAlertCount',));
         }
   
@@ -111,11 +122,22 @@ class HomeController extends Controller
         // Total alert
         $totalAlertCount = $lowStockCount + $pendingDispatchingCount;
 
+        //MyAreaChart
+        $receivingCount = \App\Models\ReceivingDetail::count();
+        $dispatchingCount = \App\Models\DispatchingDetail::count();
+
+        //MyPieChart
+        $stockChangeSummary = StockChangeLog::select('stock_change_type')
+        ->selectRaw('COUNT(*) as total')
+        ->groupBy('stock_change_type')
+        ->pluck('total', 'stock_change_type')
+        ->toArray();
+
 
             //VIEW DAHBOARD
             return view('adminDashboard', compact('itemSold','transaction','totalIncome','customerCount',
             'lowStockProducts', 'lowStockCount',
-            'pendingDispatchings', 'pendingDispatchingCount', 
+            'pendingDispatchings', 'pendingDispatchingCount',  'receivingCount',  'dispatchingCount', 'stockChangeSummary',  
             'totalAlertCount',));
         }
 
