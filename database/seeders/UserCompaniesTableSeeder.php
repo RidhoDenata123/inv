@@ -23,7 +23,7 @@ class UserCompaniesTableSeeder extends Seeder
                 'company_email' => 'info@techsolutions.com',
                 'company_website' => 'https://www.techsolutions.com',
                 'company_img' => null,
-                'company_currency' => 'USD',
+                'company_currency' => 'IDR',
                 'company_bank_account' => '123456789',
                 'created_at' => now(),
                 'updated_at' => now(),

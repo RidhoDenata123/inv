@@ -344,11 +344,15 @@ class ReportController extends Controller
     //GENERATE STOCK REPORT with DOm pdf
     public function generateStockReport()
     {
+        //Info
+        $company = UserCompany::first();
+        $generatedBy = auth()->user()->name;
+
         // Ambil semua data produk
         $products = Product::with(['category', 'unit'])->get();
 
         // Generate PDF menggunakan view
-        $pdf = Pdf::loadView('reports.stock_pdf', compact('products'));
+        $pdf = Pdf::loadView('reports.stock_pdf', compact('products', 'company', 'generatedBy'));
 
         // Nama file PDF
         $fileName = 'stock_report_' . now()->format('d_m_Y') . '.pdf';
@@ -474,6 +478,10 @@ class ReportController extends Controller
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
+        //Info
+        $company = UserCompany::first();
+        $generatedBy = auth()->user()->name;
+
         // Ambil data StockChangeLog berdasarkan Start Date dan End Date
         $stockChangeLogs = StockChangeLog::with('product', 'changedBy')
             ->whereDate('changed_at', '>=', $request->start_date)
@@ -482,7 +490,7 @@ class ReportController extends Controller
             ->get();
 
         // Generate PDF menggunakan view
-        $pdf = Pdf::loadView('reports.stockMovementPDF', compact('stockChangeLogs', 'request'));
+        $pdf = Pdf::loadView('reports.stockMovementPDF', compact('stockChangeLogs', 'request', 'company', 'generatedBy'));
 
         // Nama file PDF
         $fileName = 'stock_movement_report_' . now()->format('d_m_Y') . '.pdf';
@@ -568,11 +576,15 @@ class ReportController extends Controller
     //GENERATE STOCK MINIMUM REPORT with DOm pdf
     public function generateMinimumStockReport()
     {
+        //Info
+        $company = UserCompany::first();
+        $generatedBy = auth()->user()->name;
+
         // Ambil data produk dengan product_qty kurang dari 5
         $products = Product::where('product_qty', '<', 5)->orderBy('product_qty', 'asc')->get();
 
         // Generate PDF menggunakan view
-        $pdf = Pdf::loadView('reports.minimumStockPDF', compact('products'));
+        $pdf = Pdf::loadView('reports.minimumStockPDF', compact('products', 'company', 'generatedBy'));
 
         // Nama file PDF
         $fileName = 'minimum_stock_report_' . now()->format('d_m_Y') . '.pdf';
@@ -593,6 +605,8 @@ class ReportController extends Controller
         // Redirect kembali ke halaman laporan dengan pesan sukses
         return redirect()->route('reports.archive')->with('success', 'Minimum Stock Report generated successfully.');
     }
+
+
 
 
     //RECEIVING REPORT DATATABLE
@@ -649,13 +663,17 @@ class ReportController extends Controller
     //GENERATE RECEIVING REPORT with DOm pdf
     public function generateReceivingReport()
     {
+        //Info
+        $company = UserCompany::first();
+        $generatedBy = auth()->user()->name;
+
         // Ambil data dari StockChangeLog dengan stock_change_type tertentu
         $receivingLogs = StockChangeLog::whereIn('stock_change_type', ['Restock', 'Opening Balance', 'Transfer In', 'Return from Customer'])
             ->orderBy('changed_at', 'desc')
             ->get();
 
         // Generate PDF menggunakan view
-        $pdf = Pdf::loadView('reports.receivingReportPDF', compact('receivingLogs'));
+        $pdf = Pdf::loadView('reports.receivingReportPDF', compact('receivingLogs', 'company', 'generatedBy'));
 
         // Nama file PDF
         $fileName = 'receiving_report_' . now()->format('d_m_Y') . '.pdf';
@@ -676,6 +694,8 @@ class ReportController extends Controller
         // Redirect kembali ke halaman laporan dengan pesan sukses
         return redirect()->route('reports.archive')->with('success', 'Receiving Report generated successfully.');
     }
+
+
 
 
     //DISPATCHING REPORT DATATABLE
@@ -733,13 +753,17 @@ class ReportController extends Controller
     //GENERATE DISPATCHING REPORT with DOm pdf
     public function generateDispatchingReport()
     {
+        //Info
+        $company = UserCompany::first();
+        $generatedBy = auth()->user()->name;
+
         // Ambil data dari StockChangeLog dengan stock_change_type tertentu
         $dispatchingLogs = StockChangeLog::whereIn('stock_change_type', ['Sales Order', 'Transfer Out', 'Return to Supplier'])
             ->orderBy('changed_at', 'desc')
             ->get();
 
         // Generate PDF menggunakan view
-        $pdf = Pdf::loadView('reports.dispatchingReportPDF', compact('dispatchingLogs'));
+        $pdf = Pdf::loadView('reports.dispatchingReportPDF', compact('dispatchingLogs', 'company', 'generatedBy'));
 
         // Nama file PDF
         $fileName = 'dispatching_report_' . now()->format('d_m_Y') . '.pdf';
@@ -820,13 +844,17 @@ class ReportController extends Controller
     //GENERATE STOCK ADJUSTMENT REPORT with DOm pdf
     public function generateStockAdjustmentReport()
     {
+        //Info
+        $company = UserCompany::first();
+        $generatedBy = auth()->user()->name;
+
         // Ambil data dari StockChangeLog dengan stock_change_type tertentu
         $adjustmentLogs = StockChangeLog::whereIn('stock_change_type', ['Stock Adjustment', 'Write-Off'])
             ->orderBy('changed_at', 'desc')
             ->get();
 
         // Generate PDF menggunakan view
-        $pdf = Pdf::loadView('reports.stockAdjustmentReportPDF', compact('adjustmentLogs'));
+        $pdf = Pdf::loadView('reports.stockAdjustmentReportPDF', compact('adjustmentLogs', 'company', 'generatedBy'));
 
         // Nama file PDF
         $fileName = 'stock_adjustment_report_' . now()->format('d_m_Y') . '.pdf';
